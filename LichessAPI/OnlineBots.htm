@@ -3,7 +3,6 @@
 <title>Online bots - Lichess API
 </title>
 <script>
-//https://lichess.org/api/bot/online?nb=1
 function initialGet(clbt)
 {
 	clbt.disabled = true;
@@ -40,7 +39,6 @@ async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-		//netLogger.appendChild(document.createTextNode(value));
 		brokenLines += textToJSONhandler(value.trim(),t);
 		ChCt++;
 	}
@@ -53,7 +51,7 @@ async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,
 		netLogger.innerHTML = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
 	}
 }
-function lister(listedText, PN, ElType)//could be in a stand-alone file
+function lister(listedText, PN, ElType)
 {
 	const listEntry = document.createElement(ElType);
 	const entryText = document.createTextNode(listedText);
@@ -100,11 +98,6 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["tosViolation"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
 }
-/*
-Object.keys(jsonobject) -> stringarray
-jsonobject[string] -> corresponding key
-typeof(anything) -> string
-*/
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;

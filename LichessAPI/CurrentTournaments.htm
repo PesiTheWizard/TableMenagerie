@@ -3,7 +3,6 @@
 <title>Current tournaments - Lichess API
 </title>
 <script>
-// https://lichess.org/api/tournament
 function GetPublicTournaments(ClBt)
 {
 	ClBt.disabled = true;
@@ -52,7 +51,6 @@ function GetPublicTournaments(ClBt)
 				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):"N/A",tabRw,'td');
 				lister(CT["winner"]?(CT["winner"]["id"]??""):"",tabRw,'td');
 				TB.appendChild(tabRw);
-				//secondsToFinish, isFinished, isRecentlyFinished, podium, stats; pairingsClosed, duels, standings, featured
 			}
 		}
 	}).catch((error) => {
@@ -66,11 +64,6 @@ function lister(listedText, ParntNde, ElType)//could be in a stand-alone file
 	listEntry.appendChild(entryText);
 	ParntNde.appendChild(listEntry);
 }
-/*
-Object.keys(jsonobject) -> stringarray
-jsonobject[string] -> corresponding key
-typeof(anything) -> string
-*/
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;

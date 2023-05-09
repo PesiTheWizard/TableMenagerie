@@ -3,6 +3,7 @@
 <title>Current tournaments - Lichess API
 </title>
 <script>
+// https://lichess.org/api/tournament
 function GetPublicTournaments(ClBt)
 {
 	ClBt.disabled = true;
@@ -47,23 +48,31 @@ function GetPublicTournaments(ClBt)
 				lister(CT["status"]??"",tabRw,'td');
 				lister(CT["perf"]?(CT["perf"]["name"]??""):"N/A",tabRw,'td');
 				lister(CT["secondsToStart"]??"",tabRw,'td');
+				lister(CT["hasMaxRating"]??"",tabRw,'td');
 				lister(CT["minRatedGames"]?(CT["minRatedGames"]["nb"]??""):"",tabRw,'td');
+				lister(CT["position"]?"yes":"no",tabRw,'td');
 				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):"N/A",tabRw,'td');
 				lister(CT["winner"]?(CT["winner"]["id"]??""):"",tabRw,'td');
 				TB.appendChild(tabRw);
+				//secondsToFinish, isFinished, isRecentlyFinished, podium, stats, pairingsClosed, duels, standings, featured
 			}
 		}
 	}).catch((error) => {
 		console.log(error);
 	});
 }
-function lister(listedText, ParntNde, ElType)
+function lister(listedText, ParntNde, ElType)//could be in a stand-alone file
 {
 	const listEntry = document.createElement(ElType);
 	const entryText = document.createTextNode(listedText);
 	listEntry.appendChild(entryText);
 	ParntNde.appendChild(listEntry);
 }
+/*
+Object.keys(jsonobject) -> stringarray
+jsonobject[string] -> corresponding key
+typeof(anything) -> string
+*/
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
@@ -128,7 +137,9 @@ span
 <th><span onClick=a(13,true)>&#9650;</span> status <span onClick=a(13,false)>&#9660;</span></th>
 <th><span onClick=a(14,true)>&#9650;</span> perf/name <span onClick=a(14,false)>&#9660;</span></th>
 <th>secondsToStart</th>
-<th><span onClick=a(16,true)>&#9650;</span> minRatedGames/nb <span onClick=a(16,false)>&#9660;</span></th>
+<th>hasMaxRating</th>
+<th><span onClick=a(17,true)>&#9650;</span> minRatedGames/nb <span onClick=a(17,false)>&#9660;</span></th>
+<th><span onClick=a(18,true)>&#9650;</span> position? <span onClick=a(18,false)>&#9660;</span></th>
 <th>schedule/freq</th>
 <th>winner/id</th>
 </tr></thead>

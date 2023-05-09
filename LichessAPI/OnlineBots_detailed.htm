@@ -86,24 +86,25 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
 	lister(Object.keys(JO["perfs"]).length,tablRw,'td');
-	lister(JO["perfs"]["bullet"]["games"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["bullet"]["rating"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["blitz"]["games"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["blitz"]["rating"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["rapid"]["games"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["rapid"]["rating"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["classical"]["games"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["classical"]["rating"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["correspondence"]["games"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["correspondence"]["rating"]??"",tablRw,'td');//new addition
-	lister(JO["perfs"]["chess960"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["crazyhouse"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["antichess"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["atomic"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["horde"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["kingOfTheHill"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["racingKings"]?"yes":"no",tablRw,'td');//new addition
-	lister(JO["perfs"]["threeCheck"]?"yes":"no",tablRw,'td');//new addition
+	lister(JO["perfs"]["bullet"]["games"]??"",tablRw,'td');
+	lister(JO["perfs"]["bullet"]["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]["blitz"]["games"]??"",tablRw,'td');
+	lister(JO["perfs"]["blitz"]["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]["rapid"]["games"]??"",tablRw,'td');
+	lister(JO["perfs"]["rapid"]["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]["classical"]["games"]??"",tablRw,'td');
+	lister(JO["perfs"]["classical"]["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]["correspondence"]["games"]??"",tablRw,'td');
+	lister(JO["perfs"]["correspondence"]["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]["chess960"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["crazyhouse"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["antichess"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["atomic"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["horde"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["kingOfTheHill"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["racingKings"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["threeCheck"]?"yes":"no",tablRw,'td');
+	lister(JO["perfs"]["puzzle"]?"yes":"no",tablRw,'td');//the new addition
 	lister(JO["createdAt"],tablRw,'td');
 	lister(new Date(JO["createdAt"]).toLocaleString(),tablRw,'td');
 	lister(JO["seenAt"],tablRw,'td');
@@ -187,12 +188,13 @@ span
 <th><span onClick=a(18,true)>&#9650;</span> kingOfTheHill? <span onClick=a(18,false)>&#9660;</span></th>
 <th><span onClick=a(19,true)>&#9650;</span> racingKings? <span onClick=a(19,false)>&#9660;</span></th>
 <th><span onClick=a(20,true)>&#9650;</span> threeCheck? <span onClick=a(20,false)>&#9660;</span></th>
-<th><span onClick=a(21,true)>&#9650;</span> createdAt(Timestamp) <span onClick=a(21,false)>&#9660;</span></th>
-<th><span onClick=a(22,true)>&#9650;</span> createdAt(Date) <span onClick=a(22,false)>&#9660;</span></th>
-<th><span onClick=a(23,true)>&#9650;</span> seenAt(Timestamp) <span onClick=a(23,false)>&#9660;</span></th>
-<th><span onClick=a(24,true)>&#9650;</span> seenAt(Date) <span onClick=a(24,false)>&#9660;</span></th>
-<th><span onClick=a(25,true)>&#9650;</span> playTime/total <span onClick=a(25,false)>&#9660;</span></th>
-<th><span onClick=a(26,true)>&#9650;</span> playTime/tv <span onClick=a(26,false)>&#9660;</span></th>
+<th><span onClick=a(21,true)>&#9650;</span> puzzle? <span onClick=a(21,false)>&#9660;</span></th>
+<th><span onClick=a(22,true)>&#9650;</span> createdAt(Timestamp) <span onClick=a(22,false)>&#9660;</span></th>
+<th><span onClick=a(23,true)>&#9650;</span> createdAt(Date) <span onClick=a(23,false)>&#9660;</span></th>
+<th><span onClick=a(24,true)>&#9650;</span> seenAt(Timestamp) <span onClick=a(24,false)>&#9660;</span></th>
+<th><span onClick=a(25,true)>&#9650;</span> seenAt(Date) <span onClick=a(25,false)>&#9660;</span></th>
+<th><span onClick=a(26,true)>&#9650;</span> playTime/total <span onClick=a(26,false)>&#9660;</span></th>
+<th><span onClick=a(27,true)>&#9650;</span> playTime/tv <span onClick=a(27,false)>&#9660;</span></th>
 <th>profile?</th>
 <th>title</th>
 <th>patron</th>

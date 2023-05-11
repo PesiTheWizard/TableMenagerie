@@ -1,0 +1,138 @@
+<html>
+<head>
+<title>Current tournaments - Lishogi API
+</title>
+<script>
+function GetArenaTournaments(ClBt)
+{
+	ClBt.disabled = true;
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	const TB = document.getElementById("st");
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null) )
+	{
+		console.log("getElementById fail");
+		return;
+	}
+	OGresp.innerHTML = "Fetching tournament data...";
+	svr.innerHTML = "Waiting for response...";
+	fetch("https://lishogi.org/api/tournament").then((response) => {
+		OGresp.innerHTML = "Response code = "+response.status;
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.json();
+	}).then((response) => {
+		svr.innerHTML = "JSON response received";
+		const rcats = Object.keys(response);
+		for(let i=0;i<rcats.length;i++)
+		{
+			const currPrt = response[rcats[i]];
+			for(let j=0;j<currPrt.length;j++)
+			{
+				const CT = currPrt[j];
+				const tabRw = document.createElement('tr');
+				lister(rcats[i],tabRw,'td');
+				lister(CT["id"]??"",tabRw,'td');
+				lister(CT["createdBy"]??"",tabRw,'td');
+				lister(CT["system"]??"",tabRw,'td');
+				lister(CT["minutes"]??"",tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["limit"]??""):"N/A",tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["increment"]??""):"N/A",tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["byoyomi"]??""):"N/A",tabRw,'td');
+				lister(CT["rated"]??"",tabRw,'td');
+				lister(CT["fullName"]??"",tabRw,'td');
+				lister(CT["nbPlayers"]??"",tabRw,'td');
+				lister(CT["variant"]?(CT["variant"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["startsAt"]??"",tabRw,'td');
+				lister(CT["finishesAt"]??"",tabRw,'td');
+				lister(CT["status"]??"",tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["secondsToStart"]??"",tabRw,'td');
+				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):"N/A",tabRw,'td');
+				lister(CT["winner"]?(CT["winner"]["id"]??""):"",tabRw,'td');
+				TB.appendChild(tabRw);
+			}
+		}
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+function a(ctsb, lth)
+{//ctsb - column to sort by, lth - low to high
+	const gt = document.getElementById("st").childNodes;
+	const tl = gt.length - 2;//total length, stop if cup goes above this
+	let cup = 0;
+	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
+	while(cup <= tl)//gnomesorting the rows
+	{
+		fn = gt[cup];
+		sn = gt[cup+1];
+		s1 = fn.childNodes[ctsb].textContent;
+		s2 = sn.childNodes[ctsb].textContent;
+		if(s1 == s2)
+		{
+			cup++;
+		}
+		else if((s1 > s2) == lth)
+		{
+			fn.before(sn);//swap rows
+			cup--;
+			if(cup<0){cup=1;}
+		}
+		else
+		{
+			cup++;
+		}
+	}
+}
+</script>
+<style>
+td, th
+{
+	white-space: nowrap;
+}
+span
+{
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+<input type=button value="Get public tournaments" onClick=GetArenaTournaments(this)>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+<table border=1>
+<thead><tr>
+<th>Group</th>
+<th><span onClick=a(1,true)>&#9650;</span> id <span onClick=a(1,false)>&#9660;</span></th>
+<th><span onClick=a(2,true)>&#9650;</span> createdBy <span onClick=a(2,false)>&#9660;</span></th>
+<th>system</th>
+<th><span onClick=a(4,true)>&#9650;</span> minutes <span onClick=a(4,false)>&#9660;</span></th>
+<th><span onClick=a(5,true)>&#9650;</span> clk/lim <span onClick=a(5,false)>&#9660;</span></th>
+<th>clk/inc</th>
+<th><span onClick=a(7,true)>&#9650;</span> clk/byo <span onClick=a(7,false)>&#9660;</span></th>
+<th>rated</th>
+<th><span onClick=a(9,true)>&#9650;</span> fullName <span onClick=a(9,false)>&#9660;</span></th>
+<th><span onClick=a(10,true)>&#9650;</span> nbPlayers <span onClick=a(10,false)>&#9660;</span></th>
+<th>variant/name</th>
+<th><span onClick=a(12,true)>&#9650;</span> startsAt <span onClick=a(12,false)>&#9660;</span></th>
+<th><span onClick=a(13,true)>&#9650;</span> finishesAt <span onClick=a(13,false)>&#9660;</span></th>
+<th><span onClick=a(14,true)>&#9650;</span> status <span onClick=a(14,false)>&#9660;</span></th>
+<th><span onClick=a(15,true)>&#9650;</span> perf/name <span onClick=a(15,false)>&#9660;</span></th>
+<th>secondsToStart</th>
+<th>schedule/freq</th>
+<th>winner/id</th>
+</tr></thead>
+<tbody id="st"></tbody>
+</table>
+</body>
+</html>

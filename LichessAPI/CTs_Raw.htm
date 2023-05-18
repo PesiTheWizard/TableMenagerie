@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Current tournaments - various APIs
+</title>
+<script>
+function GetPublicTournaments(ClBt)
+{
+	ClBt.disabled = true;
+	const site = document.getElementById("site").value;
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	if( (OGresp===null)||(HL===null)||(svr===null) )
+	{
+		console.log("getElementById fail");
+		return;
+	}
+	OGresp.innerHTML = "Fetching tournament data...";
+	svr.innerHTML = "Waiting for response...";
+	fetch(`https://${site}.org/api/tournament`).then((response) => {
+		OGresp.innerHTML = "Response code = "+response.status;
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.text();
+	}).then((response) => {
+		svr.innerHTML = response;
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+</script>
+</head>
+<body>
+<select id="site">
+<option value="lichess">lichess</option>
+<option value="lishogi">lishogi</option>
+<option value="lidraughts">lidraughts</option>
+<option value="playstrategy" disabled>playstrategy</option>
+</select>
+<input type=button value="Get public tournaments" onClick=GetPublicTournaments(this)>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+</body>
+</html>

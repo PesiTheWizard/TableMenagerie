@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>User Info - Lichess API
+</title>
+<script>
+function rb(r,k,hn)
+{
+	const los = k.length;
+	for(let i=0;i<los;i++)
+	{
+		resp(k[i],r[k[i]],hn);
+	}
+}
+function resp(f,s,a)
+{
+	const ft = document.createElement('dt');
+	const st = document.createElement('dd');
+	const fti = document.createTextNode(f);
+	let sti;
+	if((s !== null) && (typeof(s)=="object"))
+	{
+		sti = document.createElement('dl');
+		rb(s,Object.keys(s),sti);
+	}
+	else//assumed either string or null
+	{
+		sti = document.createTextNode(s??"ø");
+	}
+	ft.appendChild(fti);
+	st.appendChild(sti);
+	a.appendChild(ft);
+	a.appendChild(st);
+}
+function getUserInfo(ClBt)
+{
+	ClBt.disabled = true;
+	const txtSite = document.getElementById("selSite").value;
+	const txtInfo = document.getElementById("selInfo").value;
+	const txtName = document.getElementById("NameToGet").value.trim();
+	const DlogA = document.getElementById("logA");
+	const Dstts = document.getElementById("InfoSTTS");
+	const Dhdrs = document.getElementById("InfoHDRS");
+	const Dsvar = document.getElementById("svar");
+	if((typeof(txtName) != "string") || (txtName.length===0))
+	{
+		DlogA.innerText = "username needed";
+		ClBt.disabled = false;
+		return;
+	}
+	const ApiEP = `https://${txtSite}.org/api/user/${txtName}${txtInfo}`;
+	DlogA.innerText = "fetching ".concat(ApiEP);
+	Dstts.innerText = "awaiting response...";
+	Dhdrs.innerHTML = "";
+	fetch(ApiEP).then((response) => {
+		Dstts.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,Dhdrs,'li');}
+		return response.json();
+	}).then((response) => {
+		console.log(response);
+		const keylist = Object.keys(response);
+		Dsvar.innerHTML = "";
+		rb(response,keylist,Dsvar);
+	}).then(() => {
+		DlogA.innerText = "fetched ".concat(ApiEP);
+		ClBt.disabled = false;
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, PN, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	PN.appendChild(listEntry);
+}
+</script>
+<style>
+dl
+{
+	 border-left: 1px dotted;
+}
+</style>
+</head>
+<body>
+Site = <select id="selSite">
+<option value="lichess" selected>lichess</option>
+<option value="lishogi">lishogi</option>
+<option value="lidraughts">lidraughts</option>
+<option value="playstrategy" disabled>playstrategy</option>
+</select><br>
+Info = <select id="selInfo">
+<option value="" selected>user public data</option>
+<option value="/rating-history">rating history of a user</option>
+<option value="/activity">user activity</option>
+</select><br>
+username = <input type=text id="NameToGet"><br>
+<input type=button value="Get info" onClick=getUserInfo(this)><br>
+<span id="logA">Log space</span>
+<hr>
+<div id="InfoSTTS"></div>
+<ul id="InfoHDRS"></ul>
+<dl id="svar"></dl>
+</body>
+</html>

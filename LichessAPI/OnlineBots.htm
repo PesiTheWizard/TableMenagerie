@@ -7,6 +7,7 @@ function initialGet(clbt)
 {
 	clbt.disabled = true;
 	const t = document.getElementById("NofBotsToGet").value;
+	const Dsite = document.getElementById("selSite").value;
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
@@ -15,10 +16,10 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		document.getElementById("er").innerHTML = "";
-		OGresp.innerHTML = "Fetching data of "+tv+" bot(s)";
+		OGresp.innerHTML = "Fetching data of "+tv+" "+Dsite+" bot(s)";
 		HL.innerHTML = "";
 		svr.innerHTML = "Waiting for response...";
-		fetchHandler(tv,OGresp,HL,svr,gt);
+		fetchHandler(tv,OGresp,HL,svr,gt,Dsite);
 	}
 	else
 	{
@@ -26,9 +27,9 @@ function initialGet(clbt)
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,t)
+async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,t,siteStr)
 {
-	const response = await fetch("https://lichess.org/api/bot/online?nb=" + getThisManyBots);
+	const response = await fetch(`https://${siteStr}.org/api/bot/online?nb=${getThisManyBots}`);
 	statusHolder.innerHTML = "Response code = "+response.status;
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -93,9 +94,6 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["playTime"]?JO["playTime"]["tv"]:"",tablRw,'td');
 	lister(JO["profile"]?"yes":"no",tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
-	lister(JO["patron"]??"",tablRw,'td');
-	lister(JO["verified"]??"",tablRw,'td');
-	lister(JO["tosViolation"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
 }
 function a(ctsb, lth)
@@ -139,6 +137,10 @@ span
 </style>
 </head>
 <body>
+<select id="selSite">
+<option value="lichess">lichess</option>
+<option value="lishogi">lishogi</option>
+</select><br>
 <input type=text id="NofBotsToGet" value="180"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <pre id="er"></pre>
 <hr>
@@ -158,9 +160,6 @@ span
 <th><span onClick=a(8,true)>&#9650;</span> playTime/tv <span onClick=a(8,false)>&#9660;</span></th>
 <th>profile?</th>
 <th>title</th>
-<th>patron</th>
-<th>verified</th>
-<th>tosViolation</th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

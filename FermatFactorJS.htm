@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>Fermat factorizing with JS
+</title>
+<script>
+function initialGuess(x)
+{
+	if(typeof(x)!=="bigint" || x<=(0n)){return null;}
+	let temp = x;
+	let c = 0;
+	while(temp!=(0n))
+	{
+		temp = temp>>(1n);
+		c++;
+	}
+	return (x>>BigInt(c>>1));
+}
+function NewtonRoot(x)
+{
+	if(typeof(x)!=="bigint" || x<(0n)){return null;}
+	let loopcheck = null;
+	let lastguess = null;
+	let guess = initialGuess(x);
+	while(true)
+	{
+		if(guess===lastguess){return guess;}
+		if(guess===loopcheck){return ((guess<lastguess)?guess:lastguess);}
+		loopcheck = lastguess;
+		lastguess = guess;
+		guess = (guess+(x/guess))>>(1n);
+	}
+}
+function UIEH(ClBt)
+{
+	ClBt.disabled = true;
+	let O = null;
+	let R = null;
+	const inpN = document.getElementById("txtBigNumber").value.trim();
+	const inpS = parseInt(document.getElementById("txtSteps").value.trim());
+	const Dsvar = document.getElementById("svar");
+	if(isNaN(inpS) || inpS<=0)
+	{
+		Dsvar.innerText = "Steps not a number or <= 0";
+		ClBt.disabled = false;
+		return;
+	}
+	if(inpN.length===0)
+	{
+		Dsvar.innerText = "Number field empty";
+		ClBt.disabled = false;
+		return;
+	}
+	try
+	{
+		O = BigInt(inpN);
+	}
+	catch(e)
+	{
+		console.log(e);
+		Dsvar.innerText = "Error. See console";
+		ClBt.disabled = false;
+		return;
+	}
+	Dsvar.innerText = "Number:\n".concat(O);
+	R = NewtonRoot(O);
+	Dsvar.appendChild(document.createTextNode("\nSquare root:\n".concat(R)));
+	let D = R*R;
+	if(D===O)
+	{
+		Dsvar.appendChild(document.createTextNode("\nIt\'s a square!"));
+		ClBt.disabled = false;
+		return;
+	}
+	if((O%(2n))===(0n))
+	{
+		Dsvar.appendChild(document.createTextNode("\nEven numbers won\'t work here."));
+		ClBt.disabled = false;
+		return;
+	}
+	D = D+(R<<(1n))+(1n)-O;//setting up running difference
+	R = R+(1n);
+	let B = NewtonRoot(D);
+	if((B*B)===D)//found in first step
+	{
+		Dsvar.appendChild(document.createTextNode(`\n*First step finding*\nFactors are:\n${R-B}\nand\n${R+B}`));
+		Dsvar.appendChild(document.createTextNode(`\nB:\n${B}`));
+		ClBt.disabled = false;
+		return;
+	}
+	let Sc = 1;
+	while(Sc < inpS)//does one more step than indicated by this
+	{
+		D = D+(R<<(1n))+(1n);
+		R = R+(1n);
+		Sc++;
+		B = NewtonRoot(D);
+		if((B*B)===D)
+		{
+			Dsvar.appendChild(document.createTextNode(`\n*Step ${Sc} finding*\nFactors are:\n${R-B}\nand\n${R+B}`));
+			Dsvar.appendChild(document.createTextNode(`\nB:\n${B}`));
+			ClBt.disabled = false;
+			return;
+		}
+	}
+	Dsvar.appendChild(document.createTextNode(`\n-Factors not found in ${Sc} step(s)-\nR:\n${R}\nB:\n${B}`));
+	ClBt.disabled = false;
+}
+</script>
+</head>
+<body>
+Big number = <input type=text size=110 id="txtBigNumber"><br>
+Steps = <input type=text value="100" id="txtSteps"><br>
+<input type=button value="Factorize" onclick=UIEH(this)><br>
+<pre id="svar"></pre>
+</body>
+</html>

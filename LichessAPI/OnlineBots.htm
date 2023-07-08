@@ -6,8 +6,8 @@
 function initialGet(clbt)
 {
 	clbt.disabled = true;
-	const t = document.getElementById("NofBotsToGet").value;
-	const Dsite = document.getElementById("selSite").value;
+	const t = document.getElementById("NofBotsToGet").value.trim();
+	const Tsite = document.getElementById("selSite").value;
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
@@ -15,21 +15,22 @@ function initialGet(clbt)
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
-		document.getElementById("er").innerHTML = "";
-		OGresp.innerHTML = "Fetching data of "+tv+" "+Dsite+" bot(s)";
+		const fEP = `https://${Tsite}.org/api/bot/online?nb=${tv}`;
+		document.getElementById("er").innerText = "";
+		OGresp.innerHTML = "Fetching data of "+tv+" "+Tsite+" bot(s)";
 		HL.innerHTML = "";
 		svr.innerHTML = "Waiting for response...";
-		fetchHandler(tv,OGresp,HL,svr,gt,Dsite);
+		fetchHandler(fEP,OGresp,HL,svr,gt);
 	}
 	else
 	{
-		document.getElementById("er").innerHTML = tv+" is not at least 1";
+		document.getElementById("er").innerText = tv+" is not at least 1";
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,t,siteStr)
+async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t)
 {
-	const response = await fetch(`https://${siteStr}.org/api/bot/online?nb=${getThisManyBots}`);
+	const response = await fetch(EndPointAPI);
 	statusHolder.innerHTML = "Response code = "+response.status;
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -137,7 +138,7 @@ span
 </style>
 </head>
 <body>
-<select id="selSite">
+Site = <select id="selSite">
 <option value="lichess">lichess</option>
 <option value="lishogi">lishogi</option>
 </select><br>

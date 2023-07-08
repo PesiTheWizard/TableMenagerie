@@ -6,6 +6,7 @@
 function initialGet(clbt)
 {
 	clbt.disabled = true;
+	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value.trim();
 	const Tsite = document.getElementById("selSite").value;
 	const tv = parseInt(t);
@@ -16,19 +17,19 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		const fEP = `https://${Tsite}.org/api/bot/online?nb=${tv}`;
-		document.getElementById("er").innerText = "";
+		DlogA.innerText = "";
 		OGresp.innerHTML = "Fetching data of "+tv+" "+Tsite+" bot(s)";
 		HL.innerHTML = "";
-		svr.innerHTML = "Waiting for response...";
-		fetchHandler(fEP,OGresp,HL,svr,gt);
+		svr.innerText = "Waiting for response...";
+		fetchHandler(fEP,OGresp,HL,svr,gt,DlogA);
 	}
 	else
 	{
-		document.getElementById("er").innerText = tv+" is not at least 1";
+		DlogA.innerText = tv+" is not at least 1";
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t)
+async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,LogA)
 {
 	const response = await fetch(EndPointAPI);
 	statusHolder.innerHTML = "Response code = "+response.status;
@@ -36,7 +37,7 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t)
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	let ChCt = 0;
 	let brokenLines = 0;
-	netLogger.innerHTML = "Reading response...";
+	netLogger.innerText = "Reading response...";
 	while(true)
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
@@ -44,13 +45,14 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t)
 		brokenLines += textToJSONhandler(value.trim(),t);
 		ChCt++;
 	}
+	LogA.innerText = "Fetched ".concat(EndPointAPI);
 	if(brokenLines===0)
 	{
-		netLogger.innerHTML = "Response fully received in "+ChCt+" chunks";
+		netLogger.innerText = "Response fully received in "+ChCt+" chunks";
 	}
 	else
 	{
-		netLogger.innerHTML = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
+		netLogger.innerText = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
 	}
 }
 function lister(listedText, PN, ElType)
@@ -139,11 +141,11 @@ span
 </head>
 <body>
 Site = <select id="selSite">
-<option value="lichess">lichess</option>
+<option value="lichess" selected>lichess</option>
 <option value="lishogi">lishogi</option>
 </select><br>
 <input type=text id="NofBotsToGet" value="180"> <input type=button value="Get this many bots" onClick=initialGet(this)>
-<pre id="er"></pre>
+<div id="logA">Log space</div>
 <hr>
 <div id="stts"></div>
 <ul id="hdrs"></ul>

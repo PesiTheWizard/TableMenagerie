@@ -17,8 +17,8 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		const fEP = `https://${Tsite}.org/api/bot/online?nb=${tv}`;
-		DlogA.innerText = "";
-		OGresp.innerHTML = "Fetching data of "+tv+" "+Tsite+" bot(s)";
+		DlogA.innerText = "Fetching data of "+tv+" "+Tsite+" bot(s)";
+		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
 		fetchHandler(fEP,OGresp,HL,svr,gt,DlogA);
@@ -31,8 +31,9 @@ function initialGet(clbt)
 }
 async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,LogA)
 {
+	statusHolder.innerText = "Making request..."
 	const response = await fetch(EndPointAPI);
-	statusHolder.innerHTML = "Response code = "+response.status;
+	statusHolder.innerText = "Response code = "+response.status;
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	let ChCt = 0;

@@ -70,7 +70,6 @@ function UIEH(ClBt)
 	}
 	R = NewtonRoot(O);
 	Dsvar.appendChild(document.createTextNode("\nSquare root:\n".concat(R)));
-	//adding the skip to R here
 	const iSk = document.getElementById("txtSkips").value.trim();
 	let SK;
 	if(iSk.length > 0)
@@ -95,7 +94,6 @@ function UIEH(ClBt)
 	}
 	Dsvar.appendChild(document.createTextNode("\nSkip:"+SK));
 	R = R+SK;
-	//done with the skip
 	let D = R*R;
 	if(D===O)
 	{

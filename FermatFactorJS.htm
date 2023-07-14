@@ -62,8 +62,40 @@ function UIEH(ClBt)
 		return;
 	}
 	Dsvar.innerText = "Number:\n".concat(O);
+	if(O<(0n))
+	{
+		Dsvar.appendChild(document.createTextNode("\nNo negativity allowed."));
+		ClBt.disabled = false;
+		return;
+	}
 	R = NewtonRoot(O);
 	Dsvar.appendChild(document.createTextNode("\nSquare root:\n".concat(R)));
+	//adding the skip to R here
+	const iSk = document.getElementById("txtSkips").value.trim();
+	let SK;
+	if(iSk.length > 0)
+	{
+		try
+		{
+			SK = BigInt(iSk);
+			if(SK < (0n))
+			{SK = 0n;}
+		}
+		catch(e)
+		{
+			console.log(e);
+			Dsvar.appendChild(document.createTextNode("\n(Skip error)"));
+			ClBt.disabled = false;
+			return;
+		}
+	}
+	else
+	{
+		SK = 0n;
+	}
+	Dsvar.appendChild(document.createTextNode("\nSkip:"+SK));
+	R = R+SK;
+	//done with the skip
 	let D = R*R;
 	if(D===O)
 	{
@@ -109,6 +141,7 @@ function UIEH(ClBt)
 </head>
 <body>
 Big number = <input type=text size=110 id="txtBigNumber"><br>
+Skips = <input type=text value="0" id="txtSkips"><br>
 Steps = <input type=text value="100" id="txtSteps"><br>
 <input type=button value="Factorize" onclick=UIEH(this)><br>
 <pre id="svar"></pre>

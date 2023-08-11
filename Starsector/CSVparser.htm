@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>A csv parsing thing</title>
+<script>
+function lister(listedText, PN, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	PN.appendChild(listEntry);
+}
+function csvparse(ClBt)
+{
+	ClBt.disabled = true;
+	const tTop = document.getElementById("thd");
+	const tData = document.getElementById("tbd");
+	const inplines = document.getElementById("csvinp").value.split("\n").reverse();
+	let rl = inplines.pop();
+	let pl1 = rl.split(",");
+	const lbr = document.createElement('tr');
+	for(let i=0;i<pl1.length;i++)
+	{//lister(pl1[i],lbr,'th');
+		const listEntry = document.createElement('th');
+		const asp = document.createElement('span');
+		asp.setAttribute('onClick',"a(".concat(i,",true)"));
+		asp.appendChild(document.createTextNode("▲"));
+		const entryText = document.createTextNode(" ".concat(pl1[i]," "));
+		const bsp = document.createElement('span');
+		bsp.setAttribute('onClick',"a(".concat(i,",false)"));
+		bsp.appendChild(document.createTextNode("▼"));
+		listEntry.appendChild(asp)
+		listEntry.appendChild(entryText);
+		listEntry.appendChild(bsp);
+		lbr.appendChild(listEntry);
+	}
+	tTop.appendChild(lbr);
+	const odq = '"';
+	rl = "";
+	pl1 = null;
+	let pl2 = null;
+	while(inplines.length>0)
+	{
+		rl = rl.concat(inplines.pop());
+		pl1 = rl.split(odq);
+		if(pl1.length % 2 === 0)//even means a string contains linebreaks
+		{
+			rl = rl.concat("\n");
+			continue;
+		}//pl1.length assumed odd beyond this point
+		const nent = document.createElement('tr');
+		for(let i=0;i<pl1.length;i++)
+		{
+			if(i%2===1)//seeing even-numbered parts, strangely enough, they are quotes
+			{
+				lister(odq.concat(pl1[i],odq),nent,'td');
+			}
+			else//normal comma-seperated parts
+			{
+				pl2 = pl1[i].split(",");
+				if(pl1.length-1 !== i)//meaning there's more after this
+				{//in particular, a quoted section after this
+					pl2.pop();//removing an empty string in between
+				}
+				let j=0;
+				if(i>0)//not the first non-quote part
+				{
+					j=1;//skip an empty string at start
+				}
+				for(;j<pl2.length;j++)
+				{
+					lister(pl2[j],nent,'td');
+				}
+			}
+		}
+		tData.appendChild(nent);
+		rl = "";
+	}
+	if(rl.length>0)//unprocessed remainder
+	{
+		console.log("remainder:\n".concat(rl));//todo - handle this if it becomes a thing
+	}
+}
+function a(ctsb, lth)
+{//ctsb - column to sort by, lth - low to high
+	const gt = document.getElementById("tbd").childNodes;
+	const tl = gt.length - 2;//total length, stop if cup goes above this
+	let cup = 0;
+	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
+	while(cup <= tl)//gnomesorting the rows
+	{
+		fn = gt[cup];
+		sn = gt[cup+1];
+		s1 = fn.childNodes[ctsb].textContent;
+		s2 = sn.childNodes[ctsb].textContent;
+		if(s1 == s2)
+		{
+			cup++;
+		}
+		else if((s1 > s2) == lth)
+		{
+			fn.before(sn);//swap rows
+			cup--;
+			if(cup<0){cup=1;}
+		}
+		else
+		{
+			cup++;
+		}
+	}
+}
+</script>
+<style>
+th
+{
+	white-space: nowrap;
+}
+span
+{
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+<textarea id="csvinp"></textarea>
+<input type=button value="tableify" onclick=csvparse(this)>
+<hr>
+<table border=1>
+<thead id="thd"></thead>
+<tbody id="tbd"></tbody>
+</table>
+</body>
+</html>

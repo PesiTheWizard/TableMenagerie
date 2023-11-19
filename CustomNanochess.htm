@@ -1,0 +1,361 @@
+<html>
+<head>
+<title>Custom Nanochess
+</title>
+<script>
+<!--
+class CustomNanoChess
+{
+	#UCIstr;//UCI string representing move just made
+	#AIside;//safety valve to not have AI make moves for the other side.
+	#PDC;//ply draw count, if 100 its a draw. Unused.
+	#PlyDepth;//AI difficulty
+	#RidersVar;//proper value for "Are we using knightriders?"
+	#DefPars = {AIside:true,PlyDepth:2,Riders:false,KnightValue:306,BishopValue:297,RookValue:495,QueenValue:846};
+	constructor(ParObj)
+	{
+		if(typeof(ParObj)!=="object" || (ParObj == null) || Array.isArray(ParObj))
+		{ParObj = this.#DefPars;}
+		else
+		{//sanity checks for values, else copy defaults
+			if(typeof(ParObj.PlyDepth)!=="number" || isNaN(ParObj.PlyDepth) || ParObj.PlyDepth%2!==0 || ParObj.PlyDepth<2)
+			{ParObj.PlyDepth=this.#DefPars.PlyDepth;}
+			if(typeof(ParObj.KnightValue)!=="number" || isNaN(ParObj.KnightValue) || ParObj.KnightValue<100 || ParObj.KnightValue>999)
+			{ParObj.KnightValue=this.#DefPars.KnightValue;}
+			if(typeof(ParObj.BishopValue)!=="number" || isNaN(ParObj.BishopValue) || ParObj.BishopValue<100 || ParObj.BishopValue>999)
+			{ParObj.BishopValue=this.#DefPars.BishopValue;}
+			if(typeof(ParObj.RookValue)!=="number" || isNaN(ParObj.RookValue) || ParObj.RookValue<100 || ParObj.RookValue>999)
+			{ParObj.RookValue=this.#DefPars.RookValue;}
+			if(typeof(ParObj.QueenValue)!=="number" || isNaN(ParObj.QueenValue) || ParObj.QueenValue<100 || ParObj.QueenValue>999)
+			{ParObj.QueenValue=this.#DefPars.QueenValue;}
+		}
+		//additions
+		this.#AIside=((ParObj?.AIside??true)?8:0);//truthy = black, falsy = white
+		this.#PDC=0;
+		this.UIset="o";
+		this.PromSel="t";
+		this.#PlyDepth=Math.min(ParObj.PlyDepth,6);
+		this.#RidersVar=(ParObj?.Riders)?1:2;//2 = normal knights, 1 = knightriders
+		//vars
+		this.B=0;
+		this.i=0;
+		this.y=0;
+		this.u=0;
+		this.b=undefined;
+		this.I=[];
+		this.G=120;
+		//consts
+		this.x=10;
+		this.z=15;
+		this.M=10000;
+		this.l=[5,3,4,6,2,4,3,5,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,9,13,11,12,14,10,12,11,13,0,99,0,306,297,495,846,-1,0,1,2,2,1,0,-1,-1,1,-10,10,-11,-9,9,11,10,20,-9,-11,-10,-20,-21,-19,-12,-8,8,12,19,21];
+
+		this.l[35] = ParObj.KnightValue;//Knight value replacement
+		this.l[36] = ParObj.BishopValue;//Bishop value replacement
+		this.l[37] = ParObj.RookValue;//Rook value replacement
+		this.l[38] = ParObj.QueenValue;//Queen value replacement
+		while(this.B++<120)
+		{
+			this.I[this.B-1]=this.B%this.x?this.B/this.x%this.x<2|this.B%this.x<2?7:this.B/this.x&4?0:this.l[this.i++]|16:7;
+		}
+		console.log("CustomNanoChess created, AI plays with "+(this.#AIside?"black":"white")+", plyDepth="+this.#PlyDepth+", Knights="+["ranging","normal"][this.#RidersVar-1]);
+		this.W();
+		if(this.#AIside === this.y){this.makeAImove();}
+	}
+	X(w,c,h,e,S,s)
+	{
+		let t;
+		let o;
+		let L;
+		let E;
+		let d;
+		let O = e;
+		let N = -this.M*this.M;
+		const K = 78-h<<this.x;
+		let p;
+		let g;
+		let n;
+		let m;
+		let A;
+		let q;
+		let r;
+		let C;
+		let J;
+		const a = this.y?-this.x:this.x;
+
+		this.y^=8;
+		this.G++;
+		d=w||s&&s>=h&&this.X(0,0,0,21,0,0)>this.M;
+		do
+		{
+			if(o=this.I[p=O])
+			{
+				q=(o&this.z)^this.y;//parenths added for readability
+				if(q<7)
+				{
+					A=q--&2?8:4;
+					C=o-9&this.z?[53,47,61,51,47,47][q]:57;
+					do
+					{
+						r=this.I[p+=this.l[C]];
+						if(!w|p==w)
+						{
+							g=q|p+a-S?0:S;
+							if(!r&(!!q|A<3||!!g)||(r+1&this.z^this.y)>9&&q|A>2)
+							{
+								if(m=!(r-2&7))
+									return this.y^=8,this.I[this.G--]=O,K;
+								J=n=o&this.z;
+								E=this.I[p-a]&this.z;
+								t=q|E-7?n:(n+=2,6^this.y);
+								while(n<=t)
+								{
+									L=r?this.l[r&7|32]-h-q:0;
+									if(s)
+									{
+										L+=(1-q?this.l[(p-p%this.x)/this.x+37]-this.l[(O-O%this.x)/this.x+37]+this.l[p%this.x+38]*(q?1:2)-this.l[O%this.x+38]+(o&16)/2:!!m*9)+(!q?!(this.I[p-1]^n)+!(this.I[p+1]^n)+this.l[n&7|32]-99+!!g*99+(A<2):0)+!(E^this.y^9);
+									}
+									if(s>h||1<s&s==h&&L>this.z|d)
+									{
+										this.I[p]=n,this.I[O]=m?(this.I[g]=this.I[m],this.I[m]=0):g?this.I[g]=0:0;
+										L-=this.X(s>h|d?0:p,L-N,h+1,this.I[this.G+1],J=q|A>1?0:p,s);
+										if(!(h||s-1|this.B-O|this.i-n|p-this.b|L<-this.M))
+										{//curlies added by me
+											this.logMove(O,p,this.y,this.i,q,r);
+											return this.W(),this.G--,this.u=J;
+										}
+										J=q-1|A<7||m||!s|d|r|o<this.z||this.X(0,0,0,21,0,0)>this.M;
+										this.I[O]=o;
+										this.I[p]=r;
+										m?(this.I[m]=this.I[g],this.I[g]=0):g?this.I[g]=9^this.y:0;
+									}
+									if(L>N||s>1&&L==N&&!h&&Math.random()<.5)
+									{
+										this.I[this.G]=O;
+										if(s>1)
+										{
+											if(h&&c-L<0)
+												return this.y^=8,this.G--,L;
+											if(!h)
+												this.i=n,this.B=O,this.b=p;
+										}
+										N=L;
+									}
+									n+=J||(g=p,m=p<O?g-3:g+2,this.I[m]<this.z|this.I[m+O-p]||this.I[p+=p-O])?1:0;
+								}
+							}
+						}
+					}while(!r&q>this.#RidersVar||(p=O,q|A>2|o>this.z&!r&&++C*--A));
+				}
+			}
+		}while(++O>98?O=20:e-O);
+		return this.y^=8,this.G--,N+this.M*this.M&&N>-K+1924|d?N:0;
+	}
+
+	Y(s)
+	{
+		this.i=(this.I[s]^this.y)&this.z;
+		if(this.i>8)
+		{
+			this.b=s;
+			this.W();
+		}
+		else if(this.B&&this.i<9)
+		{
+			this.b=s;
+			this.i=this.I[this.B]&this.z;
+			if((this.i&7)==1&(this.b<29|this.b>90))
+			{
+				this.i=14-document.getElementById(this.PromSel).selectedIndex^this.y;
+			}
+			this.X(0,0,0,21,this.u,1);
+
+			if(this.#AIside === this.y)
+			{setTimeout(this.makeAImove.bind(this),1);}
+		}
+		else{console.log("Nothing happens");}
+	}
+
+	W()
+	{
+		this.B=this.b;
+		let q;
+		for(let p=21;p<99;++p)
+		{
+			if(q=document.getElementById(this.UIset.concat(p)))
+			{
+				q.innerHTML=["","&#9823;","&#9818;","&#9822;","&#9821;","&#9820;","&#9819;",,,"&#9817;","&#9812;","&#9816;","&#9815;","&#9814;","&#9813;"][this.I[p]&this.z];
+				//q.innerHTML="<img width=40 src="+(this.I[p]&this.z)+".gif>";
+				//q.style.backgroundImage = "url('"+(this.I[p]&this.z)+".gif')";
+				q.style.borderColor=p==this.B?"#ff0":"#000";//no need to specify bordercolor in stylesheet since this is called right away
+				//original colors are #ff0 and #aae
+			}
+		}
+	}
+
+	logMove(f,t,cl,pc,ogpc,dest)
+	{
+		if(ogpc===0 || dest!==0)//pawn was moved or something taken
+		{this.#PDC=0;}//50-move rule reset
+		else
+		{this.#PDC++;}//one ply towards 50-move rule
+		const lttrs = ["a","b","c","d","e","f","g","h"];
+		const pcs = ogpc===0?(["","","k","n","b","r","q",""][pc&7]):""; //if pawn moved, add letter of promoted piece
+		const uci1 = lttrs[(f%10)-1];         //origin square column letter
+		const uci2 = ( 10-Math.floor(f/10) ); //origin square row number
+		const uci3 = lttrs[(t%10)-1];         //destination square column letter
+		const uci4 = ( 10-Math.floor(t/10) ); //destination square row number
+		this.#UCIstr = uci1.concat(uci2,uci3,uci4,pcs);
+	}
+	makeAImove()
+	{
+		if(this.#AIside === this.y)
+		{
+			this.#UCIstr = undefined;
+			this.X(0,0,0,21,this.u,this.#PlyDepth);
+			this.X(0,0,0,21,this.u,1);
+			if(typeof(this.#UCIstr) === "string")
+			{
+				console.log(this.#UCIstr);
+			}
+		}
+		else
+		{
+			console.log("not AIs turn");
+		}
+	}
+	makePlayerMove(movestring)
+	{
+		if(typeof(movestring)!=="string" || movestring.length < 4)
+		{
+			console.log("invalid movestring in makePlayerMove");
+		}
+		else
+		{
+			if(movestring.length===5)
+			{
+				document.getElementById(this.PromSel).selectedIndex = Math.max(0,"qrbn".indexOf(movestring.charAt(4)));
+			}
+			const ori = (10-parseInt(movestring.charAt(1)))*10+(movestring.charCodeAt(0)-96);
+			const des = (10-parseInt(movestring.charAt(3)))*10+(movestring.charCodeAt(2)-96);
+			this.Y(ori);
+			this.Y(des);
+		}
+	}
+}
+//-->
+</script>
+<style>
+.chessboard td
+{
+	width:40;
+	height:40;
+	border:2px solid;/*border color removed since W handles it*/
+	font-size:26px;/*for use with the unicode chesspiece chars*/
+	text-align:center;
+	padding:0;
+	cursor:default;/*to keep the cursor from being a bar when using unicode chesspiece chars*/
+	background-repeat:no-repeat;
+	background-size:contain;
+	background-position:center;
+}
+.chessboard>tr:nth-child(odd)>td:nth-child(odd),.chessboard>tr:nth-child(even)>td:nth-child(even)
+{
+	background-color: #c0c0ff;/*white squares*/
+}
+.chessboard>tr:nth-child(odd)>td:nth-child(even),.chessboard>tr:nth-child(even)>td:nth-child(odd)
+{
+	background-color: #9090d0;/*black squares*/
+}
+</style>
+</head>
+<body>
+AI plays with <select id="selAIside"><option>white</option><option selected>black</option></select><br>
+<input type="range" min="2" max="6" step="2" id="rangPly" oninput=rangeFeedback(this) value="2"><span></span> (ply depth)<br>
+<input type="range" min="100" max="999" step="1" id="rangNV" oninput=rangeFeedback(this) value="306"><span></span> (Knight value)<br>
+<input type="range" min="100" max="999" step="1" id="rangBV" oninput=rangeFeedback(this) value="297"><span></span> (Bishop value)<br>
+<input type="range" min="100" max="999" step="1" id="rangRV" oninput=rangeFeedback(this) value="495"><span></span> (Rook value)<br>
+<input type="range" min="100" max="999" step="1" id="rangQV" oninput=rangeFeedback(this) value="846"><span></span> (Queen value)<br>
+<input type="checkbox" id="chkRiders">Knightriders replace knights<br>
+<input type="button" value="Reset defaults" onclick=resetDefaults()> <input type="button" value="Setup game" onclick=setupNewGame(this)>
+<hr>
+<table cellspacing=0>
+<tbody class="chessboard" id="chessboard"><tr><td onclick=Y(21) id=o21></td><td onclick=Y(22) id=o22></td><td onclick=Y(23) id=o23></td><td onclick=Y(24) id=o24></td><td onclick=Y(25) id=o25></td><td onclick=Y(26) id=o26></td><td onclick=Y(27) id=o27></td><td onclick=Y(28) id=o28></td></tr><tr><td onclick=Y(31) id=o31></td><td onclick=Y(32) id=o32></td><td onclick=Y(33) id=o33></td><td onclick=Y(34) id=o34></td><td onclick=Y(35) id=o35></td><td onclick=Y(36) id=o36></td><td onclick=Y(37) id=o37></td><td onclick=Y(38) id=o38></td></tr><tr><td onclick=Y(41) id=o41></td><td onclick=Y(42) id=o42></td><td onclick=Y(43) id=o43></td><td onclick=Y(44) id=o44></td><td onclick=Y(45) id=o45></td><td onclick=Y(46) id=o46></td><td onclick=Y(47) id=o47></td><td onclick=Y(48) id=o48></td></tr><tr><td onclick=Y(51) id=o51></td><td onclick=Y(52) id=o52></td><td onclick=Y(53) id=o53></td><td onclick=Y(54) id=o54></td><td onclick=Y(55) id=o55></td><td onclick=Y(56) id=o56></td><td onclick=Y(57) id=o57></td><td onclick=Y(58) id=o58></td></tr><tr><td onclick=Y(61) id=o61></td><td onclick=Y(62) id=o62></td><td onclick=Y(63) id=o63></td><td onclick=Y(64) id=o64></td><td onclick=Y(65) id=o65></td><td onclick=Y(66) id=o66></td><td onclick=Y(67) id=o67></td><td onclick=Y(68) id=o68></td></tr><tr><td onclick=Y(71) id=o71></td><td onclick=Y(72) id=o72></td><td onclick=Y(73) id=o73></td><td onclick=Y(74) id=o74></td><td onclick=Y(75) id=o75></td><td onclick=Y(76) id=o76></td><td onclick=Y(77) id=o77></td><td onclick=Y(78) id=o78></td></tr><tr><td onclick=Y(81) id=o81></td><td onclick=Y(82) id=o82></td><td onclick=Y(83) id=o83></td><td onclick=Y(84) id=o84></td><td onclick=Y(85) id=o85></td><td onclick=Y(86) id=o86></td><td onclick=Y(87) id=o87></td><td onclick=Y(88) id=o88></td></tr><tr><td onclick=Y(91) id=o91></td><td onclick=Y(92) id=o92></td><td onclick=Y(93) id=o93></td><td onclick=Y(94) id=o94></td><td onclick=Y(95) id=o95></td><td onclick=Y(96) id=o96></td><td onclick=Y(97) id=o97></td><td onclick=Y(98) id=o98></td></tr></tbody>
+<tfoot>
+<tr>
+<th colspan=8>Promotion:<select id=t><option>Queen</option><option>Rook</option><option>Bishop</option><option>kNight</option></select></th>
+</tr>
+</tfoot>
+</table>
+<input type="button" value="flip board" onclick=flipBoard()>
+<script>
+let myTNC;
+function collectPageNodes()
+{
+	const AIside = document.getElementById("selAIside");
+	const Ply = document.getElementById("rangPly");
+	const NV = document.getElementById("rangNV");
+	const BV = document.getElementById("rangBV");
+	const RV = document.getElementById("rangRV");
+	const QV = document.getElementById("rangQV");
+	const Riders = document.getElementById("chkRiders");
+	return [AIside,Ply,NV,BV,RV,QV,Riders];
+}
+function setupNewGame(b)
+{
+	const InpNodes = collectPageNodes();
+	const s = InpNodes[0]?.selectedIndex??0;
+	const p = parseInt(InpNodes[1]?.value??"2");
+	const NV = parseInt(InpNodes[2]?.value);
+	const BV = parseInt(InpNodes[3]?.value);
+	const RV = parseInt(InpNodes[4]?.value);
+	const QV = parseInt(InpNodes[5]?.value);
+	const r = InpNodes[6]?.checked??false;
+	const P = {AIside:s,PlyDepth:p,Riders:r,KnightValue:NV,BishopValue:BV,RookValue:RV,QueenValue:QV};
+	myTNC = new CustomNanoChess(P);
+}
+function resetDefaults()
+{
+	const InpNodes = collectPageNodes();
+	InpNodes[0].selectedIndex = 1;
+	InpNodes[1].value = 2;
+	InpNodes[2].value = 306;
+	InpNodes[3].value = 297;
+	InpNodes[4].value = 495;
+	InpNodes[5].value = 846;
+	InpNodes[6].checked = false;
+	rangeFeedback(InpNodes[1]);
+	rangeFeedback(InpNodes[2]);
+	rangeFeedback(InpNodes[3]);
+	rangeFeedback(InpNodes[4]);
+	rangeFeedback(InpNodes[5]);
+}
+function Y(n)
+{
+	if(myTNC)
+	{myTNC.Y(n);}
+	else
+	{console.log("Chess not yet started");}
+}
+function rangeFeedback(ChSl)
+{
+	ChSl.nextSibling.innerText = ChSl.value;
+}
+function flipBoard()
+{
+	const G = document.getElementById("chessboard").childNodes;
+	for(let i=0;i<G.length;i++)
+	{
+		const G2 = G[i].childNodes;
+		for(let j=1;j<G2.length;j++)
+		{
+			G2[0].before(G2[j]);
+		}
+		if(i===0){continue;}
+		G[0].before(G[i]);
+	}
+}
+resetDefaults();
+</script>
+</body>
+</html>

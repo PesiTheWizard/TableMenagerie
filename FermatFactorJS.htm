@@ -62,14 +62,15 @@ function UIEH(ClBt)
 		return;
 	}
 	Dsvar.innerText = "Number:\n".concat(O);
-	if(O<(0n))
+	if(O<=(0n))
 	{
-		Dsvar.appendChild(document.createTextNode("\nNo negativity allowed."));
+		Dsvar.appendChild(document.createTextNode("\nNo emptyness or negativity allowed."));
 		ClBt.disabled = false;
 		return;
 	}
 	R = NewtonRoot(O);
 	Dsvar.appendChild(document.createTextNode("\nSquare root:\n".concat(R)));
+	//adding the skip to R here
 	const iSk = document.getElementById("txtSkips").value.trim();
 	let SK;
 	if(iSk.length > 0)
@@ -94,6 +95,7 @@ function UIEH(ClBt)
 	}
 	Dsvar.appendChild(document.createTextNode("\nSkip:"+SK));
 	R = R+SK;
+	//done with the skip
 	let D = R*R;
 	if(D===O)
 	{
@@ -135,13 +137,59 @@ function UIEH(ClBt)
 	Dsvar.appendChild(document.createTextNode(`\n-Factors not found in ${Sc} step(s)-\nR:\n${R}\nB:\n${B}`));
 	ClBt.disabled = false;
 }
+function Fcheck()
+{
+	const inpA = document.getElementById("txtCA").value.trim();
+	const inpB = document.getElementById("txtCB").value.trim();
+	const Dsvar2 = document.getElementById("svar2");
+	let BIA, BIB;
+	try
+	{
+		BIA = BigInt(inpA);
+		BIB = BigInt(inpB);
+	}
+	catch
+	{
+		console.log(e);
+		Dsvar2.innerText = "Error. See console";
+		return;
+	}//assumed BigInts after this point
+	if(BIA<(0n) || BIB<(0n))
+	{
+		Dsvar2.innerText = "No negativity allowed";
+		return;
+	}
+	if(BIA%(2n)===(0n) || BIB%(2n)===(0n))
+	{
+		Dsvar2.innerText = "Even numbers won\'t work here.";
+		return;
+	}
+	const Mu = BIA*BIB;
+	const pA = NewtonRoot(Mu);
+	const pB = (BIA+BIB)>>(1n);
+	Dsvar2.innerText = "Number A:\n".concat(BIA,"\nNumber B:\n",BIB,"\nProduct:\n",Mu,"\nFermat step:\n",(pB-pA));
+}
 </script>
+<style>
+input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
 </head>
 <body>
+<h3>Factoring</h3>
 Big number = <input type=text size=110 id="txtBigNumber"><br>
 Skips = <input type=text value="0" id="txtSkips"><br>
 Steps = <input type=text value="100" id="txtSteps"><br>
-<input type=button value="Factorize" onclick=UIEH(this)><br>
+<input type="button" value="Factorize" onclick=UIEH(this)><br>
 <pre id="svar"></pre>
+<hr>
+<h3>Fermat check</h3>
+Number A = <input type=text size=110 id="txtCA"><br>
+Number B = <input type=text size=110 id="txtCB"><br>
+<input type="button" value="Fermat check" onclick=Fcheck()><br>
+<pre id="svar2"></pre>
 </body>
 </html>

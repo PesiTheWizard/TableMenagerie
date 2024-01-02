@@ -15,9 +15,9 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		document.getElementById("er").innerHTML = "";
-		OGresp.innerHTML = "Fetching data of "+tv+" bot(s)";
+		OGresp.innerText = "Fetching data of "+tv+" bot(s)";
 		HL.innerHTML = "";
-		svr.innerHTML = "Waiting for response...";
+		svr.innerText = "Waiting for response...";
 		fetchHandler(tv,OGresp,HL,svr,gt);
 	}
 	else
@@ -29,27 +29,27 @@ function initialGet(clbt)
 async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,t)
 {
 	const response = await fetch("https://lichess.org/api/bot/online?nb=" + getThisManyBots);
-	statusHolder.innerHTML = "Response code = "+response.status;
+	statusHolder.innerText = "Response code = "+response.status;
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	let ChCt = 0;
 	let brokenLines = 0;
-	netLogger.innerHTML = "Reading response...";
+	netLogger.innerText = "Reading response...";
 	while(true)
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-		//netLogger.appendChild(document.createTextNode(value));
+
 		brokenLines += textToJSONhandler(value.trim(),t);
 		ChCt++;
 	}
 	if(brokenLines===0)
 	{
-		netLogger.innerHTML = "Response fully received in "+ChCt+" chunks";
+		netLogger.innerText = "Response fully received in "+ChCt+" chunks";
 	}
 	else
 	{
-		netLogger.innerHTML = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
+		netLogger.innerText = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
 	}
 }
 function lister(listedText, PN, ElType)
@@ -85,32 +85,32 @@ function makeTableEntry(JO,tableElem)
 	const tablRw = document.createElement('tr');
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
-	lister(Object.keys(JO["perfs"]).length,tablRw,'td');
-	lister(JO["perfs"]["bullet"]["games"]??"",tablRw,'td');
-	lister(JO["perfs"]["bullet"]["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]["blitz"]["games"]??"",tablRw,'td');
-	lister(JO["perfs"]["blitz"]["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]["rapid"]["games"]??"",tablRw,'td');
-	lister(JO["perfs"]["rapid"]["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]["classical"]["games"]??"",tablRw,'td');
-	lister(JO["perfs"]["classical"]["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]["correspondence"]["games"]??"",tablRw,'td');
-	lister(JO["perfs"]["correspondence"]["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]["chess960"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["crazyhouse"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["antichess"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["atomic"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["horde"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["kingOfTheHill"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["racingKings"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["threeCheck"]?"yes":"no",tablRw,'td');
-	lister(JO["perfs"]["puzzle"]?"yes":"no",tablRw,'td');//the new addition
-	lister(JO["createdAt"],tablRw,'td');
-	lister(new Date(JO["createdAt"]).toLocaleString(),tablRw,'td');
-	lister(JO["seenAt"],tablRw,'td');
-	lister(new Date(JO["seenAt"]).toLocaleString(),tablRw,'td');
-	lister(JO["playTime"]?JO["playTime"]["total"]:"",tablRw,'td');
-	lister(JO["playTime"]?JO["playTime"]["tv"]:"",tablRw,'td');
+	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):"N/A",tablRw,'td');
+	lister(JO["perfs"]?.["bullet"]?.["games"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["bullet"]?.["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["blitz"]?.["games"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["blitz"]?.["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["rapid"]?.["games"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["rapid"]?.["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["classical"]?.["games"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["classical"]?.["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["correspondence"]?.["games"]??"",tablRw,'td');
+	lister(JO["perfs"]?.["correspondence"]?.["rating"]??"",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["chess960"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["crazyhouse"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["antichess"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["atomic"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["horde"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["kingOfTheHill"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["racingKings"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["threeCheck"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["puzzle"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["createdAt"]??"",tablRw,'td');
+	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleString()):"",tablRw,'td');
+	lister(JO["seenAt"]??"",tablRw,'td');
+	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleString()):"",tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["total"]??""):"N/A",tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):"N/A",tablRw,'td');
 	lister(JO["profile"]?"yes":"no",tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');

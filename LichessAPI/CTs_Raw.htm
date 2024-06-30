@@ -1,12 +1,12 @@
 <html>
 <head>
-<title>Current tournaments - various APIs
-</title>
+<title>Raw data - various APIs</title>
 <script>
-function GetPublicTournaments(ClBt)
+function QueryEndpoint(ClBt)
 {
 	ClBt.disabled = true;
 	const site = document.getElementById("site").value;
+	const endPoint = document.getElementById("EP").value;
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -15,14 +15,14 @@ function GetPublicTournaments(ClBt)
 		console.log("getElementById fail");
 		return;
 	}
-	OGresp.innerHTML = "Fetching tournament data...";
-	svr.innerHTML = "Waiting for response...";
-	fetch(`https://${site}.org/api/tournament`).then((response) => {
-		OGresp.innerHTML = "Response code = "+response.status;
+	OGresp.innerText = "Fetching data...";
+	svr.innerText = "Waiting for response...";
+	fetch(`https://${site}.org/api/${endPoint}`).then((response) => {
+		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.text();
 	}).then((response) => {
-		svr.innerHTML = response;
+		svr.innerText = response;
 	}).catch((error) => {
 		console.log(error);
 	});
@@ -43,7 +43,11 @@ function lister(listedText, ParntNde, ElType)
 <option value="lidraughts">lidraughts</option>
 <option value="playstrategy" disabled>playstrategy</option>
 </select>
-<input type=button value="Get public tournaments" onClick=GetPublicTournaments(this)>
+<select id="EP">
+<option value="tournament">tournament</option>
+<option value="simul">simul</option>
+</select>
+<input type="button" value="Get raw data" onclick="QueryEndpoint(this)">
 <hr>
 <div id="stts"></div>
 <ul id="hdrs"></ul>

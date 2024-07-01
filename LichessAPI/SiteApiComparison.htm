@@ -2,7 +2,7 @@
 <head>
 <title>Site API Comparison</title>
 </head>
-<body><!-- &#9989; -->
+<body>
 <table border=1>
 <tr><th colspan=2></th><th>lichess</th><th>lishogi</th><th>lidraughts</th><th>playstrategy</th></tr>
 <tr><td rowspan=6>Account</td>           <td title="/api/account">Get my profile</td><td></td><td></td><td></td><td></td></tr>
@@ -97,7 +97,6 @@
 <tr>                                     <td title="/api/challenge/open">Open-ended challenge</td><td></td><td></td><td title="https://lidraughts.org/api/challenge/external/{username}">?</td><td></td></tr>
 <tr>                                     <td title="/api/challenge/{gameId}/start-clocks">Start clocks of a game</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td title="/api/round/{gameId}/add-time/{seconds}">Add time to the opponent clock</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
-<!-- <tr>                                     <td>Admin challenge tokens</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr> -->
 <tr><td rowspan=5>Bulk pairings</td>     <td title="/api/bulk-pairing">View (your/upcoming) bulk pairings</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td title="/api/bulk-pairing">Create a bulk pairing</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td title="/api/bulk-pairing/{id}/start-clocks">Manually start clocks</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
@@ -132,35 +131,18 @@
 <tr><td rowspan=5>Studies</td>           <td>Export one study chapter*</td><td></td><td></td><td></td><td></td></tr>
 <tr>                                     <td>Export all chapters*</td><td></td><td></td><td></td><td></td></tr>
 <tr>                                     <td title="/api/study/{studyId}/{chapterId}.pgn">Study metadata</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
-<!-- Import PGN into a study -->
 <tr>                                     <td title="/study/by/{username}/export.{ending}">Export all studies of a user</td><td></td><td></td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td title="/api/study/by/{username}">List studies of a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
-<!-- Delete a study chapter -->
 <tr><td>Messaging</td>                   <td title="/inbox/{username}">Send a private message</td><td></td><td></td><td>&#10060;</td><td></td></tr>
 <tr><td rowspan=7>Brodcasts</td>         <td title="/api/broadcast">Get official broadcasts</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td title="/api/broadcast/top">Get paginated top brodcast previews</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
 <tr>                                     <td title="/api/broadcast/by/{username}">Get broadcasts created by a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
 <tr>                                     <td title="/broadcast/new">Create a broadcast (tournament)</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr>                                     <td>Get (a/your) broadcast (tournament)?</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
-<!-- Get a broadcast leaderboard -->
-<!-- Update your brodcast tournament -->
-<!-- Create a broadcast round -->
-<!-- Get a broadcast round -->
 <tr><td>Update your broadcast (round)?</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
 <tr><td>Push PGN to your broadcast (round)?</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
-<!-- Stream an ongoing broadcast tournament as PGN -->
-<!-- Export one round as PGN -->
-<!-- Export all rounds as PGN -->
-<!-- Get your broadcast rounds -->
 <tr><td>Analysis</td>                    <td title="/api/cloud-eval">Get cloud evaluation of a position.</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
-<!-- External engine -->
-<!-- Opening Explorer -->
-<!-- Tablebase -->
-<!-- OAuth -->
 </table>
 * Site URL mismatch
-<!--
-<tr><td></td><td></td><td></td><td></td><td></td></tr>
--->
 </body>
 </html>

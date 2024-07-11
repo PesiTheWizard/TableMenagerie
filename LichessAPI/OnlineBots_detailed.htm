@@ -13,43 +13,48 @@ function initialGet(clbt)
 		const OGresp = document.getElementById("stts");
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
-		const gt = document.getElementById("st");
-		document.getElementById("er").innerHTML = "";
-		OGresp.innerText = "Fetching data of "+tv+" bot(s)";
+		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
+		document.getElementById("er").innerText = "";
+		OGresp.innerText = `Fetching data of ${tv} bot(s)`;
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler(tv,OGresp,HL,svr,gt);
+		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt);
 	}
 	else
 	{
-		document.getElementById("er").innerHTML = tv+" is not at least 1";
+		document.getElementById("er").innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(getThisManyBots,statusHolder,headerHolder,netLogger,t)
+async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t)
 {
-	const response = await fetch("https://lichess.org/api/bot/online?nb=" + getThisManyBots);
-	statusHolder.innerText = "Response code = "+response.status;
+	const response = await fetch(endPointString);
+	statusHolder.innerText = "Response code = ".concat(response.status);
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-	let ChCt = 0;
-	let brokenLines = 0;
+	let ChCt = 0;//chunk-count
+	const reps = ["",0,0,0,0];//pile of unparsables and statistics reports
 	netLogger.innerText = "Reading response...";
 	while(true)
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
 
-		brokenLines += textToJSONhandler(value.trim(),t);
+		textToJSONhandler(value.trim(),t,reps);
 		ChCt++;
 	}
+	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = "Response fully received in "+ChCt+" chunks";
+		netLogger.innerText = `Response fully received in ${ChCt} chunks`;
 	}
 	else
 	{
-		netLogger.innerText = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
+		netLogger.innerText = `Response received in ${ChCt} chunks with ${brokenLines} broken line${brokenLines==1?"":"s"}. (${reps[2]} broken lines salvaged into ${reps[3]} whole ones, ${reps[4]} discarded)`;
+	}
+	if(reps[4]!=0)
+	{
+		console.log("Discarded string-pile:\n".concat(reps[0]));
 	}
 }
 function lister(listedText, PN, ElType)
@@ -59,26 +64,43 @@ function lister(listedText, PN, ElType)
 	listEntry.appendChild(entryText);
 	PN.appendChild(listEntry);
 }
-function textToJSONhandler(stuff,t)
+function textToJSONhandler(stuff,t,als)
 {
 	const conveyorBelt = stuff.split("\n");
-	let erc = 0;
 	let jp;
+	let fs = false;//failstep
 	for(let i=0;i<conveyorBelt.length;i++)
 	{
+		fs = false;
 		try
 		{
 			jp = JSON.parse(conveyorBelt[i].trim());
 		}
 		catch(e)
 		{
-			console.log("Could not parse following line:\n"+conveyorBelt[i]);
-			erc++;
-			continue;
+			als[1]++;//broken lines counter
+			als[0] = als[0].concat(conveyorBelt[i]);//the pile of broken lines
+			als[4]++;//number of lines currently making up the pile
+			fs = true;
+		}
+		if(fs)
+		{//we're here because the single-line parse job failed
+			try
+			{
+				jp = JSON.parse(als[0].trim());
+			}
+			catch(e)
+			{
+				continue;
+			}
+			//secondary parse didn't error out, so we're back on track
+			als[0] = "";
+			als[2]+=als[4];//running total of how many broken lines were salvaged
+			als[3]++;//how many whole lines were made from the broken parts
+			als[4]=0;
 		}
 		makeTableEntry(jp,t);
 	}
-	return erc;
 }
 function makeTableEntry(JO,tableElem)
 {

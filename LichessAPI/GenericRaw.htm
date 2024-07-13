@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Generic Data - various APIs
+</title>
+<script>
+function GetGenericData(ClBt)
+{
+	ClBt.disabled = true;
+	const DlogA = document.getElementById("LogA");
+	const site = document.getElementById("site");
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	if( (DlogA===null)||(site===null)||(OGresp===null)||(HL===null)||(svr===null) )
+	{
+		console.log("getElementById fail");
+		return;
+	}
+	const endPoint = `https://${site.value}`;
+	DlogA.innerText = "Fetching ".concat(endPoint);
+	OGresp.innerText = "Fetching raw data...";
+	svr.innerText = "Waiting for response...";
+	fetch(endPoint).then((response) => {
+		OGresp.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.text();
+	}).then((response) => {
+		svr.innerText = response;
+	}).then(() => {
+		DlogA.innerText = "Fetched ".concat(endPoint);
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+</script>
+</head>
+<body>
+<select id="site">
+<option value="lichess.org/api/tournament">lichess/Get current tournaments</option>
+<option value="lichess.org/api/player">lichess/Get all top 10</option>
+<option value="lichess.org/api/streamer/live">lichess/Get live streamers</option>
+<option value="lichess.org/api/tv/channels">lichess/Get current TV games</option>
+<option value="lichess.org/api/puzzle/daily">lichess/Get the daily puzzle</option>
+<option value="lichess.org/api/bot/online">lichess/Get online bots</option>
+<option value="lichess.org/api/simul">lichess/Get current simuls</option>
+<option value="lishogi.org/api/tournament">lishogi/Get current tournaments</option>
+<option value="lishogi.org/player">lishogi/Get all top 10</option>
+<option value="lishogi.org/streamer/live">lishogi/Get live streamers</option>
+<option value="lishogi.org/api/tv/channels">lishogi/Get current TV games</option>
+<option value="lishogi.org/api/puzzle/daily">lishogi/Get the daily puzzle</option>
+<option value="lishogi.org/api/bot/online">lishogi/Get online bots</option>
+<option value="lishogi.org/api/simul">lishogi/Get current simuls</option>
+<option value="lidraughts.org/api/tournament">lidraughts/Get current tournaments</option>
+<option value="lidraughts.org/player">lidraughts/Get all top 10</option>
+<option value="lidraughts.org/streamer/live">lidraughts/Get live streamers</option>
+<option value="lidraughts.org/api/simul">lidraughts/Get current simuls</option>
+<option value="playstrategy.org/api/tournament">playstrategy/Get current tournaments</option>
+<option value="playstrategy.org/player">playstrategy/Get all top 10</option>
+<option value="playstrategy.org/streamer/live">playstrategy/Get live streamers</option>
+<option value="playstrategy.org/api/tv/channels">playstrategy/Get current TV games</option>
+<option value="playstrategy.org/api/simul">playstrategy/Get current simuls</option>
+<option value="www.pychess.org/api/calendar">pychess calendar</option>
+<option value="www.pychess.org/api/games">pychess games</option>
+</select>
+<input type=button value="Get data" onClick=GetGenericData(this)><br>
+<div id="LogA">Log space</div>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+</body>
+</html>

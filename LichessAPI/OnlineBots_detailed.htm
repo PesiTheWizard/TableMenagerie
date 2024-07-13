@@ -46,11 +46,11 @@ async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunks`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunks with ${brokenLines} broken line${brokenLines==1?"":"s"}. (${reps[2]} broken lines salvaged into ${reps[3]} whole ones, ${reps[4]} discarded)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole ones, ${reps[4]} discarded`;
 	}
 	if(reps[4]!=0)
 	{
@@ -133,7 +133,7 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleString()):"",tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["total"]??""):"N/A",tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):"N/A",tablRw,'td');
-	lister(JO["profile"]?"yes":"no",tablRw,'td');
+	lister(JO["profile"]?(Object.keys(JO["profile"]).length):"N/A",tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["flair"]?"yes":"no",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
@@ -189,7 +189,10 @@ span
 <ul id="hdrs"></ul>
 <div id="svar"></div>
 <table border=1>
-<thead><tr>
+<thead>
+<tr><th colspan=3></th>                        <th colspan=2>Bullet</th>    <th colspan=2>Blitz</th>     <th colspan=2>Rapid</th>     <th colspan=2>Classical</th> <th colspan=2>Correspondence</th><th colspan=9>Variants?</th>                                                                                                                                   <th colspan=2>createdAt</th>       <th colspan=2>seenAt</th>          <th colspan=2>playTime</th></tr>
+<tr><th>id</th><th>username</th><th>#perfs</th><th>games</th><th>rating</th><th>games</th><th>rating</th><th>games</th><th>rating</th><th>games</th><th>rating</th><th>games</th><th>rating</th>    <th>chess960</th><th>crazyhouse</th><th>antichess</th><th>atomic</th><th>horde</th><th>kingOfTheHill</th><th>racingKings</th><th>threeCheck</th><th>puzzle</th><th>(Timestamp)</th><th>(Date)</th><th>(Timestamp)</th><th>(Date)</th><th>total</th><th>tv</th>       <th>#profile</th><th>title</th><th>flair?</th><th>patron</th><th>verified</th><th>tosViolation</th></tr>
+<tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
 <th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
@@ -224,41 +227,6 @@ span
 <th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
 <th><span onClick=a(32,true)>&#9650;</span> <span onClick=a(32,false)>&#9660;</span></th>
 <th><span onClick=a(33,true)>&#9650;</span> <span onClick=a(33,false)>&#9660;</span></th>
-</tr><tr>
-<th>id</th>
-<th>username</th>
-<th>#perfs</th>
-<th>bullet/games</th>
-<th>bullet/rating</th>
-<th>blitz/games</th>
-<th>blitz/rating</th>
-<th>rapid/games</th>
-<th>rapid/rating</th>
-<th>classic/games</th>
-<th>classic/rating</th>
-<th>corresp/games</th>
-<th>corresp/rating</th>
-<th>chess960?</th>
-<th>crazyhouse?</th>
-<th>antichess?</th>
-<th>atomic?</th>
-<th>horde?</th>
-<th>kingOfTheHill?</th>
-<th>racingKings?</th>
-<th>threeCheck?</th>
-<th>puzzle?</th>
-<th>createdAt(Timestamp)</th>
-<th>createdAt(Date)</th>
-<th>seenAt(Timestamp)</th>
-<th>seenAt(Date)</th>
-<th>playTime/total</th>
-<th>playTime/tv</th>
-<th>profile?</th>
-<th>title</th>
-<th>flair?</th>
-<th>patron</th>
-<th>verified</th>
-<th>tosViolation</th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

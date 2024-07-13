@@ -1,0 +1,167 @@
+<html>
+<head>
+<title>Site API Comparison</title>
+</head>
+<body><!-- &#9989; -->
+<table border=1>
+<tr><th colspan=2></th><th>lichess</th><th>lishogi</th><th>lidraughts</th><th>playstrategy</th></tr>
+<tr><td rowspan=6>Account</td>           <td title="/api/account">Get my profile</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/account/email">Get my email address</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/account/preferences">Get my preferences</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/account/kid">Get my kid mode status</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/account/kid">Set my kid mode status</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/timeline">Get my timeline</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=14>Users</td>            <td title="/api/users/status">Get real-time users status</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td>Get all top 10*</td><td title="/api/player"></td><td title="/player"></td><td title="/player"></td><td title="/player"></td></tr>
+<tr>                                     <td>Get one leaderboard*</td><td title="/api/player/top/{nb}/{perfType}"></td><td title="/player/top/{nb}/{perfType}"></td><td title="/player/top/{nb}/{perfType}"></td><td title="/player/top/{nb}/{perfType}"></td></tr>
+<tr>                                     <td title="/api/user/{username}">Get user public data</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/user/{username}/rating-history">Get rating history of a user</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/user/{username}/perf/{perf}">Get performance statistics of a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/user/{username}/activity">Get user activity</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/users">Get users by ID</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/users">Get members of a team</td><td>Teams</td><td></td><td></td><td></td></tr>
+<tr>                                     <td>Get live streamers*</td><td title="/api/streamer/live"></td><td title="/streamer/live"></td><td title="/streamer/live"></td><td title="/streamer/live"></td></tr>
+<tr>                                     <td title="/api/crosstable/{user1}/{user2}">Get crosstable</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/player/autocomplete">Autocomplete usernames</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/user/{username}/note">Add a note for a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/user/{username}/note">Get notes for a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=4>Relations</td>         <td>Get users followed by (a/the logged in) user*</td><td title="/api/rel/following"></td><td>&#10060;</td><td title="/api/user/{username}/following"></td><td title="/api/user/{username}/following"></td></tr>
+<tr>                                     <td title="/api/user/{username}/followers">Get users who follow a user</td><td>&#10060;</td><td>&#10060;</td><td></td><td></td></tr>
+<tr>                                     <td title="/api/rel/follow/{username}">Follow a player</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/rel/unfollow/{username}">Unfollow a player</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=11>Games</td>            <td title="/game/export/{gameId}">Export one game</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/user/{username}/current-game">Export ongoing game of a user</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/games/user/{username}">Export games of a user</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td>Export games by IDs*</td><td title="/api/games/export/_ids"></td><td>&#10060;</td><td title="/games/export/_ids"></td><td title="/games/export/_ids"></td></tr>
+<tr>                                     <td title="/api/stream/games-by-users">Stream games of users</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/stream/games/{streamId}">Stream games by IDs</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/stream/games/{streamId}/add">Add game IDs to stream</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/account/playing">Get (my) ongoing games</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/stream/game/{id}">Stream moves of a game</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/import">Import one game</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/games/export/imports">Export your imported games</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=4>TV</td>                <td title="/api/tv/channels">Get current TV games</td><td></td><td></td><td>&#10060;</td><td>Games</td></tr>
+<tr>                                     <td>Stream current TV game*</td><td title="/api/tv/feed"></td><td title="/api/tv/feed"></td><td title="/tv/feed">Games</td><td title="/api/tv/feed">Games</td></tr>
+<tr>                                     <td title="/api/tv/{channel}/feed">Stream current TV game of a TV channel</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/tv/{channel}">Get best ongoing games of a TV channel</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=6>Puzzles</td>           <td title="/api/puzzle/daily">Get the daily puzzle</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/puzzle/{id}">Get a puzzle by its ID</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/puzzle/activity">Get your puzzle activity</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/puzzle/dashboard/{days}">Get your puzzle dashboard</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/storm/dashboard/{username}">Get the storm dashboard of a player</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/racer">Create and join a puzzle race</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=14>Teams</td>            <td title="/api/team/{teamId}/swiss">Get team swiss tournaments</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}">Get a single team</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/all">Get popular teams</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/of/{username}">Teams of a player</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/search">Search teams</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/users">Get members of a team</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/arena">Get team Arena tournaments</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/team/{teamId}/join">Join a team</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/team/{teamId}/quit">Leave a team</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/requests">Get join requests</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/team/{teamId}/request/{userId}/accept">Accept join request</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/team/{teamId}/request/{userId}/decline">Decline join request</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td>Kick a user from your team*</td><td title="/api/team/{teamId}/kick/{userId}"></td><td title="/team/{teamId}/kick/{userId}"></td><td title="/team/{teamId}/kick/{userId}"></td><td title="/team/{teamId}/kick/{userId}"></td></tr>
+<tr>                                     <td title="/team/{teamId}/pm-all">Message all members</td><td></td><td></td><td></td><td></td></tr>
+<tr><td rowspan=12>Board</td>            <td title="/api/stream/event">Stream incoming events</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/seek">Create a seek</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/stream/{gameId}">Stream Board game state</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/move/{move}">Make a Board move</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/chat">Write in the chat</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/chat">Fetch the game chat</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/abort">Abort a game</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/resign">Resign a game</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/draw/{accept}">Handle draw offers</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/takeback/{accept}">Handle takeback offers</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/claim-victory">Claim victory of a game</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/board/game/{gameId}/berserk">Berserk a tournament game</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=11>Bot</td>              <td title="/api/stream/event">Stream incoming events</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/online">Get online bots</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/bot/account/upgrade">Upgrade to Bot account</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/stream/{gameId}">Stream Bot game state</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/move/{move}">Make a Bot move</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/chat">Write in the chat</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/chat">Fetch the game chat</td><td></td><td></td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/abort">Abort a game</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/resign">Resign a game</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/draw/{accept}">Handle draw offers</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/bot/game/{gameId}/takeback/{accept}">Handle takeback offers</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=10>Challenges</td>       <td title="/api/challenge">List your challenges</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/challenge/{username}">Create a challenge</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/challenge/{challengeId}/show">Show one challenge</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/challenge/{challengeId}/accept">Accept a challenge</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/challenge/{challengeId}/decline">Decline a challenge</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/challenge/{challengeId}/cancel">Cancel a challenge</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/challenge/ai">Challenge the AI</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/challenge/open">Open-ended challenge</td><td></td><td></td><td title="https://lidraughts.org/api/challenge/external/{username}">?</td><td></td></tr>
+<tr>                                     <td title="/api/challenge/{gameId}/start-clocks">Start clocks of a game</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/round/{gameId}/add-time/{seconds}">Add time to the opponent clock</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<!-- <tr>                                     <td>Admin challenge tokens</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr> -->
+<tr><td rowspan=6>Bulk pairings</td>     <td title="/api/bulk-pairing">View (your/upcoming) bulk pairings</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/bulk-pairing">Create a bulk pairing</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/bulk-pairing/{id}/start-clocks">Manually start clocks</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/bulk-pairing/{id}">Show a bulk pairing</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/bulk-pairing/{id}">Cancel a bulk pairing</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/bulk-pairing/{id}/games">Export games of a bulk pairing</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr><td rowspan=13>Arena tournaments</td><td title="/api/tournament">Get current tournaments</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament">Create a new Arena tournament</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}">Get info about an Arena tournament</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}">Update an Arena tournament</td><td></td><td>&#10060;</td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}/join">Join an Arena tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}/withdraw">Pause or leave an Arena tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/tournament/{id}/terminate">Terminate an Arena tournament</td><td></td><td>&#10060;</td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/team-battle/{id}">Update a team battle</td><td></td><td>&#10060;</td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}/games">Export games of an Arena tournament</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}/results">Get results of an Arena tournament</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/tournament/{id}/teams">Get team standing of a team battle</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/user/{username}/tournament/created">Get tournaments created by a user</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/arena">Get team Arena tournaments</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr><td rowspan=11>Swiss tournaments</td><td title="/api/swiss/new/{teamId}">Create a new Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/swiss/{id}">Get info about a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/swiss/{id}/edit">Update a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/swiss/{id}/schedule-next-round">Manually schedule the next round</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/swiss/{id}/join">Join a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/swiss/{id}/withdraw">Pause or leave a swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/swiss/{id}/terminate">Terminate a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/swiss/{id}.trf">Export TRF of a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/swiss/{id}/games">Export games of a Swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/swiss/{id}/results">Get results of a swiss tournament</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/team/{teamId}/swiss">Get team swiss tournaments</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr><td rowspan=2>Simuls</td>            <td title="/api/simul">Get current simuls</td><td></td><td></td><td></td><td></td></tr>
+<tr>                                     <td title="/api/simul/{id}/games">Export games of a simul</td><td>&#10060;</td><td>&#10060;</td><td></td><td>&#10060;</td></tr>
+<tr><td rowspan=6>Studies</td>           <td>Export one study chapter*</td><td title="/api/study/{studyId}/{chapterId}.pgn"></td><td title="/study/{studyId}/{chapterId}.kif"></td><td title="/study/{studyId}/{chapterId}.pdn"></td><td title="/study/{studyId}/{chapterId}.pgn"></td></tr>
+<tr>                                     <td>Export all chapters*</td><td title="/api/study/{studyId}.pgn"></td><td title="/api/study/{studyId}.kif"></td><td title="/study/{studyId}.pdn"></td><td title="/study/{studyId}.pgn"></td></tr>
+<tr>                                     <td title="/api/study/{studyId}.pgn">Study metadata</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/study/{studyId}/import-pgn">Import PGN into a study</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/study/by/{username}/export.{ending}">Export all studies of a user</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/study/by/{username}">List studies of a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<!-- Delete a study chapter -->
+<tr><td>Messaging</td>                   <td title="/inbox/{username}">Send a private message</td><td></td><td></td><td>&#10060;</td><td></td></tr>
+<tr><td rowspan=7>Brodcasts</td>         <td title="/api/broadcast">Get official broadcasts</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td title="/api/broadcast/top">Get paginated top brodcast previews</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/api/broadcast/by/{username}">Get broadcasts created by a user</td><td></td><td>&#10060;</td><td>&#10060;</td><td>&#10060;</td></tr>
+<tr>                                     <td title="/broadcast/new">Create a broadcast (tournament)</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<tr>                                     <td>Get (a/your) broadcast (tournament)?</td><td title="/api/broadcast/{broadcastTournamentId}"></td><td>&#10060;</td><td>&#10060;</td><td title="/broadcast/{slug}/{broadcastId}"></td></tr>
+<!-- Get a broadcast leaderboard -->
+<tr><td>Update your broadcast (tournament)?</td><td title="/broadcast/{broadcastTournamentId}/edit"></td><td>&#10060;</td><td>&#10060;</td><td title="/broadcast/{slug}/{broadcastId}/edit"></td></tr>
+<!-- Create a broadcast round -->
+<!-- Get a broadcast round -->
+<!-- Update your brodcast round -->
+<!-- Reset a brodcast round -->
+<tr><td>Push PGN to (a/your) broadcast (round)?</td><td title="/broadcast/round/{broadcastRoundId}/push"></td><td>&#10060;</td><td>&#10060;</td><td title="/broadcast/{slug}/{broadcastId}/push"></td></tr>
+<!-- Stream an ongoing broadcast tournament as PGN -->
+<!-- Export one round as PGN -->
+<!-- Export all rounds as PGN -->
+<!-- Get your broadcast rounds -->
+<tr><td>Analysis</td>                    <td title="/api/cloud-eval">Get cloud evaluation of a position.</td><td></td><td>&#10060;</td><td>&#10060;</td><td></td></tr>
+<!-- External engine -->
+<!-- Opening Explorer -->
+<!-- Tablebase -->
+<!-- OAuth -->
+</table>
+<!--
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+-->
+</body>
+</html>

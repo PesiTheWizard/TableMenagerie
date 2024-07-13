@@ -33,27 +33,32 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,Lo
 {
 	statusHolder.innerText = "Making request..."
 	const response = await fetch(EndPointAPI);
-	statusHolder.innerText = "Response code = "+response.status;
+	statusHolder.innerText = "Response code = ".concat(response.status);
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	let ChCt = 0;
-	let brokenLines = 0;
+	const reps = ["",0,0,0,0];
 	netLogger.innerText = "Reading response...";
 	while(true)
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-		brokenLines += textToJSONhandler(value.trim(),t);
+		textToJSONhandler(value.trim(),t,reps);
 		ChCt++;
 	}
 	LogA.innerText = "Fetched ".concat(EndPointAPI);
+	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = "Response fully received in "+ChCt+" chunks";
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}`;
 	}
 	else
 	{
-		netLogger.innerText = "Response received in "+ChCt+" chunks with "+brokenLines+" broken line(s)";
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole ones, ${reps[4]} discarded`;
+	}
+	if(reps[4]!=0)
+	{
+		console.log("Discarded string-pile:\n".concat(reps[0]));
 	}
 }
 function lister(listedText, PN, ElType)
@@ -63,26 +68,43 @@ function lister(listedText, PN, ElType)
 	listEntry.appendChild(entryText);
 	PN.appendChild(listEntry);
 }
-function textToJSONhandler(stuff,t)
+function textToJSONhandler(stuff,t,als)
 {
 	const conveyorBelt = stuff.split("\n");
-	let erc = 0;
 	let jp;
+	let fs = false;
 	for(let i=0;i<conveyorBelt.length;i++)
 	{
+		fs = false;
 		try
 		{
 			jp = JSON.parse(conveyorBelt[i].trim());
 		}
 		catch(e)
 		{
-			console.log("Could not parse following line:\n"+conveyorBelt[i]);
-			erc++;
-			continue;
+			als[1]++;
+			als[0] = als[0].concat(conveyorBelt[i]);
+			als[4]++;
+			fs = true;
+		}
+		if(fs)
+		{
+			try
+			{
+				jp = JSON.parse(als[0].trim());
+			}
+			catch(e)
+			{
+				continue;
+			}
+			//secondary parse didn't error out, so we're back on track
+			als[0] = "";
+			als[2]+=als[4];//running total of how many broken lines were salvaged
+			als[3]++;//how many whole lines were made from the broken parts
+			als[4]=0;
 		}
 		makeTableEntry(jp,t);
 	}
-	return erc;
 }
 function makeTableEntry(JO,tableElem)
 {
@@ -96,8 +118,9 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleString()):"",tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["total"]??""):"N/A",tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):"N/A",tablRw,'td');
-	lister(JO["profile"]?"yes":"no",tablRw,'td');
+	lister(JO["profile"]?(Object.keys(JO["profile"]).length):"N/A",tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
+	lister(JO["patron"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
 }
 function a(ctsb, lth)
@@ -157,6 +180,21 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead><tr>
+<th colspan=3></th><th colspan=2>createdAt</th><th colspan=2>seenAt</th><th colspan=2>playTime</th>
+</tr><tr>
+<th>id</th>
+<th>username</th>
+<th>#perfs</th>
+<th>(Timestamp)</th>
+<th>(Date)</th>
+<th>(Timestamp)</th>
+<th>(Date)</th>
+<th>total</th>
+<th>tv</th>
+<th>#profile</th>
+<th>title</th>
+<th>patron</th>
+</tr><tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
 <th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
@@ -167,18 +205,8 @@ Site = <select id="selSite">
 <th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
 <th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
 <th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
-</tr><tr>
-<th>id</th>
-<th>username</th>
-<th>#perfs</th>
-<th>createdAt(Timestamp)</th>
-<th>createdAt(Date)</th>
-<th>seenAt(Timestamp)</th>
-<th>seenAt(Date)</th>
-<th>playTime/total</th>
-<th>playTime/tv</th>
-<th>profile?</th>
-<th>title</th>
+<th></th>
+<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

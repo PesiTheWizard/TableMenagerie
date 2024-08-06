@@ -15,7 +15,7 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
 		document.getElementById("er").innerText = "";
-		OGresp.innerText = `Fetching data of ${tv} bot(s)`;
+		OGresp.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
 		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt);

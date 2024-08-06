@@ -37,7 +37,7 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,Lo
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 	let ChCt = 0;
-	const reps = ["",0,0,0,0];
+	const reps = ["",0,0,0,0,0];
 	netLogger.innerText = "Reading response...";
 	while(true)
 	{
@@ -50,11 +50,11 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,Lo
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole ones, ${reps[4]} discarded`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
 	}
 	if(reps[4]!=0)
 	{
@@ -104,6 +104,7 @@ function textToJSONhandler(stuff,t,als)
 			als[4]=0;
 		}
 		makeTableEntry(jp,t);
+		als[5]++;//parsed lines counter
 	}
 }
 function makeTableEntry(JO,tableElem)

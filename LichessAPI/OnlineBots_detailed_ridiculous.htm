@@ -46,11 +46,11 @@ async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
 	}
 	if(reps[4]!=0)
 	{

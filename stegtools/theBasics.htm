@@ -1,0 +1,91 @@
+<html>
+<head>
+<title>The basics</title>
+<script>
+function something()
+{
+	"use strict";
+	const inp = document.getElementById("i1").value;
+	const f = [
+		document.getElementById("f0"),
+		document.getElementById("f1"),
+		document.getElementById("f2"),
+		document.getElementById("f3"),
+		document.getElementById("f4"),
+		document.getElementById("f5"),
+		document.getElementById("f6"),
+		document.getElementById("f7"),
+		document.getElementById("f8"),
+		document.getElementById("f9"),
+		document.getElementById("f10"),
+		document.getElementById("f11"),
+		document.getElementById("f12"),
+		document.getElementById("f13"),
+	];
+	f[0].textContent = inp;
+	f[1].textContent = inp.split("").reverse().join("");
+	f[2].textContent = escape(inp);
+	f[3].textContent = unescape(inp);
+	f[4].textContent = encodeURI(inp);
+	f[5].textContent = decodeURI(inp);
+	f[6].textContent = encodeURIComponent(inp);
+	f[7].textContent = decodeURIComponent(inp);
+	try
+	{
+		f[8].textContent = atob(inp);
+	}
+	catch(e)
+	{
+		f[8].textContent = e.toString();
+	}
+	try
+	{
+		f[9].textContent = btoa(inp);
+	}
+	catch(e)
+	{
+		f[9].textContent = e.toString();
+	}
+	f[10].textContent = parseInt(inp);
+	f[11].textContent = parseFloat(inp);
+	{
+		const tt1 = [], tt2 = [];
+		for(const i in inp)
+		{
+			tt1.push(inp.charCodeAt(i));
+			tt2.push(inp.codePointAt(i));
+		}
+		f[12].textContent = tt1.toString();
+		f[13].textContent = tt2.toString();
+	}
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+<input type=text id="i1"><br>
+<input type=button value="Do the thing!" onclick=something()>
+<table border=1><tbody>
+<tr><th>input</th><td id="f0"></td></tr>
+<tr><th>reverse</th><td id="f1"></td></tr>
+<tr><th>escape</th><td id="f2"></td></tr>
+<tr><th>unescape</th><td id="f3"></td></tr>
+<tr><th>encodeURI</th><td id="f4"></td></tr>
+<tr><th>decodeURI</th><td id="f5"></td></tr>
+<tr><th>encodeURIComponent</th><td id="f6"></td></tr>
+<tr><th>decodeURIComponent</th><td id="f7"></td></tr>
+<tr><th>atob</th><td id="f8"></td></tr>
+<tr><th>btoa</th><td id="f9"></td></tr>
+<tr><th>parseInt</th><td id="f10"></td></tr>
+<tr><th>parseFloat</th><td id="f11"></td></tr>
+<tr><th>charCodes</th><td id="f12"></td></tr>
+<tr><th>codePoints</th><td id="f13"></td></tr>
+</tbody></table>
+</body>
+</html>

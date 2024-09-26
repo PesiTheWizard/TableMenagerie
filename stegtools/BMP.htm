@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>
+</title>
+<script>
+//let UFD;
+function p1(ClBt)
+{
+	"use strict";
+	const fpckr = document.getElementById("finp");
+	const logA = document.getElementById("preLogA");
+	const reprt = document.getElementById("scanresults");
+	const dd = document.getElementById("origdisp");
+	dd.innerHTML = "";
+	if(fpckr == null || logA == null || reprt == null)
+	{
+		console.log("DOM error");
+		return;
+	}
+	if(fpckr.files.length < 1)
+	{
+		logA.innerText = "no file picked";
+		return;
+	}
+	const fileUnderTest = fpckr.files[0];
+	logA.innerText = "reading file metadata...\n";
+	const metaSize = fileUnderTest.size;
+	if(metaSize < 18)
+	{
+		logA.appendChild(document.createTextNode("file is too small."));
+		return;
+	}
+	else if(BigInt(metaSize) > 2147483647n)
+	{
+		logA.appendChild(document.createTextNode("file is too large."));
+		return;
+	}
+	else
+	{
+		logA.appendChild(document.createTextNode("(filesize: ".concat(metaSize,")\n")));
+	}
+	ClBt.disabled = true;
+	const strSuccess = " ✅";
+	const strFail = " ❌";
+	const strWarn = " ⚠️";
+	const strCrash = " 💀";
+	let pt = 0;//reading pointer
+	logA.appendChild(document.createTextNode("reading file data...\n"));
+	reprt.innerHTML = "";
+	fileUnderTest.arrayBuffer().then((daBuf) => {
+		return new Uint8Array(daBuf);
+	}).then((UFD) => {
+		logA.appendChild(document.createTextNode("file data read.\n"));
+		if(UFD.length !== metaSize)
+		{
+			logA.appendChild(document.createTextNode("Size mismatch!"));
+			ClBt.disabled = false;
+			return;
+		}
+		const fIdentifier = String.fromCharCode(UFD[pt++],UFD[pt++]);
+		pointTheNth(reprt,"Identifier: ".concat(fIdentifier,(fIdentifier=="BM"?strSuccess:( (fIdentifier=="BA"||fIdentifier=="CI"||fIdentifier=="CP"||fIdentifier=="IC"||fIdentifier=="PT")?strWarn:strFail))));
+		const fFileSize = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,"File size: ".concat(fFileSize,(fFileSize==metaSize?strSuccess:strFail)));
+		pointTheNth(reprt,"Reserved: ".concat(UFD[pt++]," ",UFD[pt++]," ",UFD[pt++]," ",UFD[pt++]));
+		const fOffset = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,"Offset: ".concat(fOffset));
+		const fDIBheaderSize = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		const aDIBcheck = DIBsizeNotes(fDIBheaderSize);
+		pointTheNth(reprt,"DIB header size: ".concat(fDIBheaderSize,aDIBcheck[0]));
+		if((pt-4+fDIBheaderSize) > UFD.length)
+		{
+			logA.appendChild(document.createTextNode("DIB header size claim larger than rest of file."));
+			ClBt.disabled = false;
+			return;
+		}
+		const ddg = fOffset-fDIBheaderSize-14;
+		if(ddg>0)
+		{
+			pointTheNth(reprt,"(".concat(ddg," byte gap between DIB header and image data)",strWarn));
+		}
+		else if(ddg<0)
+		{
+			pointTheNth(reprt,"(DIB header overlaps image data by ".concat(ddg," bytes)",strFail));
+		}
+		else if(ddg===0)
+		{
+			pointTheNth(reprt,"(Snug fit to image data)".concat(strSuccess));
+		}
+		else
+		{
+			pointTheNth(reprt,"(This tool failed horribly)".concat(strCrash));
+		}
+		if(aDIBcheck[1]==0)
+		{
+			pointTheNth(reprt,"DIB header reports unfamiliar size".concat(strFail));
+			ClBt.disabled = false;
+			return;
+		}
+	//DIB header length assumed multiple of 4 from this point forth
+		let fWidth, fHeight, bStopEarly;
+		if(fDIBheaderSize==12)
+		{
+			fWidth = UFD[pt++] | (UFD[pt++]<<8);
+			fHeight = UFD[pt++] | (UFD[pt++]<<8);
+			bStopEarly = true;
+		}
+		else
+		{
+			fWidth = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+			fHeight = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+			bStopEarly = (fDIBheaderSize==16)?true:false;
+		}
+		const fPlanes = UFD[pt++] | (UFD[pt++]<<8);
+		const fBPP = UFD[pt++] | (UFD[pt++]<<8);
+		const DHs = [
+			"Image width: ",
+			"Image height: ",
+			"Planes: ",
+			"Bits per pixel: ",
+			"Compression method: ",//first thing if header larger than 12 or 16
+			"Image size: ",
+			"Horizontal resolution: ",
+			"Vertical resolution: ",
+			"Palette size: ",
+			"Important colors: "//last thing if header = 40; last before split on 64
+		];
+		pointTheNth(reprt,DHs[0].concat(fWidth," pixels"));
+		pointTheNth(reprt,DHs[1].concat(fHeight," pixels"));
+		const totalPixels = fWidth*fHeight;
+		pointTheNth(reprt,"(Total pixels: ".concat(totalPixels,")"));
+		pointTheNth(reprt,DHs[2].concat(fPlanes,(fPlanes===1?strSuccess:strFail)));
+		pointTheNth(reprt,DHs[3].concat(fBPP,(fBPP!==1&&fBPP!==2&&fBPP!==4&&fBPP!==8&&fBPP!==16&&fBPP!==24&&fBPP!==32&&fBPP!==64)?strFail:""));
+		if(fDIBheaderSize==12 && (fBPP===16 || fBPP===32))
+		{
+			pointTheNth(reprt,"(OS/2 V1 bitmaps cannot be 16 or 32 bpp)".concat(strFail));
+		}
+		const calcdLineFiller = (32-((fWidth*fBPP)%32))%32;
+		pointTheNth(reprt,"(line filler calculated as ".concat(calcdLineFiller," bits)"));
+		if(bStopEarly)
+		{
+			pointTheNth(reprt,"(This is all I can say about this format".concat(aDIBcheck[0],")"));
+			ClBt.disabled = false;
+			return;
+		}
+		const fComprMethod = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[4].concat(fComprMethod));
+		const fImageSize = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[5].concat(fImageSize));
+
+		bStopEarly = false;
+		const gap2 = UFD.length-fOffset-fImageSize;
+		if(gap2<0)
+		{
+			logA.appendChild(document.createTextNode("Bitmap size claim from offset larger than rest of file.\n"));
+			pointTheNth(reprt,"(".concat(-gap2," expected image bytes cut off by EOF)",strFail));
+			bStopEarly = true;
+		}
+		else if(gap2>0)
+		{
+			pointTheNth(reprt,"(".concat(gap2," byte space after image data)",strWarn));
+		}
+		else if(gap2==0)
+		{
+			pointTheNth(reprt,"(Snug fit to EOF)".concat(strSuccess));
+		}
+		else
+		{
+			pointTheNth(reprt,"(Something went very wrong)".concat(strCrash));
+		}
+		const calcdImgSize = (((fWidth*fBPP)+calcdLineFiller)>>>3)*fHeight;
+		pointTheNth(reprt,"(calculated Image Size: ".concat(calcdImgSize,")"));
+		if(calcdImgSize < fImageSize)
+		{
+			pointTheNth(reprt,"(image claims ".concat(fImageSize-calcdImgSize," bytes more than needed)",strWarn));
+		}
+		const gap2B = UFD.length-fOffset-calcdImgSize;
+		if(gap2B < 0)
+		{
+			logA.appendChild(document.createTextNode("Bitmap actual size from offset larger than rest of file.\n"));
+			pointTheNth(reprt,"(".concat(-gap2B," bytes of actual image data cut off by EOF)",strFail));
+			bStopEarly = true;
+		}
+		const fHorzRes = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[6].concat(fHorzRes));
+		const fVertRes = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[7].concat(fVertRes));
+		const fPaletteSize = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[8].concat(fPaletteSize));
+		if(fBPP<=8 && fPaletteSize==0)
+		{
+			pointTheNth(reprt,"(missing palette when BPP <= 8)".concat(strFail));
+			//bStopEarly = true;
+		}
+		if(ddg>0 && fPaletteSize>0)
+		{
+			const palBytes = (fPaletteSize<<2)-ddg;
+			if(palBytes===0)
+			{
+				pointTheNth(reprt,"(palette fills gap, ignore line 6 warning above)".concat(strSuccess));
+			}
+			else if(palBytes > 0)
+			{
+				pointTheNth(reprt,"(palette overlaps image data by ".concat(palBytes," bytes)",strFail));
+			}
+			else if(palBytes < 0)
+			{
+				pointTheNth(reprt,"(palette present, but gap is still ".concat(-palBytes," bytes)",strWarn));
+			}
+		}
+		if(totalPixels < fPaletteSize)
+		{
+			pointTheNth(reprt,"(palette has ".concat(fPaletteSize-totalPixels," more colors than image has pixels)",strWarn));
+		}
+		const fImportantColors = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+		pointTheNth(reprt,DHs[9].concat(fImportantColors,((fImportantColors>fPaletteSize)?strFail:"")));
+
+		if(fDIBheaderSize==64)//other os2 versions already covered
+		{
+			const osResUnits = UFD[pt++] | (UFD[pt++]<<8);
+			pointTheNth(reprt,"Resolution units: ".concat(osResUnits!==0?strFail:""));
+			pointTheNth(reprt,"Padding: ".concat(UFD[pt++]," ",UFD[pt++]));
+			const osDirection = UFD[pt++] | (UFD[pt++]<<8);
+			pointTheNth(reprt,"Direction: ".concat(osDirection,(osDirection!==0?strFail:"")));
+			const osHalftAlgo = UFD[pt++] | (UFD[pt++]<<8);
+			pointTheNth(reprt,"Halftoning algo: ".concat(osHalftAlgo));
+			const osHalftParam1 = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+			const osHalftParam2 = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+			const osColorEncoding = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+			pointTheNth(reprt,"Halftoning param 1: ".concat(osHalftParam1));
+			pointTheNth(reprt,"Halftoning param 2: ".concat(osHalftParam2));
+			pointTheNth(reprt,"Color encoding: ".concat(osColorEncoding,(osColorEncoding!==0?strFail:"")));
+			pointTheNth(reprt,"App-defined ID: ".concat(UFD[pt++]," ",UFD[pt++]," ",UFD[pt++]," ",UFD[pt++]));
+		}
+		else
+		{
+			const AHs = [
+				"Red bitmask: ",
+				"Green bitmask: ",
+				"Blue bitmask: ",
+				"Alpha bitmask: ",
+				"Color space type: ",
+				"Color space endpoint 1: ",
+				"Color space endpoint 2: ",
+				"Color space endpoint 3: ",
+				"Color space endpoint 4: ",
+				"Color space endpoint 5: ",
+				"Color space endpoint 6: ",
+				"Color space endpoint 7: ",
+				"Color space endpoint 8: ",
+				"Color space endpoint 9: ",
+				"Gamma red: ",
+				"Gamma green: ",
+				"Gamma blue: ",
+				"Intent: ",
+				"ICC Profile Data: ",
+				"ICC Profile Size: ",
+				"Reserved: "
+			];
+			const tlim = (fDIBheaderSize>>>2)-10;
+			for(let i=0;i<tlim;i++)
+			{
+				const antem = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
+				pointTheNth(reprt,AHs[i].concat(antem));
+			}
+		}
+		if(bStopEarly)
+		{
+			logA.appendChild(document.createTextNode("Stopping due to flaw in file"));
+			ClBt.disabled = false;
+			return;
+		}
+
+		const blobtest = new Blob([UFD],{type:"image/bmp"});
+		const urltest = URL.createObjectURL(blobtest);
+		const imgtest = new Image();
+		imgtest.src = urltest;
+		dd.appendChild(imgtest);
+		//console.log(urltest);
+
+		ClBt.disabled = false;
+	}).catch((error) => {
+		console.log(error);
+		logA.appendChild(document.createTextNode("Error. See console."));
+		ClBt.disabled = false;
+	});
+}
+function pointTheNth(pn,txtnd)
+{
+	"use strict";
+	const ntd = document.createElement('div');
+	const entryText = document.createTextNode(txtnd);
+	ntd.appendChild(entryText);
+	pn.appendChild(ntd);
+}
+function DIBsizeNotes(dhs)
+{
+	"use strict";
+	if(dhs===12){return [" (OS/2 V1)",1];}
+	if(dhs===40){return [" (Windows V3)",1];}//last entry = Important colors
+	if(dhs===52){return [" (Windows V3 w/RGB masks [undocumented])",1];}//last entry = Blue bitmask
+	if(dhs===56){return [" (Windows V3 w/RGB masks and alpha channel [undocumented])",1];}//last entry = alpha bitmask
+	if(dhs===64){return [" (OS/2 V2)",1];}//different than the rest
+	if(dhs===16){return [" (OS/2 V2; short)",1];}//size 16 is a variant with leftovers assumed 0
+	if(dhs===108){return [" (Windows V4)",1];}//last entry = gamma blue
+	if(dhs===124){return [" (Windows V5)",1];}//last entry = reserved
+	return [" (unknown)",0];
+}
+</script>
+<style>
+input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
+</head>
+<body>
+<table><thead><tr><td valign=top colspan=2>
+<input type="file" id="finp"><br>
+<input type="button" value="read file" onclick=p1(this)>
+</td></tr></thead>
+<tbody>
+<tr><td valign=top id="scanresults"></td><td valign=top><pre id="preLogA"></pre></td></tr>
+</tbody></table>
+<table border=1><tbody><tr><td id="origdisp"></td></tr></tbody></table>
+</body>
+</html>

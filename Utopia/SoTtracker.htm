@@ -1,0 +1,414 @@
+<html>
+<head>
+<title>SoT parser and tracker
+</title>
+<style>
+fieldset
+{
+	display: inline-block;
+}
+summary,span
+{
+	cursor: pointer;
+}
+details,input
+{
+	margin-bottom:1px;
+	margin-top:1px;
+}
+th,p
+{
+	white-space: nowrap;
+}
+</style>
+<script>
+let provincePile;
+let SoT;
+function startThePile()
+{
+	"use strict";
+	if(provincePile==undefined)
+	{
+		provincePile = {};
+	}
+	else
+	{
+		console.log("pile already started");
+	}
+}
+function saveThePile()
+{
+	"use strict";
+	if(provincePile && typeof(provincePile)=="object")
+	{
+		try
+		{
+			localStorage.setItem("provincePile",JSON.stringify(provincePile));
+		}
+		catch(e)
+		{
+			console.log(e);
+		}
+	}
+	else
+	{
+		console.log("no pile to save");
+	}
+}
+function loadThePile()
+{
+	"use strict";
+	let temp;
+	try
+	{
+		temp = JSON.parse(localStorage.getItem("provincePile"));
+	}
+	catch(e)
+	{
+		console.log(e);
+		return;
+	}
+	provincePile = temp;
+}
+function parseSoT()
+{
+	"use strict";
+	const DSoTlog = document.getElementById("SoTlog");
+	if(!DSoTlog)
+	{
+		console.log("Logging element not found!");
+		return;
+	}
+	const DSoTa = document.getElementById("txtaSoT");
+	if(!DSoTa)
+	{
+		DSoTlog.innerText = "Parsing element not found.";
+		return;
+	}
+	const SoTlines = DSoTa.value.trim().split("\n");
+	const cutThroughBlather = SoTlines[0].split(".");
+	if(cutThroughBlather[0].trim() !== "Early indications show that our operation was a success and we have 100% confidence in the information retrieved")
+	{
+		DSoTlog.innerText = "Start the copying at \"Early indications show...\"";
+		SoT = undefined;
+		return;
+	}
+	if(SoTlines.length < 13)
+	{
+		DSoTlog.innerText = "Not enough lines. Make sure to include your own stealth.";
+		SoT = undefined;
+		return;
+	}
+	const MAPreport = cutThroughBlather[1].trim();
+/**/	const L1sponsp = SoTlines[1].trim().split(" ");
+	const Vkd = L1sponsp.pop();
+	L1sponsp.shift();
+	L1sponsp.shift();
+	L1sponsp.shift();
+	const Vname = L1sponsp.join(" ");
+/**/	const DateSplit = SoTlines[2].split(" ");
+	const Umonth = DateSplit[0];
+	const Uday = DateSplit[1];
+	const Uyear = DateSplit[3];
+/**/	const L3split = SoTlines[3].trim().split("\t");
+	const Vrace = L3split[1].trim();
+	const Nsoldiers = parseInt(L3split[3].trim().split(",").join(""));
+/**/	const L4split = SoTlines[4].trim().split("\t");
+	const NameWithTitle = L4split[1].trim();
+/**/	const FullName = L4split[1].trim().split(" ");
+	FullName.shift();
+	const PersTitle = FullName.shift();
+	const HonorTitle = FullName.shift();
+	const LeaderName = FullName.join(" ");
+	const offspecName = L4split[2].trim();
+	const Noffspecs = parseInt(L4split[3].trim().split(",").join(""));
+/**/	const L5split = SoTlines[5].trim().split("\t");
+	const Nacres = parseInt(L5split[1].trim().split(",").join(""));
+	const defspecName = L5split[2].trim();
+	const Ndefspecs = parseInt(L5split[3].trim().split(",").join(""));
+/**/	const L6split = SoTlines[6].trim().split("\t");
+	const Npeasants = parseInt(L6split[1].trim().split(",").join(""));
+	const eliteName = L6split[2].trim();
+	const Nelites = parseInt(L6split[3].trim().split(",").join(""));
+	const BeffMult = parseInt(SoTlines[7].trim().split("\t")[1].trim())/100;
+	const Ngold = parseInt(SoTlines[8].trim().split("\t")[1].trim().split(",").join(""));
+/**/	const L9split = SoTlines[9].trim().split("\t");
+	const Nfood = parseInt(L9split[1].trim().split(",").join(""));
+	const Nhorses = parseInt(L9split[3].trim().split(",").join(""));
+/**/	const L10split = SoTlines[10].trim().split("\t");
+	const Nrunes = parseInt(L10split[1].trim().split(",").join(""));
+	const Nprisoners = parseInt(L10split[3].trim().split(",").join(""));
+/**/	const L11split = SoTlines[11].trim().split("\t");
+	const NTB = parseInt(L11split[1].trim().split(",").join(""));
+	const NoffPoints = parseInt(L11split[3].trim().split(",").join(""));
+/**/	const L12split = SoTlines[12].trim().split("\t");
+	const Networth = parseInt(L12split[1].trim().split(",").join(""));
+	const NdefPoints = parseInt(L12split[3].trim().split(",").join(""));
+	let parseNotes = "";
+	const extras = [];
+	let currln = 13;
+	while(currln<SoTlines.length)
+	{
+		let lncntna = SoTlines[currln].trim().split("\t");
+		const temp = lncntna[0].trim();
+		if(temp==="Number of thieves")
+		{
+			parseNotes+=" (Proper ending)";
+			break;
+		}
+		else if(temp==="")
+		{
+			extras.push(SoTlines[++currln].trim());
+			currln++;
+			continue;
+		}
+		else
+		{
+			parseNotes+=" (Unexpected end of data)";
+			break;
+		}
+	}
+	if(
+		!isNaN(Nsoldiers)&&
+		!isNaN(Noffspecs)&&
+		!isNaN(Nacres)&&
+		!isNaN(Ndefspecs)&&
+		!isNaN(Npeasants)&&
+		!isNaN(Nelites)&&
+		!isNaN(Ngold)&&
+		!isNaN(Nfood)&&
+		!isNaN(Nhorses)&&
+		!isNaN(Nrunes)&&
+		!isNaN(Nprisoners)&&
+		!isNaN(NTB)&&
+		!isNaN(NoffPoints)&&
+		!isNaN(Networth)&&
+		!isNaN(NdefPoints))
+	{
+		DSoTlog.innerText = "SoT parsed".concat(parseNotes);
+	}
+	else
+	{
+		DSoTlog.innerText = "Parsing error".concat(parseNotes);
+	}
+	SoT = {
+		"MAPreport":MAPreport,
+		"Vname":Vname,
+		"Vkd":Vkd,
+		"Umonth":Umonth,
+		"Uday":Uday,
+		"Uyear":Uyear,
+		"Vrace":Vrace,
+		"Nsoldiers":Nsoldiers,
+		"NameWithTitle":NameWithTitle,
+		"PersTitle":PersTitle,//There is an issue
+		"HonorTitle":HonorTitle,//with these three
+		"LeaderName":LeaderName,//parsing is weird
+		"offspecName":offspecName,
+		"Noffspecs":Noffspecs,
+		"Nacres":Nacres,
+		"defspecName":defspecName,
+		"Ndefspecs":Ndefspecs,
+		"Npeasants":Npeasants,
+		"eliteName":eliteName,
+		"Nelites":Nelites,
+		"BeffMult":BeffMult,
+		"Ngold":Ngold,
+		"Nfood":Nfood,
+		"Nhorses":Nhorses,
+		"Nrunes":Nrunes,
+		"Nprisoners":Nprisoners,
+		"TradeBalance":NTB,
+		"NoffPoints":NoffPoints,
+		"Networth":Networth,
+		"NdefPoints":NdefPoints,
+		"Extras":extras,
+		"TimestampOfParse":Date.now()
+	};
+	if(provincePile==undefined)
+	{
+		console.log("parsed province not added to pile because pile doesn't exist");
+	}
+	else
+	{
+		provincePile[Vname] = SoT;
+	}
+}
+function viewThePile()
+{
+	"use strict";
+	if(provincePile && typeof(provincePile)=="object")
+	{
+		const rowholder = document.getElementById("plvr");
+		const plist = Object.keys(provincePile);
+		if(!(plist.length > 0))
+		{
+			console.log("pile empty");
+			return;
+		}
+		rowholder.innerHTML = "";
+		for(let i=0;i<plist.length;i++)
+		{
+			makeTableEntry(provincePile[plist[i]],rowholder);
+		}
+	}
+	else
+	{
+		console.log("pile doesn't exist");
+	}
+}
+function lister(listedText,PN,ElType)
+{
+	"use strict";
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	PN.appendChild(listEntry);
+}
+function makeTableEntry(JO,Delem)
+{
+	"use strict";
+	const tablRw = document.createElement('tr');
+	lister(JO["NameWithTitle"],tablRw,'td');
+	lister(JO["Vname"],tablRw,'td');
+	lister(JO["Vkd"],tablRw,'td');
+	lister(JO["Vrace"],tablRw,'td');
+	lister(JO["Networth"],tablRw,'td');
+	const Acres = JO["Nacres"];
+	lister(Acres,tablRw,'td');
+	lister(JO["Nsoldiers"],tablRw,'td');
+	lister(JO["Noffspecs"],tablRw,'td');
+	lister(JO["Ndefspecs"],tablRw,'td');
+	lister(JO["Nelites"],tablRw,'td');
+	const Horses = JO["Nhorses"];
+	lister(Horses,tablRw,'td');
+	lister(`${Math.ceil(Horses/80)} (${(Math.ceil(Horses/80)/Acres*100).toFixed(2)}%)`,tablRw,'td');
+	const Prisoners = JO["Nprisoners"];
+	lister(Prisoners,tablRw,'td');
+	lister(`${Math.ceil(Prisoners/30)} (${(Math.ceil(Prisoners/30)/Acres*100).toFixed(2)}%)`,tablRw,'td');
+	lister(JO["NoffPoints"],tablRw,'td');
+	lister(JO["NdefPoints"],tablRw,'td');
+	lister(JO["Npeasants"],tablRw,'td');
+	lister(JO["Ngold"],tablRw,'td');
+	lister(JO["Nfood"],tablRw,'td');
+	lister(JO["Nrunes"],tablRw,'td');
+	lister(JO["BeffMult"],tablRw,'td');
+	lister(JO["TradeBalance"],tablRw,'td');
+	lister(JO["MAPreport"],tablRw,'td');
+	const NI = JO["Extras"];
+	const NIc = document.createElement('td');
+	for(let i=0;i<NI.length;i++)
+	{
+		lister(NI[i],NIc,'p');
+	}
+	tablRw.appendChild(NIc);
+	lister(JO["Uyear"],tablRw,'td');
+	lister(JO["Umonth"],tablRw,'td');
+	lister(JO["Uday"],tablRw,'td');
+	lister(new Date(JO["TimestampOfParse"]).toLocaleString(),tablRw,'td');
+	Delem.appendChild(tablRw);
+}
+function a(ctsb, lth)
+{//ctsb - column to sort by, lth - low to high
+	const gt = document.getElementById("plvr").childNodes;
+	const tl = gt.length - 2;//total length, stop if cup goes above this
+	let cup = 0;
+	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
+	while(cup <= tl)//gnomesorting the rows
+	{
+		fn = gt[cup];
+		sn = gt[cup+1];
+		s1 = fn.childNodes[ctsb].textContent;
+		s2 = sn.childNodes[ctsb].textContent;
+		if(s1 == s2)
+		{
+			cup++;
+		}
+		else if((s1 > s2) == lth)
+		{
+			fn.before(sn);//swap rows
+			cup--;
+			if(cup<0){cup=1;}
+		}
+		else
+		{
+			cup++;
+		}
+	}
+}
+</script>
+</head>
+<body>
+<fieldset><legend>SoT parser</legend>
+<textarea id="txtaSoT"></textarea> <input type=button value="parse SoT" onclick=parseSoT()>
+<div id="SoTlog"> </div>
+</fieldset>
+<hr>
+<input type=button value="start the pile" onclick=startThePile()>
+<input type=button value="load stored pile" onclick=loadThePile()>
+<input type=button value="store current pile" onclick=saveThePile()><hr>
+<input type=button value="view current pile" onclick=viewThePile()>
+<table border=1><thead><tr>
+<th>leader name</th>
+<th>province name</th>
+<th>KD</th>
+<th>race</th>
+<th>networth</th>
+<th>acres</th>
+<th>soldiers</th>
+<th>offense specs</th>
+<th>defense specs</th>
+<th>elites</th>
+<th>horses</th>
+<th>(min stables)</th>
+<th>prisoners</th>
+<th>(min prisons)</th>
+<th>offense points</th>
+<th>defense points</th>
+<th>peasants</th>
+<th>gold</th>
+<th>food</th>
+<th>runes</th>
+<th>BE</th>
+<th>TBalance</th>
+<th>MAP report</th>
+<th>extras</th>
+<th>year</th>
+<th>month</th>
+<th>day</th>
+<th>time of parse</th>
+</tr>
+<tr>
+<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
+<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
+<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
+<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
+<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
+<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
+<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
+<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
+<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
+<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
+<th><span onClick=a(10,true)>&#9650;</span> <span onClick=a(10,false)>&#9660;</span></th>
+<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
+<th><span onClick=a(12,true)>&#9650;</span> <span onClick=a(12,false)>&#9660;</span></th>
+<th><span onClick=a(13,true)>&#9650;</span> <span onClick=a(13,false)>&#9660;</span></th>
+<th><span onClick=a(14,true)>&#9650;</span> <span onClick=a(14,false)>&#9660;</span></th>
+<th><span onClick=a(15,true)>&#9650;</span> <span onClick=a(15,false)>&#9660;</span></th>
+<th><span onClick=a(16,true)>&#9650;</span> <span onClick=a(16,false)>&#9660;</span></th>
+<th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
+<th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
+<th><span onClick=a(19,true)>&#9650;</span> <span onClick=a(19,false)>&#9660;</span></th>
+<th><span onClick=a(20,true)>&#9650;</span> <span onClick=a(20,false)>&#9660;</span></th>
+<th><span onClick=a(21,true)>&#9650;</span> <span onClick=a(21,false)>&#9660;</span></th>
+<th><span onClick=a(22,true)>&#9650;</span> <span onClick=a(22,false)>&#9660;</span></th>
+<th><span onClick=a(23,true)>&#9650;</span> <span onClick=a(23,false)>&#9660;</span></th>
+<th><span onClick=a(24,true)>&#9650;</span> <span onClick=a(24,false)>&#9660;</span></th>
+<th><span onClick=a(25,true)>&#9650;</span> <span onClick=a(25,false)>&#9660;</span></th>
+<th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
+<th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
+</tr></thead>
+<tbody id="plvr"></tbody>
+</table>
+</body>
+</html>

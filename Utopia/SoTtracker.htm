@@ -1,0 +1,248 @@
+<html>
+<head>
+<title>SoT parser and tracker
+</title>
+<style>
+fieldset
+{
+	display: inline-block;
+}
+summary
+{
+	cursor: pointer;
+}
+details,input
+{
+	margin-bottom:1px;
+	margin-top:1px;
+}
+</style>
+<script>
+let provincePile;
+let SoT;
+function startThePile()
+{
+	"use strict";
+	if(provincePile==undefined)
+	{
+		provincePile = {};
+	}
+	else
+	{
+		console.log("pile already started");
+	}
+}
+function saveThePile()
+{
+	"use strict";
+	if(provincePile && typeof(provincePile)=="object")
+	{
+		try
+		{
+			localStorage.setItem("provincePile",JSON.stringify(provincePile));
+		}
+		catch(e)
+		{
+			console.log(e);
+		}
+	}
+	else
+	{
+		console.log("no pile to save");
+	}
+}
+function loadThePile()
+{
+	"use strict";
+	let temp;
+	try
+	{
+		temp = JSON.parse(localStorage.getItem("provincePile"));
+	}
+	catch(e)
+	{
+		console.log(e);
+		return;
+	}
+	provincePile = temp;
+}
+function parseSoT()
+{
+	"use strict";
+	const DSoTlog = document.getElementById("SoTlog");
+	if(!DSoTlog)
+	{
+		console.log("Logging element not found!");
+		return;
+	}
+	const DSoTa = document.getElementById("txtaSoT");
+	if(!DSoTa)
+	{
+		DSoTlog.innerText = "Parsing element not found.";
+		return;
+	}
+	const SoTlines = DSoTa.value.trim().split("\n");
+	const cutThroughBlather = SoTlines[0].split(".");
+	if(cutThroughBlather[0].trim() !== "Early indications show that our operation was a success and we have 100% confidence in the information retrieved")
+	{
+		DSoTlog.innerText = "Start the copying at \"Early indications show...\"";
+		SoT = undefined;
+		return;
+	}
+	if(SoTlines.length < 13)
+	{
+		DSoTlog.innerText = "Not enough lines. Make sure to include your own stealth.";
+		SoT = undefined;
+		return;
+	}
+	const MAPreport = cutThroughBlather[1].trim();
+/**/	const L1sponsp = SoTlines[1].trim().split(" ");
+	const Vkd = L1sponsp.pop();
+	L1sponsp.shift();
+	L1sponsp.shift();
+	L1sponsp.shift();
+	const Vname = L1sponsp.join(" ");
+/**/	const DateSplit = SoTlines[2].split(" ");
+	const Umonth = DateSplit[0];
+	const Uday = DateSplit[1];
+	const Uyear = DateSplit[3];
+/**/	const L3split = SoTlines[3].trim().split("\t");
+	const Vrace = L3split[1].trim();
+	const Nsoldiers = parseInt(L3split[3].trim().split(",").join(""));
+/**/	const L4split = SoTlines[4].trim().split("\t");
+/**/	const FullName = L4split[1].trim().split(" ",3);
+	const PersTitle = FullName[1];
+	const HonorTitle = FullName[2];
+	const offspecName = L4split[2].trim();
+	const Noffspecs = parseInt(L4split[3].trim().split(",").join(""));
+/**/	const L5split = SoTlines[5].trim().split("\t");
+	const Nacres = parseInt(L5split[1].trim().split(",").join(""));
+	const defspecName = L5split[2].trim();
+	const Ndefspecs = parseInt(L5split[3].trim().split(",").join(""));
+/**/	const L6split = SoTlines[6].trim().split("\t");
+	const Npeasants = parseInt(L6split[1].trim().split(",").join(""));
+	const eliteName = L6split[2].trim();
+	const Nelites = parseInt(L6split[3].trim().split(",").join(""));
+	const BeffMult = parseInt(SoTlines[7].trim().split("\t")[1].trim())/100;
+	const Ngold = parseInt(SoTlines[8].trim().split("\t")[1].trim().split(",").join(""));
+/**/	const L9split = SoTlines[9].trim().split("\t");
+	const Nfood = parseInt(L9split[1].trim().split(",").join(""));
+	const Nhorses = parseInt(L9split[3].trim().split(",").join(""));
+/**/	const L10split = SoTlines[10].trim().split("\t");
+	const Nrunes = parseInt(L10split[1].trim().split(",").join(""));
+	const Nprisoners = parseInt(L10split[3].trim().split(",").join(""));
+/**/	const L11split = SoTlines[11].trim().split("\t");
+	const NTB = parseInt(L11split[1].trim().split(",").join(""));
+	const NoffPoints = parseInt(L11split[3].trim().split(",").join(""));
+/**/	const L12split = SoTlines[12].trim().split("\t");
+	const Networth = parseInt(L12split[1].trim().split(",").join(""));
+	const NdefPoints = parseInt(L12split[3].trim().split(",").join(""));
+	let parseNotes = "";
+	const extras = [];
+	let currln = 13;
+	while(currln<SoTlines.length)
+	{
+		let lncntna = SoTlines[currln].trim().split("\t");
+		const temp = lncntna[0].trim();
+		if(temp==="Number of thieves")
+		{
+			parseNotes+=" (Proper ending)";
+			break;
+		}
+		else if(temp==="")
+		{
+			extras.push(SoTlines[++currln].trim());
+			currln++;
+			continue;
+		}
+		else
+		{
+			parseNotes+=" (Unexpected end of data)";
+			break;
+		}
+	}
+	if(
+		!isNaN(Nsoldiers)&&
+		!isNaN(Noffspecs)&&
+		!isNaN(Nacres)&&
+		!isNaN(Ndefspecs)&&
+		!isNaN(Npeasants)&&
+		!isNaN(Nelites)&&
+		!isNaN(Ngold)&&
+		!isNaN(Nfood)&&
+		!isNaN(Nhorses)&&
+		!isNaN(Nrunes)&&
+		!isNaN(Nprisoners)&&
+		!isNaN(NTB)&&
+		!isNaN(NoffPoints)&&
+		!isNaN(Networth)&&
+		!isNaN(NdefPoints))
+	{
+		DSoTlog.innerText = "SoT parsed".concat(parseNotes);
+	}
+	else
+	{
+		DSoTlog.innerText = "Parsing error".concat(parseNotes);
+	}
+	SoT = {
+		"MAPreport":MAPreport,
+		"Vname":Vname,
+		"Vkd":Vkd,
+		"Umonth":Umonth,
+		"Uday":Uday,
+		"Uyear":Uyear,
+		"Vrace":Vrace,
+		"Nsoldiers":Nsoldiers,
+		"PersTitle":PersTitle,
+		"HonorTitle":HonorTitle,
+		"offspecName":offspecName,
+		"Noffspecs":Noffspecs,
+		"Nacres":Nacres,
+		"defspecName":defspecName,
+		"Ndefspecs":Ndefspecs,
+		"Npeasants":Npeasants,
+		"eliteName":eliteName,
+		"Nelites":Nelites,
+		"BeffMult":BeffMult,
+		"Ngold":Ngold,
+		"Nfood":Nfood,
+		"Nhorses":Nhorses,
+		"Nrunes":Nrunes,
+		"Nprisoners":Nprisoners,
+		"TradeBalance":NTB,
+		"NoffPoints":NoffPoints,
+		"Networth":Networth,
+		"NdefPoints":NdefPoints,
+		"Extras":extras,
+		"TimestampOfParse":Date.now()
+	};
+	if(provincePile==undefined)
+	{
+		console.log("parsed province not added to pile because pile doesn't exist");
+	}
+	else
+	{
+		provincePile[Vname] = SoT;
+	}
+}
+function viewThePile()
+{
+	//
+}
+</script>
+</head>
+<body>
+<fieldset><legend>SoT parser</legend>
+<textarea id="txtaSoT"></textarea> <input type=button value="parse SoT" onclick=parseSoT()>
+<div id="SoTlog"> </div>
+</fieldset>
+<hr>
+<input type=button value="start the pile" onclick=startThePile()> <input type=button value="load stored pile" onclick=loadThePile()> <input type=button value="store current pile" onclick=saveThePile()><br>
+<input type=button value="view current pile" onclick=viewThePile()>
+<table border=1><thead>
+<tr><th>province name</th><th>kingdom</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+</body>
+</html>

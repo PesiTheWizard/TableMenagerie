@@ -16,7 +16,7 @@ details,input
 	margin-bottom:1px;
 	margin-top:1px;
 }
-th,p
+th,td>div
 {
 	white-space: nowrap;
 }
@@ -99,7 +99,8 @@ function parseSoT()
 		SoT = undefined;
 		return;
 	}
-	const MAPreport = cutThroughBlather[1].trim();
+/**/	const preMAP = cutThroughBlather[1].trim();
+	const MAPreport = preMAP.substring(36,preMAP.length-18);
 /**/	const L1sponsp = SoTlines[1].trim().split(" ");
 	const Vkd = L1sponsp.pop();
 	L1sponsp.shift();
@@ -247,7 +248,7 @@ function viewThePile()
 			return;
 		}
 		rowholder.innerHTML = "";
-		for(let i=0;i<plist.length;i++)
+		for(let i=plist.length-1;i>=0;i--)
 		{
 			makeTableEntry(provincePile[plist[i]],rowholder);
 		}
@@ -299,7 +300,7 @@ function makeTableEntry(JO,Delem)
 	const NIc = document.createElement('td');
 	for(let i=0;i<NI.length;i++)
 	{
-		lister(NI[i],NIc,'p');
+		lister(NI[i],NIc,'div');
 	}
 	tablRw.appendChild(NIc);
 	lister(JO["Uyear"],tablRw,'td');
@@ -310,6 +311,7 @@ function makeTableEntry(JO,Delem)
 }
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
+	"use strict";
 	const gt = document.getElementById("plvr").childNodes;
 	const tl = gt.length - 2;//total length, stop if cup goes above this
 	let cup = 0;

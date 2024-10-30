@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>Text Formats</title>
+<script>
+let FBA;
+function rf(ClBt)
+{
+	"use strict";
+	const fpckr = document.getElementById("finp");
+	if(fpckr == null || fpckr.files.length < 1)
+	{return;}
+	fpckr.files[0].arrayBuffer().then((daBuf) => {
+		return new Uint8Array(daBuf);
+	}).then((UFD) => {
+		FBA = UFD;
+		ClBt.nextSibling.innerText = ` ${UFD.length} bytes read`;
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function d(ClBt)
+{
+	"use strict";
+	if(FBA)
+	{
+		const TD = new TextDecoder(ClBt.value);
+		document.getElementById("svar").innerText = TD.decode(FBA);
+	}
+}
+</script>
+<style>
+pre
+{
+	border:1px solid black;
+}
+input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
+</head>
+<body>
+<input type="file" id="finp"><br><br>
+<input type="button" value="read file" onclick=rf(this)><span></span>
+<hr>
+Decoders:<br>
+<input type=button value="utf-8" onclick=d(this)>
+<input type=button value="ibm866" onclick=d(this)>
+<input type=button value="iso-8859-2" onclick=d(this)>
+<input type=button value="iso-8859-3" onclick=d(this)>
+<input type=button value="iso-8859-4" onclick=d(this)>
+<input type=button value="iso-8859-5" onclick=d(this)>
+<input type=button value="iso-8859-6" onclick=d(this)>
+<input type=button value="iso-8859-7" onclick=d(this)>
+<input type=button value="iso-8859-8" onclick=d(this)>
+<input type=button value="iso-8859-8-i" onclick=d(this)>
+<input type=button value="iso-8859-10" onclick=d(this)>
+<input type=button value="iso-8859-13" onclick=d(this)>
+<input type=button value="iso-8859-14" onclick=d(this)>
+<input type=button value="iso-8859-15" onclick=d(this)>
+<input type=button value="iso-8859-16" onclick=d(this)>
+<input type=button value="koi8-r" onclick=d(this)>
+<input type=button value="koi8-u" onclick=d(this)>
+<input type=button value="mac" onclick=d(this)>
+<input type=button value="iso-8859-11" onclick=d(this)>
+<input type=button value="windows-1250" onclick=d(this)>
+<input type=button value="windows-1251" onclick=d(this)>
+<input type=button value="iso-8859-1" onclick=d(this)>
+<input type=button value="windows-1253" onclick=d(this)>
+<input type=button value="iso-8859-9" onclick=d(this)>
+<input type=button value="windows-1255" onclick=d(this)>
+<input type=button value="windows-1256" onclick=d(this)>
+<input type=button value="windows-1257" onclick=d(this)>
+<input type=button value="windows-1258" onclick=d(this)>
+<input type=button value="x-mac-cyrillic" onclick=d(this)>
+<input type=button value="gb_2312-80" onclick=d(this)>
+<input type=button value="gb18030" onclick=d(this)>
+<input type=button value="hz-gb-2312" onclick=d(this)>
+<input type=button value="big5-hkscs" onclick=d(this)>
+<input type=button value="euc-jp" onclick=d(this)>
+<input type=button value="iso-2022-jp" onclick=d(this)>
+<input type=button value="shift-jis" onclick=d(this)>
+<input type=button value="iso-ir-149" onclick=d(this)>
+<input type=button value="iso-2022-kr" onclick=d(this)>
+<input type=button value="utf-16be" onclick=d(this)>
+<input type=button value="utf-16le" onclick=d(this)>
+<pre id="svar"></pre>
+</body>
+</html>

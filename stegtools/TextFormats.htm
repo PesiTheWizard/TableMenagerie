@@ -3,20 +3,49 @@
 <title>Text Formats</title>
 <script>
 let FBA;
-function rf(ClBt)
+function rf()
 {
 	"use strict";
 	const fpckr = document.getElementById("finp");
+	const DlogA = document.getElementById("logA");
 	if(fpckr == null || fpckr.files.length < 1)
 	{return;}
 	fpckr.files[0].arrayBuffer().then((daBuf) => {
 		return new Uint8Array(daBuf);
 	}).then((UFD) => {
 		FBA = UFD;
-		ClBt.nextSibling.innerText = ` ${UFD.length} bytes read`;
+		if(DlogA){DlogA.innerText = `${UFD.length} byte${UFD.length===1?"":"s"} read from file`;}
 	}).catch((error) => {
 		console.log(error);
 	});
+}
+function rv()
+{
+	"use strict";
+	const vrdr = document.getElementById("tinp");
+	const DlogA = document.getElementById("logA");
+	if(vrdr == null){return;}
+	const vinp = vrdr.value.trim();
+	if(vinp.length===0)
+	{
+		if(DlogA){DlogA.innerText = "Input field empty";}
+		return;
+	}
+	const varr = vinp.split(",");
+	const carr = new Uint8Array(varr.length);
+	for(let i=0;i<varr.length;i++)
+	{
+		carr[i] = parseInt(varr[i].trim());
+	}
+	if(carr.length===1 && carr[0]===0)
+	{
+		if(DlogA){DlogA.innerText = "Nothing could be read";}
+	}
+	else
+	{
+		FBA = carr;
+		if(DlogA){DlogA.innerText = `${carr.length} byte${carr.length===1?"":"s"} read from textfield`;}
+	}
 }
 function d(ClBt)
 {
@@ -31,6 +60,7 @@ function d(ClBt)
 <style>
 pre
 {
+	padding:1px;
 	border:1px solid black;
 }
 input
@@ -41,8 +71,16 @@ input
 </style>
 </head>
 <body>
-<input type="file" id="finp"><br><br>
-<input type="button" value="read file" onclick=rf(this)><span></span>
+<table><tbody><tr>
+<td>
+<input type="file" id="finp"><br>
+<input type="button" value="read file" onclick=rf()>
+</td><td>
+<input type="text" id="tinp"><br>
+<input type="button" value="read values" onclick=rv()>
+</td>
+</tr></tbody></table>
+<span id="logA"> </span>
 <hr>
 Decoders:<br>
 <input type=button value="utf-8" onclick=d(this)>

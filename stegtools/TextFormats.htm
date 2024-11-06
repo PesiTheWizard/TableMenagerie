@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>Text Formats</title>
+<script>
+let FBA;
+function rf()
+{
+	"use strict";
+	const fpckr = document.getElementById("finp");
+	const DlogA = document.getElementById("logA");
+	if(fpckr == null || fpckr.files.length < 1)
+	{return;}
+	fpckr.files[0].arrayBuffer().then((daBuf) => {
+		return new Uint8Array(daBuf);
+	}).then((UFD) => {
+		FBA = UFD;
+		if(DlogA){DlogA.innerText = `${UFD.length} byte${UFD.length===1?"":"s"} read from file`;}
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function rv()
+{
+	"use strict";
+	const vrdr = document.getElementById("tinp");
+	const DlogA = document.getElementById("logA");
+	if(vrdr == null){return;}
+	const vinp = vrdr.value.trim();
+	if(vinp.length===0)
+	{
+		if(DlogA){DlogA.innerText = "Input field empty";}
+		return;
+	}
+	const varr = vinp.split(",");
+	const carr = new Uint8Array(varr.length);
+	for(let i=0;i<varr.length;i++)
+	{
+		carr[i] = parseInt(varr[i].trim());
+	}
+	if(carr.length===1 && carr[0]===0)
+	{
+		if(DlogA){DlogA.innerText = "Nothing could be read";}
+	}
+	else
+	{
+		FBA = carr;
+		if(DlogA){DlogA.innerText = `${carr.length} byte${carr.length===1?"":"s"} read from textfield`;}
+	}
+}
+function d(ClBt)
+{
+	"use strict";
+	if(FBA)
+	{
+		const TD = new TextDecoder(ClBt.value);
+		document.getElementById("svar").innerText = TD.decode(FBA);
+	}
+}
+</script>
+<style>
+pre
+{
+	padding:1px;
+	border:1px solid black;
+}
+input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
+</head>
+<body>
+<table><tbody><tr>
+<td>
+<input type="file" id="finp"><br>
+<input type="button" value="read file" onclick=rf()>
+</td><td>
+<input type="text" id="tinp"><br>
+<input type="button" value="read values" onclick=rv()>
+</td>
+</tr></tbody></table>
+<span id="logA"> </span>
+<hr>
+Decoders:<br>
+<input type=button value="utf-8" onclick=d(this)>
+<input type=button value="ibm866" onclick=d(this)>
+<input type=button value="iso-8859-2" onclick=d(this)>
+<input type=button value="iso-8859-3" onclick=d(this)>
+<input type=button value="iso-8859-4" onclick=d(this)>
+<input type=button value="iso-8859-5" onclick=d(this)>
+<input type=button value="iso-8859-6" onclick=d(this)>
+<input type=button value="iso-8859-7" onclick=d(this)>
+<input type=button value="iso-8859-8" onclick=d(this)>
+<input type=button value="iso-8859-8-i" onclick=d(this)>
+<input type=button value="iso-8859-10" onclick=d(this)>
+<input type=button value="iso-8859-13" onclick=d(this)>
+<input type=button value="iso-8859-14" onclick=d(this)>
+<input type=button value="iso-8859-15" onclick=d(this)>
+<input type=button value="iso-8859-16" onclick=d(this)>
+<input type=button value="koi8-r" onclick=d(this)>
+<input type=button value="koi8-u" onclick=d(this)>
+<input type=button value="mac" onclick=d(this)>
+<input type=button value="iso-8859-11" onclick=d(this)>
+<input type=button value="windows-1250" onclick=d(this)>
+<input type=button value="windows-1251" onclick=d(this)>
+<input type=button value="iso-8859-1" onclick=d(this)>
+<input type=button value="windows-1253" onclick=d(this)>
+<input type=button value="iso-8859-9" onclick=d(this)>
+<input type=button value="windows-1255" onclick=d(this)>
+<input type=button value="windows-1256" onclick=d(this)>
+<input type=button value="windows-1257" onclick=d(this)>
+<input type=button value="windows-1258" onclick=d(this)>
+<input type=button value="x-mac-cyrillic" onclick=d(this)>
+<input type=button value="gb_2312-80" onclick=d(this)>
+<input type=button value="gb18030" onclick=d(this)>
+<input type=button value="hz-gb-2312" onclick=d(this)>
+<input type=button value="big5-hkscs" onclick=d(this)>
+<input type=button value="euc-jp" onclick=d(this)>
+<input type=button value="iso-2022-jp" onclick=d(this)>
+<input type=button value="shift-jis" onclick=d(this)>
+<input type=button value="iso-ir-149" onclick=d(this)>
+<input type=button value="iso-2022-kr" onclick=d(this)>
+<input type=button value="utf-16be" onclick=d(this)>
+<input type=button value="utf-16le" onclick=d(this)>
+<pre id="svar"></pre>
+</body>
+</html>

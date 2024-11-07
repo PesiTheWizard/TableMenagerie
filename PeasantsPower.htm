@@ -1,0 +1,58 @@
+<html>
+<head>
+<title></title>
+<script>
+function peasantsPower(b,e,m)
+{
+	if(typeof(b)!="bigint" || typeof(e)!="bigint" || typeof(m)!="bigint")
+	{return undefined;}
+	if(b < (0n) || e < (0n) || m < (2n))
+	{return NaN;}
+	//
+	if(b>m){b = b%m;}
+	if(b==(0n)){return (0n);}
+	let svar = (1n);
+	while(e>(0n))
+	{
+		if((e&(1n))==(1n))//e is odd
+		{
+			svar = (svar*b)%m;
+			e = e-(1n);
+		}
+		else//e is even
+		{
+			b = (b*b)%m
+			e = e>>(1n);
+		}
+	}
+	return svar;
+}
+function calc()
+{
+	const o = document.getElementById("svar");
+	try
+	{
+		const b = BigInt(document.getElementById("b")?.value??"");
+		const e = BigInt(document.getElementById("e")?.value??"");
+		const m = BigInt(document.getElementById("m")?.value??"");
+		o.innerText = peasantsPower(b,e,m);
+	}
+	catch(e)
+	{
+		o.innerText = e.toString();
+	}
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+(<input type=text id="b">^<input type=text id="e">)%<input type=text id="m"> = <span id="svar"></span><br>
+<input type=button value="calculate" onclick=calc()>
+</body>
+</html>

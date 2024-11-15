@@ -1,0 +1,107 @@
+<html>
+<head>
+<title>Fun with Bases</title>
+<script>
+const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+function inpToString(istr,mAr)
+{
+	"use strict";
+	if(typeof(istr)!="string" || !Array.isArray(mAr))
+	{
+		throw "bad inputs";
+	}
+	let svar = "";
+	for(let i=0,p,q;i<istr.length;i++)
+	{
+		p = istr.charAt(i);
+		q = A.indexOf(p);
+		if(q>=0)
+		{
+			svar+=mAr[q];
+		}
+		else if(p==="=")
+		{
+			svar = svar.substring(0,svar.length-2);//This is what makes the octal string wrong
+		}
+		else
+		{
+			console.log(`Offbeat character "${p}" in input at index ${i}`);
+		}
+	}
+	return svar;
+}
+function Base64toUint8Array()
+{
+	const inp = document.getElementById("inptf")?.value??"";
+	const bs = inpToString(inp,SNA(2,6));
+	if(bs.length%8!=0)
+	{
+		console.log("no fit to byte");
+		return null;
+	}
+	const svar = [];
+	for(let i=0;i<bs.length;i+=8)
+	{
+		svar.push( parseInt(bs.substring(i,i+8),2) );
+	}
+	return new Uint8Array(svar);
+}
+function SNA(b,p)
+{
+	const svar = new Array(64);
+	for(let i=0;i<64;i++)
+	{
+		svar[i] = i.toString(b).padStart(p,"0");
+	}
+	return svar;
+}
+function showNumber(j)
+{
+	const Dsvar = document.getElementById("svar");
+	const inp = document.getElementById("inptf")?.value??"";
+	const bs = inpToString(inp,[SNA(2,6),SNA(8,2)][j]);//Octal is wrong if there is '=' in the Base64 string
+	if(Dsvar){Dsvar.innerText = bs;}
+	else{console.log(bs);}
+}
+function showByteArray()
+{
+	const Dsvar = document.getElementById("svar");
+	let temp = Base64toUint8Array();
+	if(temp)
+	{
+		temp = temp.toString();
+		if(Dsvar){Dsvar.innerText = temp;}
+		else{console.log(temp);}
+	}
+	else
+	{console.log("Base64toUint8Array() returned null");}
+}
+function clean()
+{
+	document.getElementById("svar").innerText = "";
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+div
+{
+	padding: 1px;
+	border: 1px solid black;
+}
+</style>
+</head>
+<body>
+<h2>Base64</h2>
+<input type=text id="inptf"><br>
+<input type=button value="Binary string" onclick=showNumber(0)>
+<input type=button value="Octal string*" onclick=showNumber(1)>
+<input type=button value="byte array" onclick=showByteArray()><br>
+<div id="svar"></div>
+<input type=button value="clear" onclick=clean()>
+<hr>
+</body>
+</html>

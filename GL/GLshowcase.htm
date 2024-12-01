@@ -1,0 +1,417 @@
+<html>
+<head>
+<title>GLSL-JavaScript test</title>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="MV.js"></script>
+<style>
+canvas
+{
+	background: #000000;
+}
+</style>
+</head>
+<body>
+<table border=1>
+<thead>
+<tr><th>Vertex shader</th><th>Fragment shader</th></tr>
+</thead>
+<tbody><tr>
+<td>
+<textarea id="vsTa" rows=32 cols=38>
+attribute vec4 vPosition;
+attribute vec4 vColor;
+varying vec4 fColor;
+varying vec3 nv;
+uniform mat4 transform;
+void main()
+{
+	vec4 sp = transform * vPosition;
+	nv = sp.xyz;
+	//nv = normalize(nv);
+	fColor = vColor;
+	//gl_Position = sp;
+	gl_Position.xyz = nv;
+	gl_Position.w = sp.w;
+}
+</textarea>
+</td><td>
+<textarea id="fsTa" rows=32 cols=61>
+precision mediump float;
+varying vec4 fColor;
+varying vec3 nv;
+uniform float DiscDist;
+uniform int switches;
+uniform sampler2D texture;
+void main()
+{
+	vec3 nzv = nv;
+	if(switches>=4)
+	{
+		gl_FragColor = texture2D(texture,nv.xy);
+	}
+	else
+	{
+		if(switches==1 || switches==3)
+		{
+			nzv = normalize(nzv);
+		}
+		if(switches==2 || switches==3)
+		{
+			gl_FragColor = fColor;
+		}
+		else
+		{
+			gl_FragColor.xyz = nzv.xyz / 2.0 + 0.5;
+			gl_FragColor.w = 1.0;
+		}
+	}
+	if(nzv.x+nzv.y+nzv.z > DiscDist){discard;}
+}
+</textarea>
+</td>
+</tr><tr>
+<td><input type=button value="compile vertex shader" onclick=compileVertexShader()><pre id="vsCI">(info goes here)</pre></td>
+<td><input type=button value="compile fragment shader" onclick=compileFragmentShader()><pre id="fsCI">(info goes here)</pre></td>
+</tr><tr>
+<td><input type=button value="attach shaders" onclick=attachShaders()></td>
+<td><input type=button value="link program" onclick=linkPrgrm()><pre id="lpCI">(info goes here)</pre></td>
+</tr><tr>
+<td><input type=button value="use program" onclick=usePrgrm()></td>
+<td><select id="selSplitCount">
+<option>0</option>
+<option>1</option>
+<option selected>2</option>
+<option>3</option>
+<option>4</option>
+</select> <input type=button value="divide points" onclick=splitThePoints()></td>
+</tr><tr>
+<td><input type=button value="all the rest" onclick=alltherest()></td>
+<td><input type=button value="render" onclick=render()></td>
+</tr></tbody></table>
+<hr>
+<canvas id="gl-canvas" width="512" height="512"></canvas><br>
+<table border=1><tbody><tr>
+<td>Discard limit:<br>
+Current:<span id="currDiscLim"></span><br>
+New:<input type=range id="dlsldr" min="0" max="1.9" step="0.05" value="1.9" onchange=showCurrentDiscLim(this) oninput=showNewDiscLim(this)><span id="newDiscLim"></span></td>
+<td>Node skip:<br>
+Current:<span id="currSkipLim"></span><br>
+New:<input type=range id="nssldr" min="0" max="15" step="1" value="0" onchange=showCurrentNodeSkip(this) oninput=showNewNodeSkip(this)><span id="newSkipLim"></span></td>
+</tr><tr>
+<td>Colors:<select id="SelClSett">
+<option>by position</option>
+<option>by position, normalized</option>
+<option selected>given</option>
+<option>given, normalized</option>
+<option>texture</option>
+</select> <input type=button value="make it so" onclick=colorSetter()><br>
+Current:<span id="scc"></span></td>
+<td>Clear buffers on render:<input type=checkbox checked oninput=buffCheck(this) id="bufferBox"></td>
+</tr></tbody></table>
+<input type=file id="finp"><br>
+<input type=button value="file to img" onclick=fileToImg()><br>
+<img id="texcarr">
+<script>
+const Dcanvas = document.getElementById("gl-canvas");
+const DvertexShader = document.getElementById("vsTa");
+const DfragmentShader = document.getElementById("fsTa");
+const DvsCI = document.getElementById("vsCI");
+const DfsCI = document.getElementById("fsCI");
+const DlpCI = document.getElementById("lpCI");
+const DsSS = document.getElementById("selSplitCount");
+const DbuffBox = document.getElementById("bufferBox");
+const DskipSlider = document.getElementById("nssldr");
+const DcurrSkipLim = document.getElementById("currSkipLim");
+const DnewSkipLim = document.getElementById("newSkipLim");
+const DdiscSlider = document.getElementById("dlsldr");
+const DcurrDiscLim = document.getElementById("currDiscLim");
+const DnewDiscLim = document.getElementById("newDiscLim");
+const DclSetter = document.getElementById("SelClSett");
+const Dscc = document.getElementById("scc");
+
+let movement=false,spinX=0,spinY=0;
+Dcanvas.onmousedown = (e) => {
+	movement = !movement;
+};
+Dcanvas.onmouseup = (e) => {
+	movement = false;
+};
+Dcanvas.onmousemove = (e) => {
+	if(movement)
+	{
+		spinX-=e.movementY;
+		spinY-=e.movementX;
+	}
+};
+
+const rawPoints = [
+	vec3(0,1,0),//1
+	vec3(1,0,0),//2
+	vec3(0,0,1),//3
+
+	vec3(0,1,0),//4
+	vec3(0,0,1),//5
+	vec3(-1,0,0),//6
+
+	vec3(0,1,0),//7
+	vec3(1,0,0),//8
+	vec3(0,0,-1),//9
+
+	vec3(0,1,0),//10
+	vec3(0,0,-1),//11
+	vec3(-1,0,0),//12
+
+	vec3(0,-1,0),//13
+	vec3(1,0,0),//14
+	vec3(0,0,1),//15
+
+	vec3(0,-1,0),//16
+	vec3(0,0,1),//17
+	vec3(-1,0,0),//18
+
+	vec3(0,-1,0),//19
+	vec3(1,0,0),//20
+	vec3(0,0,-1),//21
+
+	vec3(0,-1,0),//22
+	vec3(0,0,-1),//23
+	vec3(-1,0,0)//24
+];
+
+const rawColors = [
+	[0.0,0.0,0.0,1.0],//1
+	[1.0,0.0,0.0,1.0],//2
+	[0.0,1.0,0.0,1.0],//3
+
+	[0.0,0.0,1.0,1.0],//4
+	[1.0,1.0,0.0,1.0],//5
+	[0.0,1.0,1.0,1.0],//6
+
+	[1.0,0.0,1.0,1.0],//7
+	[1.0,1.0,1.0,1.0],//8
+	[0.0,1.0,0.0,1.0],//9
+
+	[1.0,1.0,1.0,1.0],//10
+	[1.0,0.0,0.0,1.0],//11
+	[1.0,1.0,0.0,1.0],//12
+
+	[1.0,0.0,0.0,1.0],//13
+	[0.0,1.0,0.0,1.0],//14
+	[1.0,0.0,1.0,1.0],//15
+
+	[0.0,1.0,0.0,1.0],//16
+	[0.0,0.0,1.0,1.0],//17
+	[1.0,0.0,0.0,1.0],//18
+
+	[1.0,1.0,0.0,1.0],//19
+	[0.0,0.0,0.0,1.0],//20
+	[0.0,1.0,1.0,1.0],//21
+
+	[1.0,0.0,1.0,1.0],//22
+	[0.0,1.0,0.0,1.0],//23
+	[1.0,0.0,1.0,1.0]//24
+];
+let points, colors, NumVertices;
+function splitThePoints()
+{
+	const N = DsSS?.selectedIndex??0;
+	points = [];
+	colors = [];
+	let q1,q2,q3;
+	for(let j=2;j<rawPoints.length;j+=3)
+	{
+		const A = rawPoints[j-2];
+		const B = rawPoints[j-1];
+		const C = rawPoints[j];
+		q1 = rawColors[j-2];
+		q2 = rawColors[j-1];
+		q3 = rawColors[j];
+		myf(A,B,C,N);
+	}
+	NumVertices = points.length;
+
+	function myf(a,b,c,n)
+	{
+		if(n<=0)
+		{
+			points.push(a);
+			points.push(b);
+			points.push(c);
+			colors.push(q1);
+			colors.push(q2);
+			colors.push(q3);
+		}
+		else
+		{
+			const ab = mix(a,b,0.5);
+			const ac = mix(a,c,0.5);
+			const bc = mix(b,c,0.5);
+			n--;
+			myf(a,ab,ac,n);
+			myf(ab,b,bc,n);
+			myf(ac,bc,c,n);
+			myf(ab,bc,ac,n);
+		}
+	}
+}
+
+const gl = WebGLUtils.setupWebGL(Dcanvas);
+gl.viewport(0,0,Dcanvas.width,Dcanvas.height);
+gl.clearColor(0.96,0.96,0.96,1.0);
+gl.enable(gl.DEPTH_TEST);
+const vertShdr = gl.createShader(gl.VERTEX_SHADER);
+const fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
+const program = gl.createProgram();
+function compileVertexShader()
+{
+	gl.shaderSource(vertShdr,DvertexShader.value);
+	gl.compileShader(vertShdr);
+	const S = gl.getShaderParameter(vertShdr,gl.COMPILE_STATUS);
+	DvsCI.innerText = `Vertex shader compile status: ${S}\nVertex shader log: "${gl.getShaderInfoLog(vertShdr)}"`;
+	return S;
+}
+function compileFragmentShader()
+{
+	gl.shaderSource(fragShdr,DfragmentShader.value);
+	gl.compileShader(fragShdr);
+	const S = gl.getShaderParameter(fragShdr,gl.COMPILE_STATUS);
+	DfsCI.innerText = `Fragment shader compile status: ${S}\nFragment shader log: "${gl.getShaderInfoLog(fragShdr)}"`;
+	return S;
+}
+function attachShaders()
+{
+	gl.attachShader(program,vertShdr);
+	gl.attachShader(program,fragShdr);
+}
+function linkPrgrm()
+{
+	gl.linkProgram(program);
+	const S = gl.getProgramParameter(program,gl.LINK_STATUS);
+	DlpCI.innerText = `Link status: ${S}\nProgram log: "${gl.getProgramInfoLog(program)}"`;
+	return S;
+}
+function usePrgrm()
+{
+	gl.useProgram(program);
+}
+const Dfinp = document.getElementById("finp");
+const Dtexcarr = document.getElementById("texcarr");
+const texture = gl.createTexture();
+function fileToImg()
+{
+	if(Dfinp == null)
+	{
+		console.log("DOM error in fileToImg");
+		return;
+	}
+	if(Dfinp.files.length < 1)
+	{
+		console.log("no file picked");
+		return;
+	}
+	Dfinp.files[0].arrayBuffer().then((daBuf) => {
+		return new Uint8Array(daBuf);
+	}).then((UDF) => {
+		const myBlob = new Blob([UDF]);
+		const myUrl = URL.createObjectURL(myBlob);
+		Dtexcarr.setAttribute("src",myUrl);
+	}).catch((e) => {
+		console.log(e);
+	});
+}
+
+let matrixLoc, discLoc, switchLoc, textureLoc;
+let bitClear=true, NodeSkip=0;
+function alltherest()
+{
+	const cBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER,cBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER,flatten(colors),gl.STATIC_DRAW);
+
+	const vColor = gl.getAttribLocation(program,"vColor");
+	gl.vertexAttribPointer(vColor,4,gl.FLOAT,false,0,0);
+	gl.enableVertexAttribArray(vColor);
+
+	const vBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER,vBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER,flatten(points),gl.STATIC_DRAW);
+
+	const vPosition = gl.getAttribLocation(program,"vPosition");
+	gl.vertexAttribPointer(vPosition,3,gl.FLOAT,false,0,0);
+	gl.enableVertexAttribArray(vPosition);
+
+	matrixLoc = gl.getUniformLocation(program,"transform");
+	discLoc = gl.getUniformLocation(program,"DiscDist");
+	switchLoc = gl.getUniformLocation(program,"switches");
+	textureLoc = gl.getUniformLocation(program,"texture");
+
+	//gl.uniform1i(switchLoc,2);
+
+	buffCheck(DbuffBox);
+	showCurrentDiscLim(DdiscSlider);
+	showNewDiscLim(DdiscSlider);
+	showCurrentNodeSkip(DskipSlider);
+	showNewNodeSkip(DskipSlider);
+	colorSetter();
+
+	if(Dtexcarr.src)
+	{
+		gl.bindTexture(gl.TEXTURE_2D,texture);
+		gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,Dtexcarr);
+		gl.generateMipmap(gl.TEXTURE_2D);
+	}
+	if(textureLoc){gl.uniform1i(textureLoc, 0);}
+}
+function render()
+{
+	if(bitClear)
+	{gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);}
+
+	const mv = mult(rotateX(spinX),rotateY(spinY));
+
+	gl.uniformMatrix4fv(matrixLoc,false,flatten(mv));
+
+	gl.drawArrays(gl.TRIANGLES,NodeSkip,NumVertices-NodeSkip);
+
+	requestAnimFrame(render);
+}
+function buffCheck(inp)
+{
+	if(inp){bitClear = inp.checked??true;}
+}
+function showCurrentDiscLim(Sldr)
+{
+	const f = parseFloat(Sldr?.value??1.9);
+	if(DcurrDiscLim){DcurrDiscLim.innerText = f.toFixed(2);}
+	if(discLoc){gl.uniform1f(discLoc, f);}
+}
+function showNewDiscLim(Sldr)
+{
+	const f = parseFloat(Sldr?.value??1.9);
+	if(DnewDiscLim){DnewDiscLim.innerText = f.toFixed(2);}
+}
+function showCurrentNodeSkip(Sldr)
+{
+	const n = parseInt(Sldr?.value??0);
+	if(DcurrSkipLim){DcurrSkipLim.innerText=n;}
+	NodeSkip = n;
+}
+function showNewNodeSkip(Sldr)
+{
+	const n = parseInt(Sldr?.value??0);
+	if(DnewSkipLim){DnewSkipLim.innerText=n;}
+}
+function colorSetter()
+{
+	if(DclSetter)
+	{
+		const n = (DclSetter?.selectedIndex??0)%5;
+		if(switchLoc){gl.uniform1i(switchLoc,n);}
+		if(Dscc){Dscc.innerText = DclSetter.value;}
+	}
+	else if(Dscc)
+	{Dscc.innerText = "N/A";}
+}
+</script>
+</body>
+</html>

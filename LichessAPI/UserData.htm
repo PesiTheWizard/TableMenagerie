@@ -51,7 +51,8 @@ function getUserInfo(ClBt)
 		`api/user/${txtName}`,
 		`api/user/${txtName}/rating-history`,
 		`api/user/${txtName}/activity`,
-		`api/team/of/${txtName}`
+		`api/team/of/${txtName}`,
+		`api/user/${txtName}/tournament/created?nb=1`
 	];
 	const ApiEP = `https://${txtSite}.org/${StrLitEv[nSelInd]}`;
 	DlogA.innerText = "fetching ".concat(ApiEP);
@@ -73,6 +74,8 @@ function getUserInfo(ClBt)
 		DlogA.innerText = `fetched ${ApiEP} in ${(TS2-TS1)/1000} seconds`;
 		ClBt.disabled = false;
 	}).catch((error) => {
+		DlogA.appendChild(document.createElement('br'));
+		DlogA.appendChild(document.createTextNode(`\n${error.toString()}`));
 		console.log(error);
 	});
 }
@@ -108,6 +111,7 @@ Info = <select id="selData">
 <option>rating history of a user</option>
 <option>user activity</option>
 <option>teams of a player</option>
+<option>latest tournament created by user</option>
 </select><br>
 username = <input type=text id="NameToGet"><br>
 <input type=button value="Get data" onClick=getUserInfo(this)><br>

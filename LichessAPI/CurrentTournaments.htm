@@ -15,14 +15,16 @@ function GetPublicTournaments(ClBt)
 		console.log("getElementById fail");
 		return;
 	}
+	const NA = "N/A";
 	OGresp.innerText = "Fetching tournament data...";
 	svr.innerText = "Waiting for response...";
+	const TS1 = Date.now();
 	fetch("https://lichess.org/api/tournament").then((response) => {
-		OGresp.innerText = "Response code = "+response.status;
+		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.json();
 	}).then((response) => {
-		svr.innerText = "JSON response received";
+		const TS = Date.now();
 		const rcats = Object.keys(response);
 		for(let i=0;i<rcats.length;i++)
 		{
@@ -36,25 +38,39 @@ function GetPublicTournaments(ClBt)
 				lister(CT["createdBy"]??"",tabRw,'td');
 				lister(CT["system"]??"",tabRw,'td');
 				lister(CT["minutes"]??"",tabRw,'td');
-				lister(CT["clock"]?(CT["clock"]["limit"]??""):"N/A",tabRw,'td');
-				lister(CT["clock"]?(CT["clock"]["increment"]??""):"N/A",tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["limit"]??""):NA,tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["increment"]??""):NA,tabRw,'td');
 				lister(CT["rated"]??"",tabRw,'td');
 				lister(CT["fullName"]??"",tabRw,'td');
 				lister(CT["nbPlayers"]??"",tabRw,'td');
-				lister(CT["variant"]?(CT["variant"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["variant"]?(CT["variant"]["name"]??""):NA,tabRw,'td');
 				lister(CT["startsAt"]??"",tabRw,'td');
+				lister(CT["startsAt"]?(new Date(CT["startsAt"]).toLocaleDateString()):"",tabRw,'td');
+				lister(CT["startsAt"]?(new Date(CT["startsAt"]).toLocaleTimeString()):"",tabRw,'td');
 				lister(CT["finishesAt"]??"",tabRw,'td');
+				lister(CT["finishesAt"]?(new Date(CT["finishesAt"]).toLocaleDateString()):"",tabRw,'td');
+				lister(CT["finishesAt"]?(new Date(CT["finishesAt"]).toLocaleTimeString()):"",tabRw,'td');
 				lister(CT["status"]??"",tabRw,'td');
-				lister(CT["perf"]?(CT["perf"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["name"]??""):NA,tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["position"]??""):NA,tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["icon"]??""):NA,tabRw,'td');
 				lister(CT["secondsToStart"]??"",tabRw,'td');
 				lister(CT["hasMaxRating"]??"",tabRw,'td');
+				lister(CT["maxRating"]?.["rating"]??"",tabRw,'td');
+				lister(CT["minRatedGames"]?"yes":"no",tabRw,'td');
 				lister(CT["minRatedGames"]?.["nb"]??"",tabRw,'td');
 				lister(CT["position"]?"yes":"no",tabRw,'td');
-				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):"N/A",tabRw,'td');
+				lister(CT["position"]?.["eco"]??"",tabRw,'td');
+				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):NA,tabRw,'td');
+				lister(CT["schedule"]?(CT["schedule"]["speed"]??""):NA,tabRw,'td');
 				lister(CT["winner"]?.["id"]??"",tabRw,'td');
+				lister(CT["winner"]?.["title"]??"",tabRw,'td');
 				TB.appendChild(tabRw);
 			}
 		}
+		return TS;
+	}).then((TS2) => {
+		svr.innerText = "JSON response received in ".concat((TS2-TS1)/1000," seconds");
 	}).catch((error) => {
 		console.log(error);
 	});
@@ -113,7 +129,32 @@ span
 <ul id="hdrs"></ul>
 <div id="svar"></div>
 <table border=1>
-<thead><tr>
+<thead><tr><th colspan=5></th><th colspan=2>clock</th><th colspan=3></th><th>variant</th>
+<th colspan=3>startsAt</th><th colspan=3>finishesAt</th><th></th><th colspan=3>perf</th>
+<th></th><th colspan=2>maxRating</th><th colspan=2>minRatedGames</th>
+<th colspan=2>position</th><th colspan=2>schedule</th><th colspan=2>winner</th>
+</tr><tr>
+<th>Group</th><th>id</th><th>createdBy</th>
+<th>system</th><th>minutes</th>
+<th>lim</th><th>incr</th>
+<th>rated</th>
+<th>fullName</th>
+<th>nbPlayers</th>
+<th>name</th>
+<th>(timestamp)</th><th>(Date)</th><th>(Time)</th>
+<th>(timestamp)</th><th>(Date)</th><th>(Time)</th>
+<th>status</th>
+<th>name</th>
+<th>pos</th>
+<th>icon</th>
+<th>secondsToStart</th>
+<th>has</th><th>rating</th>
+<th>?</th><th>nb</th>
+<th>?</th><th>eco</th>
+<th>freq</th><th>speed</th>
+<th>id</th>
+<th>title</th>
+</tr><tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
 <th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
@@ -135,28 +176,17 @@ span
 <th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
 <th><span onClick=a(19,true)>&#9650;</span> <span onClick=a(19,false)>&#9660;</span></th>
 <th><span onClick=a(20,true)>&#9650;</span> <span onClick=a(20,false)>&#9660;</span></th>
-</tr><tr>
-<th>Group</th>
-<th>id</th>
-<th>createdBy</th>
-<th>system</th>
-<th>minutes</th>
-<th>clk/lim</th>
-<th>clk/inc</th>
-<th>rated</th>
-<th>fullName</th>
-<th>nbPlayers</th>
-<th>variant/name</th>
-<th>startsAt</th>
-<th>finishesAt</th>
-<th>status</th>
-<th>perf/name</th>
-<th>secondsToStart</th>
-<th>hasMaxRating</th>
-<th>minRatedGames/nb</th>
-<th>position?</th>
-<th>schedule/freq</th>
-<th>winner/id</th>
+<th><span onClick=a(21,true)>&#9650;</span> <span onClick=a(21,false)>&#9660;</span></th>
+<th><span onClick=a(22,true)>&#9650;</span> <span onClick=a(22,false)>&#9660;</span></th>
+<th><span onClick=a(23,true)>&#9650;</span> <span onClick=a(23,false)>&#9660;</span></th>
+<th><span onClick=a(24,true)>&#9650;</span> <span onClick=a(24,false)>&#9660;</span></th>
+<th><span onClick=a(25,true)>&#9650;</span> <span onClick=a(25,false)>&#9660;</span></th>
+<th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
+<th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
+<th><span onClick=a(28,true)>&#9650;</span> <span onClick=a(28,false)>&#9660;</span></th>
+<th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
+<th><span onClick=a(30,true)>&#9650;</span> <span onClick=a(30,false)>&#9660;</span></th>
+<th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

@@ -10,16 +10,19 @@ function GetPublicTournaments(ClBt)
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
 	const TB = document.getElementById("st");
-	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null) )
+	const DchkAL = document.getElementById("chkAL");
+	const DtxtAL = document.getElementById("txtAL");
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null) )
 	{
 		console.log("getElementById fail");
 		return;
 	}
 	const NA = "N/A";
+	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim()}}:{};
 	OGresp.innerText = "Fetching tournament data...";
 	svr.innerText = "Waiting for response...";
 	const TS1 = Date.now();
-	fetch("https://lichess.org/api/tournament").then((response) => {
+	fetch("https://lichess.org/api/tournament",hAL).then((response) => {
 		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.json();
@@ -112,7 +115,12 @@ function a(ctsb, lth)
 }
 </script>
 <style>
-td, th
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+td,th
 {
 	white-space: nowrap;
 }
@@ -123,6 +131,7 @@ span
 </style>
 </head>
 <body>
+<input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
 <input type=button value="Get public tournaments" onClick=GetPublicTournaments(this)>
 <hr>
 <div id="stts"></div>

@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>User Data - Lichess API
+</title>
+<script>
+function rb(r,k,hn)
+{
+	const los = k.length;
+	for(let i=0;i<los;i++)
+	{
+		resp(k[i],r[k[i]],hn);
+	}
+}
+function resp(f,s,a)
+{
+	const ft = document.createElement('dt');
+	const st = document.createElement('dd');
+	const fti = document.createTextNode(f);
+	let sti;
+	if((s !== null) && (typeof(s)=="object"))
+	{
+		sti = document.createElement('dl');
+		rb(s,Object.keys(s),sti);
+	}
+	else//assumed either string or null
+	{
+		sti = document.createTextNode(s??"ø");
+	}
+	ft.appendChild(fti);
+	st.appendChild(sti);
+	a.appendChild(ft);
+	a.appendChild(st);
+}
+function getUserInfo(ClBt)
+{
+	ClBt.disabled = true;
+	const txtSite = document.getElementById("selSite").value;
+	const nSelInd = document.getElementById("selData").selectedIndex;
+	const txtName = document.getElementById("NameToGet").value.trim();
+	const DlogA = document.getElementById("logA");
+	const Dstts = document.getElementById("InfoSTTS");
+	const Dhdrs = document.getElementById("InfoHDRS");
+	const Dsvar = document.getElementById("svar");
+	if((typeof(txtName) != "string") || (txtName.length===0))
+	{
+		DlogA.innerText = "username needed";
+		ClBt.disabled = false;
+		return;
+	}
+	const StrLitEv = [
+		`api/user/${txtName}`,
+		`api/user/${txtName}/rating-history`,
+		`api/user/${txtName}/activity`,
+		`api/team/of/${txtName}`,
+		`api/user/${txtName}/tournament/created?nb=1`
+	];
+	const ApiEP = `https://${txtSite}.org/${StrLitEv[nSelInd]}`;
+	DlogA.innerText = "fetching ".concat(ApiEP);
+	Dstts.innerText = "awaiting response...";
+	Dhdrs.innerHTML = "";
+	const TS1 = Date.now();
+	fetch(ApiEP).then((response) => {
+		Dstts.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,Dhdrs,'li');}
+		return response.json();
+	}).then((response) => {
+		const TS = Date.now();
+		console.log(response);
+		const keylist = Object.keys(response);
+		Dsvar.innerHTML = "";
+		rb(response,keylist,Dsvar);
+		return TS;
+	}).then((TS2) => {
+		DlogA.innerText = `fetched ${ApiEP} in ${(TS2-TS1)/1000} seconds`;
+		ClBt.disabled = false;
+	}).catch((error) => {
+		DlogA.appendChild(document.createElement('br'));
+		DlogA.appendChild(document.createTextNode(`\n${error.toString()}`));
+		console.log(error);
+	});
+}
+function lister(listedText, PN, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	PN.appendChild(listEntry);
+}
+</script>
+<style>
+dl
+{
+	border-left: 1px dotted;
+}
+select,input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
+</head>
+<body>
+Site = <select id="selSite">
+<option value="lichess" selected>lichess</option>
+<option value="lishogi">lishogi</option>
+<option value="lidraughts">lidraughts</option>
+<option value="playstrategy">playstrategy</option>
+</select><br>
+Info = <select id="selData">
+<option selected>user public data</option>
+<option>rating history of a user</option>
+<option>user activity</option>
+<option>teams of a player</option>
+<option>latest tournament created by user</option>
+</select><br>
+username = <input type=text id="NameToGet"><br>
+<input type=button value="Get data" onClick=getUserInfo(this)><br>
+<span id="logA">Log space</span>
+<hr>
+<div id="InfoSTTS"></div>
+<ul id="InfoHDRS"></ul>
+<dl id="svar"></dl>
+</body>
+</html>

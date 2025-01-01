@@ -15,14 +15,16 @@ function GetPublicTournaments(ClBt)
 		console.log("getElementById fail");
 		return;
 	}
+	const NA = "N/A";
 	OGresp.innerText = "Fetching tournament data...";
 	svr.innerText = "Waiting for response...";
+	const TS1 = Date.now();
 	fetch("https://playstrategy.org/api/tournament").then((response) => {
-		OGresp.innerText = "Response code = "+response.status;
+		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.json();
 	}).then((response) => {
-		svr.innerText = "JSON response received";
+		const TS = Date.now();
 		const rcats = Object.keys(response);
 		for(let i=0;i<rcats.length;i++)
 		{
@@ -36,24 +38,27 @@ function GetPublicTournaments(ClBt)
 				lister(CT["createdBy"]??"",tabRw,'td');
 				lister(CT["system"]??"",tabRw,'td');
 				lister(CT["minutes"]??"",tabRw,'td');
-				lister(CT["clock"]?(CT["clock"]["limit"]??""):"N/A",tabRw,'td');
-				lister(CT["clock"]?(CT["clock"]["delay"]??""):"N/A",tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["limit"]??""):NA,tabRw,'td');
+				lister(CT["clock"]?(CT["clock"]["delay"]??""):NA,tabRw,'td');
 				lister(CT["rated"]??"",tabRw,'td');
 				lister(CT["fullName"]??"",tabRw,'td');
 				lister(CT["nbPlayers"]??"",tabRw,'td');
-				lister(CT["variant"]?(CT["variant"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["variant"]?(CT["variant"]["name"]??""):NA,tabRw,'td');
 				lister(CT["startsAt"]??"",tabRw,'td');
 				lister(CT["finishesAt"]??"",tabRw,'td');
 				lister(CT["status"]??"",tabRw,'td');
-				lister(CT["perf"]?(CT["perf"]["name"]??""):"N/A",tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["name"]??""):NA,tabRw,'td');
 				lister(CT["isMedley"]??"",tabRw,'td');
 				lister(CT["handicapped"]??"",tabRw,'td');
 				lister(CT["secondsToStart"]??"",tabRw,'td');
-				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):"N/A",tabRw,'td');
+				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):NA,tabRw,'td');
 				lister(CT["winner"]?.["id"]??"",tabRw,'td');
 				TB.appendChild(tabRw);
 			}
 		}
+		return TS;
+	}).then((TS2) => {
+		svr.innerText = "JSON response received in ".concat((TS2-TS1)/1000," seconds");
 	}).catch((error) => {
 		console.log(error);
 	});

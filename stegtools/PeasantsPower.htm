@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>Peasant's Power</title>
+<script>
+function peasantsPower(b,e,m)
+{
+	if(typeof(b)!="bigint" || typeof(e)!="bigint" || typeof(m)!="bigint")
+	{return undefined;}
+	if(b < (0n) || e < (0n) || m < (2n))
+	{return NaN;}
+	//
+	if(b>m){b = b%m;}
+	if(b==(0n)){return (0n);}
+	let svar = (1n);
+	while(e>(0n))
+	{
+		if((e&(1n))==(1n))//e is odd
+		{
+			svar = (svar*b)%m;
+			e = e-(1n);
+		}
+		else//e is even
+		{
+			b = (b*b)%m
+			e = e>>(1n);
+		}
+	}
+	return svar;
+}
+function calc()
+{
+	let res;
+	const DlogA = document.getElementById("logA");
+	try
+	{
+		const b = BigInt(document.getElementById("b")?.value??"");
+		const e = BigInt(document.getElementById("e")?.value??"");
+		const m = BigInt(document.getElementById("m")?.value??"");
+		res = peasantsPower(b,e,m);
+	}
+	catch(e)
+	{
+		if(DlogA){DlogA.innerText = e.toString();}
+		else{console.log(e);}
+		return;
+	}
+	if(DlogA){DlogA.innerText = "";}
+	document.getElementById("b10").innerText = res;
+	document.getElementById("b16").innerText = res.toString(16);
+	document.getElementById("b2").innerText = res.toString(2);
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+(<input type=text id="b">^<input type=text id="e">)%<input type=text id="m"><br>
+<input type=button value="calculate" onclick=calc()> <span id="logA"></span><br>
+<table border=1><tbody>
+<tr><th>decimal</th><td id="b10"></td></tr>
+<tr><th>hexadecimal</th><td id="b16"></td></tr>
+<tr><th>binary</th><td id="b2"></td></tr>
+</tbody></table>
+</body>
+</html>

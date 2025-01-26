@@ -21,15 +21,31 @@ function something()
 		document.getElementById("f11"),
 		document.getElementById("f12"),
 		document.getElementById("f13"),
+		document.getElementById("f14"),
+		document.getElementById("f15")
 	];
 	f[0].textContent = inp;
 	f[1].textContent = inp.split("").reverse().join("");
 	f[2].textContent = escape(inp);
 	f[3].textContent = unescape(inp);
 	f[4].textContent = encodeURI(inp);
-	f[5].textContent = decodeURI(inp);
+	try
+	{
+		f[5].textContent = decodeURI(inp);
+	}
+	catch(e)
+	{
+		f[5].textContent = e.toString();
+	}
 	f[6].textContent = encodeURIComponent(inp);
-	f[7].textContent = decodeURIComponent(inp);
+	try
+	{
+		f[7].textContent = decodeURIComponent(inp);
+	}
+	catch(e)
+	{
+		f[7].textContent = e.toString();
+	}
 	try
 	{
 		f[8].textContent = atob(inp);
@@ -58,6 +74,8 @@ function something()
 		f[12].textContent = tt1.toString();
 		f[13].textContent = tt2.toString();
 	}
+	f[14].textContent = inp.toLowerCase();
+	f[15].textContent = inp.toUpperCase();
 }
 </script>
 <style>
@@ -86,6 +104,8 @@ input
 <tr><th>parseFloat</th><td id="f11"></td></tr>
 <tr><th>charCodes</th><td id="f12"></td></tr>
 <tr><th>codePoints</th><td id="f13"></td></tr>
+<tr><th>toLowerCase</th><td id="f14"></td></tr>
+<tr><th>toUpperCase</th><td id="f15"></td></tr>
 </tbody></table>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>
+<title>BMP reader
 </title>
 <script>
 //let UFD;
@@ -43,6 +43,7 @@ function p1(ClBt)
 	const strSuccess = " ✅";
 	const strFail = " ❌";
 	const strWarn = " ⚠️";
+	const strInfo = " ℹ️";
 	const strCrash = " 💀";
 	let pt = 0;//reading pointer
 	logA.appendChild(document.createTextNode("reading file data...\n"));
@@ -76,7 +77,11 @@ function p1(ClBt)
 		const ddg = fOffset-fDIBheaderSize-14;
 		if(ddg>0)
 		{
-			pointTheNth(reprt,"(".concat(ddg," byte gap between DIB header and image data)",strWarn));
+			pointTheNth(reprt,"(".concat(ddg," byte gap between DIB header and image data)",strInfo));
+			if((ddg&3)!=0)
+			{pointTheNth(reprt,"(Not 4N bytes; suspicious)".concat(strWarn));}
+			else
+			{pointTheNth(reprt,`(expect ${ddg>>>2} colors in palette)`);}
 		}
 		else if(ddg<0)
 		{
@@ -143,12 +148,14 @@ function p1(ClBt)
 			return;
 		}
 		const fComprMethod = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
-		pointTheNth(reprt,DHs[4].concat(fComprMethod));
+		const fComprMethodID = ["BI_RGB","BI_RLE8","BI_RLE4","BI_BITFIELDS","BI_JPEG","BI_PNG","BI_ALPHABITFIELDS",,,,,"BI_CMYK","BI_CMYKRLE8","BI_CMYKRLE4"][fComprMethod];
+		pointTheNth(reprt,DHs[4].concat(fComprMethod," (",fComprMethodID,")"));
 		const fImageSize = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
 		pointTheNth(reprt,DHs[5].concat(fImageSize));
 
 		bStopEarly = false;
 		const gap2 = UFD.length-fOffset-fImageSize;
+		let DoTheColorThing = false;
 		if(gap2<0)
 		{
 			logA.appendChild(document.createTextNode("Bitmap size claim from offset larger than rest of file.\n"));
@@ -162,6 +169,7 @@ function p1(ClBt)
 		else if(gap2==0)
 		{
 			pointTheNth(reprt,"(Snug fit to EOF)".concat(strSuccess));
+			DoTheColorThing = true;
 		}
 		else
 		{
@@ -196,7 +204,7 @@ function p1(ClBt)
 			const palBytes = (fPaletteSize<<2)-ddg;
 			if(palBytes===0)
 			{
-				pointTheNth(reprt,"(palette fills gap, ignore line 6 warning above)".concat(strSuccess));
+				pointTheNth(reprt,"(palette fills gap)".concat(strSuccess));
 			}
 			else if(palBytes > 0)
 			{
@@ -259,8 +267,8 @@ function p1(ClBt)
 			const tlim = (fDIBheaderSize>>>2)-10;
 			for(let i=0;i<tlim;i++)
 			{
-				const antem = UFD[pt++] | (UFD[pt++]<<8) | (UFD[pt++]<<16) | (UFD[pt++]<<24);
-				pointTheNth(reprt,AHs[i].concat(antem));
+				const antem = BigInt(UFD[pt++]) | (BigInt(UFD[pt++])<<(8n)) | (BigInt(UFD[pt++])<<(16n)) | (BigInt(UFD[pt++])<<(24n));
+				pointTheNth(reprt,AHs[i].concat(antem," (",antem.toString(2).padStart(fBPP,"0"),")"));
 			}
 		}
 		if(bStopEarly)
@@ -275,8 +283,127 @@ function p1(ClBt)
 		const imgtest = new Image();
 		imgtest.src = urltest;
 		dd.appendChild(imgtest);
-		//console.log(urltest);
+		//----
+		if(!((fBPP%8)===0&&fPaletteSize===0&&DoTheColorThing&&(calcdLineFiller%8)===0))
+		{
+			ClBt.disabled = false;
+			return;
+		}
+		//Should be good to go for making copies
+		const fillerBytes = calcdLineFiller>>>3;
+		const pixelBytes = fBPP>>>3;
+		const L = new Uint8Array([0,-1]);
 
+		const Invertedcopy = new Uint8Array(UFD);
+		const Bit1copy = new Uint8Array(UFD);
+		const Bit2copy = new Uint8Array(UFD);
+		const Bit3copy = new Uint8Array(UFD);
+		const Bit4copy = new Uint8Array(UFD);
+		const Bit5copy = new Uint8Array(UFD);
+		const Bit6copy = new Uint8Array(UFD);
+		const Bit7copy = new Uint8Array(UFD);
+		const Bit8copy = new Uint8Array(UFD);
+		const Flip2copy = new Uint8Array(UFD);
+		const Flip3copy = new Uint8Array(UFD);
+		const Flip4copy = new Uint8Array(UFD);
+		const Flip5copy = new Uint8Array(UFD);
+		const Flip6copy = new Uint8Array(UFD);
+		const Flip7copy = new Uint8Array(UFD);
+		const Flip8copy = new Uint8Array(UFD);
+		const Top2bitscopy = new Uint8Array(UFD);
+	//Starts requiring pixelBytes >= 2
+		const Dim1copy = new Uint8Array(UFD);
+		const Dim2copy = new Uint8Array(UFD);
+		const Dim3copy = new Uint8Array(UFD);
+		const Copy0to1copy = new Uint8Array(UFD);
+		const Copy1to0copy = new Uint8Array(UFD);
+		const Copy2to0copy = new Uint8Array(UFD);
+		const Copy0to2copy = new Uint8Array(UFD);
+		const Copy1to2copy = new Uint8Array(UFD);
+		const Copy2to1copy = new Uint8Array(UFD);
+		const Inv0copy = new Uint8Array(UFD);
+		const Inv1copy = new Uint8Array(UFD);
+		const Inv2copy = new Uint8Array(UFD);
+		const arrayOfCopies = [Invertedcopy,Bit1copy,Bit2copy,Bit3copy,Bit4copy,Bit5copy,Bit6copy,Bit7copy,Bit8copy,Flip2copy,Flip3copy,Flip4copy,Flip5copy,Flip6copy,Flip7copy,Flip8copy,Top2bitscopy];
+		if(pixelBytes>=2)
+		{
+			arrayOfCopies.push(Dim1copy,Dim2copy);
+			if(pixelBytes>=3){arrayOfCopies.push(Dim3copy);}
+			arrayOfCopies.push(Copy0to1copy,Copy1to0copy);
+			if(pixelBytes>=3){arrayOfCopies.push(Copy2to0copy,Copy0to2copy,Copy1to2copy,Copy2to1copy);}
+			arrayOfCopies.push(Inv0copy,Inv1copy);
+			if(pixelBytes>=3){arrayOfCopies.push(Inv2copy);}
+		}
+
+		let fcpt = fOffset;
+		for(let i=0;i<fHeight;i++)
+		{
+			for(let j=0;j<fWidth;j++)
+			{
+				for(let k=0;k<pixelBytes;k++)
+				{
+					Invertedcopy[fcpt] = ~Invertedcopy[fcpt];
+					Bit1copy[fcpt] = L[Bit1copy[fcpt]&1];
+					Bit2copy[fcpt] = L[(Bit2copy[fcpt]>>1)&1];
+					Bit3copy[fcpt] = L[(Bit3copy[fcpt]>>2)&1];
+					Bit4copy[fcpt] = L[(Bit4copy[fcpt]>>3)&1];
+					Bit5copy[fcpt] = L[(Bit5copy[fcpt]>>4)&1];
+					Bit6copy[fcpt] = L[(Bit6copy[fcpt]>>5)&1];
+					Bit7copy[fcpt] = L[(Bit7copy[fcpt]>>6)&1];
+					Bit8copy[fcpt] = L[(Bit8copy[fcpt]>>7)&1];
+					Flip2copy[fcpt] = L[((Flip2copy[fcpt]>>1)&1)^(Flip2copy[fcpt]&1)];
+					Flip3copy[fcpt] = L[((Flip3copy[fcpt]>>2)&1)^((Flip3copy[fcpt]>>1)&1)^(Flip3copy[fcpt]&1)];
+					Flip4copy[fcpt] = L[((Flip4copy[fcpt]>>3)&1)^((Flip4copy[fcpt]>>2)&1)^((Flip4copy[fcpt]>>1)&1)^(Flip4copy[fcpt]&1)];
+					Flip5copy[fcpt] = L[((Flip5copy[fcpt]>>4)&1)^((Flip5copy[fcpt]>>3)&1)^((Flip5copy[fcpt]>>2)&1)^((Flip5copy[fcpt]>>1)&1)^(Flip5copy[fcpt]&1)];
+					Flip6copy[fcpt] = L[((Flip6copy[fcpt]>>5)&1)^((Flip6copy[fcpt]>>4)&1)^((Flip6copy[fcpt]>>3)&1)^((Flip6copy[fcpt]>>2)&1)^((Flip6copy[fcpt]>>1)&1)^(Flip6copy[fcpt]&1)];
+					Flip7copy[fcpt] = L[((Flip7copy[fcpt]>>6)&1)^((Flip7copy[fcpt]>>5)&1)^((Flip7copy[fcpt]>>4)&1)^((Flip7copy[fcpt]>>3)&1)^((Flip7copy[fcpt]>>2)&1)^((Flip7copy[fcpt]>>1)&1)^(Flip7copy[fcpt]&1)];
+					Flip8copy[fcpt] = L[((Flip8copy[fcpt]>>7)&1)^((Flip8copy[fcpt]>>6)&1)^((Flip8copy[fcpt]>>5)&1)^((Flip8copy[fcpt]>>4)&1)^((Flip8copy[fcpt]>>3)&1)^((Flip8copy[fcpt]>>2)&1)^((Flip8copy[fcpt]>>1)&1)^(Flip8copy[fcpt]&1)];
+					Top2bitscopy[fcpt] = Top2bitscopy[fcpt]&192;
+					if(k===0)
+					{
+						if(pixelBytes >= 2)
+						{
+							Dim1copy[fcpt]=0;
+							Copy1to0copy[fcpt] = Copy1to0copy[fcpt+1];
+							Inv0copy[fcpt] = ~Inv0copy[fcpt];
+						}
+						if(pixelBytes >= 3)
+						{
+							Copy2to0copy[fcpt] = Copy2to0copy[fcpt+2]
+						}
+					}
+					else if(k===1)//We know there's a 0
+					{
+						Dim2copy[fcpt]=0;
+						Copy0to1copy[fcpt] = Copy0to1copy[fcpt-1];
+						Inv1copy[fcpt] = ~Inv1copy[fcpt];
+						if(pixelBytes >= 3)
+						{
+							Copy2to1copy[fcpt] = Copy2to1copy[fcpt+1];
+						}
+					}
+					else if(k===2)//We know there's a 1 and 0
+					{
+						Dim3copy[fcpt]=0;
+						Inv2copy[fcpt] = ~Inv2copy[fcpt];
+						Copy0to2copy[fcpt] = Copy0to2copy[fcpt-2];
+						Copy1to2copy[fcpt] = Copy1to2copy[fcpt-1];
+					}
+					fcpt++;
+				}
+			}
+			fcpt+=fillerBytes;
+		}
+
+		for(let i=0;i<arrayOfCopies.length;i++)
+		{
+			dd.appendChild(document.createTextNode(" "));
+			const Fblob = new Blob([arrayOfCopies[i]],{type:"image/bmp"});
+			const Furl = URL.createObjectURL(Fblob);
+			const Fimg = new Image();
+			Fimg.src = Furl;
+			dd.appendChild(Fimg);
+		}
 		ClBt.disabled = false;
 	}).catch((error) => {
 		console.log(error);

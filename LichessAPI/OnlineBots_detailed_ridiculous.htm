@@ -182,6 +182,16 @@ function a(ctsb, lth)
 		sn = gt[cup+1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
+
+        // Check if the values are numbers
+        const num1 = parseFloat(s1);
+        const num2 = parseFloat(s2);
+        if (!isNaN(num1) && !isNaN(num2)) {
+            // If both are numbers, compare them as numbers
+            s1 = num1;
+            s2 = num2;
+        }
+
 		if(s1 == s2)
 		{
 			cup++;

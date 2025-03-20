@@ -38,15 +38,8 @@ function UIEH(ClBt)
 	const inpN = document.getElementById("txtBigNumber").value.trim();
 	const inpS = parseInt(document.getElementById("txtSteps").value.trim());
 	const Dsvar = document.getElementById("svar");
-	if(isNaN(inpS) || inpS<=0)
+	if(sanityChecker([inpS],inpN,["Steps"],Dsvar))
 	{
-		Dsvar.innerText = "Steps not a number or <= 0";
-		ClBt.disabled = false;
-		return;
-	}
-	if(inpN.length===0)
-	{
-		Dsvar.innerText = "Number field empty";
 		ClBt.disabled = false;
 		return;
 	}
@@ -169,6 +162,99 @@ function Fcheck()
 	const pB = (BIA+BIB)>>(1n);
 	Dsvar2.innerText = "Number A:\n".concat(BIA,"\nNumber B:\n",BIB,"\nProduct:\n",Mu,"\nFermat step:\n",(pB-pA));
 }
+function MultMethod(ClBt)
+{
+	ClBt.disabled = true;
+	const MinpN = document.getElementById("txtMN").value.trim();
+	const MSPS = parseInt(document.getElementById("txtMSPS").value.trim());
+	const MS = parseInt(document.getElementById("txtMS").value.trim());
+	const Dsvar3 = document.getElementById("svar3");
+	if(sanityChecker([MSPS,MS],MinpN,["Steps","Stops"],Dsvar3))
+	{
+		ClBt.disabled = false;
+		return;
+	}
+	let MMN = null;
+	try
+	{
+		MMN = BigInt(MinpN);
+	}
+	catch(e)
+	{
+		console.log(e);
+		Dsvar3.innerText = "Error. See console";
+		ClBt.disabled = false;
+		return;
+	}
+	Dsvar3.innerText = "Number:\n".concat(MMN);
+	if(MMN<=(0n))
+	{
+		Dsvar3.appendChild(document.createTextNode("\nNo emptyness or negativity allowed"));
+		ClBt.disabled = false;
+		return;
+	}
+	if((MMN%(2n))===(0n))
+	{
+		Dsvar3.appendChild(document.createTextNode("\nEven numbers won\'t work here."));
+		ClBt.disabled = false;
+		return;
+	}
+	Dsvar3.appendChild(document.createTextNode("\nSteps:"+MSPS));
+	Dsvar3.appendChild(document.createTextNode("\nStops:"+MS+"\n"));
+	const addedEachStep = MMN << (1n);
+	let multDisplay = -1;
+	MMN-=addedEachStep;//so that first step will start off right
+	for(let i=0;i<MS;i++)
+	{
+		multDisplay+=2;//In first iteration, this becomes 1
+		MMN+=addedEachStep;//In first iteration, this becomes the original
+		//check for initial square
+		let R = NewtonRoot(MMN);
+		const D = R*R;
+		if(D==MMN)
+		{
+			Dsvar3.appendChild(document.createTextNode(`\nMultiplier:${multDisplay}\nIt's a square!\nRoot:${R}\n(i:${i})`));
+			ClBt.disabled = false;
+			return;
+		}
+		//since it wasn't equal, a minimum of 1 step is needed
+		let RunningDifference = D-MMN;//starts off negative, becomes positive during first iteration of inner loop
+		//D is not used after this point
+		for(let j=0;j<MSPS;j++)
+		{
+			RunningDifference += (R<<(1n))+(1n);
+			R = R+(1n);
+			const diffRoot = NewtonRoot(RunningDifference);
+			if(diffRoot*diffRoot == RunningDifference)
+			{
+				Dsvar3.appendChild(document.createTextNode(`--Answer found--\nMultiplier:${multDisplay}\nStep:${j+1}\nFactors are:\n${R+diffRoot}\nand\n${R-diffRoot}\nB:\n${diffRoot}`));
+				ClBt.disabled = false;
+				return;
+			}
+		}
+	}
+	Dsvar3.appendChild(document.createTextNode(`\n-Factors not found in ${MS} stop(s)-\nLast multiplier: ${multDisplay}`));
+	ClBt.disabled = false;
+}
+function sanityChecker(A,S,E,D)//returns true if something wrong
+{
+	console.assert(Array.isArray(A) && A.length>0,"A must be non-empty number array");
+	console.assert(Array.isArray(E) && E.length>=A.length,"E must be string-array as long as A");
+	for(let i=0;i<A.length;i++)
+	{
+		if(isNaN(A[i]) || A[i]<=0)
+		{
+			D.innerText = `${E[i]} not a number or <= 0`;
+			return true;
+		}
+	}
+	if(S.length===0)
+	{
+		D.innerText = "Number field empty";
+		return true;
+	}
+	return false;
+}
 </script>
 <style>
 input
@@ -191,5 +277,12 @@ Number A = <input type=text size=110 id="txtCA"><br>
 Number B = <input type=text size=110 id="txtCB"><br>
 <input type="button" value="Fermat check" onclick=Fcheck()><br>
 <pre id="svar2"></pre>
+<hr>
+<h3>Multiplier method</h3>
+Number = <input type=text size=110 id="txtMN"><br>
+Steps per stop = <input type=text value="20" id="txtMSPS"><br>
+stops = <input type=text value="129" id="txtMS"><br>
+<input type=button value="check" onclick=MultMethod(this)><br>
+<pre id="svar3"></pre>
 </body>
 </html>

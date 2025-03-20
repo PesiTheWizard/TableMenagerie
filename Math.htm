@@ -1,0 +1,70 @@
+<html>
+<head>
+<title></title>
+<script>
+function GCD(A,B)
+{
+	console.assert(typeof(A)=="bigint" && typeof(B)=="bigint","Parameters must be BigInts");
+	console.assert(A >= 0n && B >= 0n,"Parameters must not be negative");
+	if(B>A)
+	{
+		const temp = A;
+		A = B;
+		B = temp;
+	}
+	//0 >= A >= B
+	while(true)
+	{
+		if(B==0n){return A;}
+		A = A%B;
+		if(A==0n){return B;}
+		B = B%A;
+	}
+}
+function GCDmanager()
+{
+	const VA = document.getElementById("GCDA").value.trim();
+	const VB = document.getElementById("GCDB").value.trim();
+	const Dlog = document.getElementById("GCDlog");
+	if(VA.length == 0)
+	{
+		Dlog.innerText = "Field A empty";
+		return;
+	}
+	if(VB.length == 0)
+	{
+		Dlog.innerText = "Field B empty";
+		return;
+	}
+	let BIA,BIB;
+	try
+	{
+		BIA = BigInt(VA);
+		BIB = BigInt(VB);
+	}
+	catch(e)
+	{
+		console.log(e);
+		Dlog.innerText = "Error. See console.";
+		return;
+	}
+	Dlog.innerText = `GCD(${BIA},${BIB}):\n${GCD(BIA,BIB).toString()}`;
+}
+</script>
+<style>
+input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+</style>
+</head>
+<body>
+<h2>GCD</h2>
+Number A = <input type=text id="GCDA"><br>
+Number B = <input type=text id="GCDB"><br>
+<input type=button value="Calculate" onclick=GCDmanager()><br>
+<pre id="GCDlog"></pre>
+<hr>
+</body>
+</html>

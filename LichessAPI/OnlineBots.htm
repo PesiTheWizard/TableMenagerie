@@ -1,7 +1,6 @@
 <html>
 <head>
-<title>Online bots - Lichess API
-</title>
+<title>Online bots - Lichess API</title>
 <script>
 function initialGet(clbt)
 {
@@ -17,7 +16,7 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		const fEP = `https://${Tsite}.org/api/bot/online?nb=${tv}`;
-		DlogA.innerText = `Fetching data of ${tv} ${Tsite} bot${tv===1?"":"s"}`;
+		DlogA.innerText = `Fetching data of ${tv} ${Tsite} bot(s)`;
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
@@ -31,11 +30,13 @@ function initialGet(clbt)
 }
 async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,LogA)
 {
-	statusHolder.innerText = "Making request..."
+	statusHolder.innerText = "Making request...";
+	const TS1 = Date.now();
 	const response = await fetch(EndPointAPI);
 	statusHolder.innerText = "Response code = ".concat(response.status);
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+	const TS2 = Date.now();
 	let ChCt = 0;
 	const reps = ["",0,0,0,0,0];
 	netLogger.innerText = "Reading response...";
@@ -46,15 +47,15 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,Lo
 		textToJSONhandler(value.trim(),t,reps);
 		ChCt++;
 	}
-	LogA.innerText = "Fetched ".concat(EndPointAPI);
+	LogA.innerText = "Fetched ".concat(EndPointAPI," in ",(TS2-TS1)/1000," sec.");
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
 	}
 	if(reps[4]!=0)
 	{
@@ -109,17 +110,18 @@ function textToJSONhandler(stuff,t,als)
 }
 function makeTableEntry(JO,tableElem)
 {
+	const NA = "N/A";
 	const tablRw = document.createElement('tr');
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
-	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
 	lister(JO["createdAt"]??"",tablRw,'td');
 	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleString()):"",tablRw,'td');
 	lister(JO["seenAt"]??"",tablRw,'td');
 	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleString()):"",tablRw,'td');
-	lister(JO["playTime"]?(JO["playTime"]["total"]??""):"N/A",tablRw,'td');
-	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):"N/A",tablRw,'td');
-	lister(JO["profile"]?(Object.keys(JO["profile"]).length):"N/A",tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
+	lister(JO["profile"]?(Object.keys(JO["profile"]).length):NA,tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
@@ -173,7 +175,7 @@ Site = <select id="selSite">
 <option value="lichess" selected>lichess</option>
 <option value="lishogi">lishogi</option>
 </select><br>
-<input type=text id="NofBotsToGet" value="180"> <input type=button value="Get this many bots" onClick=initialGet(this)>
+<input type=text id="NofBotsToGet" value="190"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <div id="logA">Log space</div>
 <hr>
 <div id="stts"></div>

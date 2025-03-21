@@ -1,11 +1,11 @@
 <html>
 <head>
-<title>Online bots, detailed - Lichess API
-</title>
+<title>Online bots, detailed - Lichess API</title>
 <script>
 function initialGet(clbt)
 {
 	clbt.disabled = true;
+	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
 	const tv = parseInt(t);
 	if(tv>=1)
@@ -14,24 +14,27 @@ function initialGet(clbt)
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
-		document.getElementById("er").innerText = "";
-		OGresp.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
+		DlogA.innerText = `Fetching data of ${tv} bot(s)`;
+		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt);
+		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt,DlogA);
 	}
 	else
 	{
-		document.getElementById("er").innerText = `${tv} is not at least 1`;
+		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t)
+async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA)
 {
+	statusHolder.innerText = "Making request...";
+	const TS1 = Date.now();
 	const response = await fetch(endPointString);
 	statusHolder.innerText = "Response code = ".concat(response.status);
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+	const TS2 = Date.now();
 	let ChCt = 0;//chunk-count
 	const reps = ["",0,0,0,0,0];//pile of unparsables and statistics reports
 	netLogger.innerText = "Reading response...";
@@ -39,18 +42,18 @@ async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-
 		textToJSONhandler(value.trim(),t,reps);
 		ChCt++;
 	}
+	LogA.innerText = "Fetched ".concat(endPointString," in ",(TS2-TS1)/1000," sec.");
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
 	}
 	if(reps[4]!=0)
 	{
@@ -105,10 +108,11 @@ function textToJSONhandler(stuff,t,als)
 }
 function makeTableEntry(JO,tableElem)
 {
+	const NA = "N/A";
 	const tablRw = document.createElement('tr');
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
-	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
 	lister(JO["perfs"]?.["bullet"]?.["games"]??"",tablRw,'td');
 	lister(JO["perfs"]?.["bullet"]?.["rating"]??"",tablRw,'td');
 	lister(JO["perfs"]?.["blitz"]?.["games"]??"",tablRw,'td');
@@ -119,22 +123,22 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["perfs"]?.["classical"]?.["rating"]??"",tablRw,'td');
 	lister(JO["perfs"]?.["correspondence"]?.["games"]??"",tablRw,'td');
 	lister(JO["perfs"]?.["correspondence"]?.["rating"]??"",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["chess960"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["crazyhouse"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["antichess"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["atomic"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["horde"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["kingOfTheHill"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["racingKings"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["threeCheck"]?"yes":"no"):"N/A",tablRw,'td');
-	lister(JO["perfs"]?(JO["perfs"]["puzzle"]?"yes":"no"):"N/A",tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["chess960"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["crazyhouse"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["antichess"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["atomic"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["horde"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["kingOfTheHill"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["racingKings"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["threeCheck"]?"yes":"no"):NA,tablRw,'td');
+	lister(JO["perfs"]?(JO["perfs"]["puzzle"]?"yes":"no"):NA,tablRw,'td');
 	lister(JO["createdAt"]??"",tablRw,'td');
 	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleString()):"",tablRw,'td');
 	lister(JO["seenAt"]??"",tablRw,'td');
 	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleString()):"",tablRw,'td');
-	lister(JO["playTime"]?(JO["playTime"]["total"]??""):"N/A",tablRw,'td');
-	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):"N/A",tablRw,'td');
-	lister(JO["profile"]?(Object.keys(JO["profile"]).length):"N/A",tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
+	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
+	lister(JO["profile"]?(Object.keys(JO["profile"]).length):NA,tablRw,'td');
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["flair"]?"yes":"no",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
@@ -183,15 +187,15 @@ span
 </style>
 </head>
 <body>
-<input type=text id="NofBotsToGet" value="180"> <input type=button value="Get this many bots" onClick=initialGet(this)>
-<pre id="er"></pre>
+<input type=text id="NofBotsToGet" value="190"> <input type=button value="Get this many bots" onClick=initialGet(this)>
+<div id="logA">Log space</div>
 <hr>
 <div id="stts"></div>
 <ul id="hdrs"></ul>
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr><th colspan=3></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th><th colspan=9>Variants?</th><th colspan=2>createdAt</th><th colspan=2>seenAt</th><th colspan=2>playTime</th></tr>
+<tr><th colspan=3></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th> <th colspan=2>Correspondence</th><th colspan=9>Variants?</th><th colspan=2>createdAt</th><th colspan=2>seenAt</th><th colspan=2>playTime</th></tr>
 <tr><th>id</th><th>username</th><th>#perfs</th>
 <th>games</th><th>rating</th>
 <th>games</th><th>rating</th>

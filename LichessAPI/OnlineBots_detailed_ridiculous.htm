@@ -1,11 +1,11 @@
 <html>
 <head>
-<title>Online bots, detailed, ridiculous - Lichess API
-</title>
+<title>Online bots, detailed, ridiculous - Lichess API</title>
 <script>
 function initialGet(clbt)
 {
 	clbt.disabled = true;
+	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
 	const tv = parseInt(t);
 	if(tv>=1)
@@ -14,24 +14,27 @@ function initialGet(clbt)
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
-		document.getElementById("er").innerText = "";
-		OGresp.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
+		DlogA.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
+		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt);
+		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt,DlogA);
 	}
 	else
 	{
-		document.getElementById("er").innerText = `${tv} is not at least 1`;
+		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t)
+async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA)
 {
+	statusHolder.innerText = "Making request...";
+	const TS1 = Date.now();
 	const response = await fetch(endPointString);
 	statusHolder.innerText = "Response code = ".concat(response.status);
 	for(let [k,v] of response.headers){lister(`${k} : ${v}`,headerHolder,'li');}
 	const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+	const TS2 = Date.now();
 	let ChCt = 0;//chunk-count
 	const reps = ["",0,0,0,0,0];//pile of unparsables and statistics reports
 	netLogger.innerText = "Reading response...";
@@ -39,18 +42,18 @@ async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-
 		textToJSONhandler(value.trim(),t,reps);
 		ChCt++;
 	}
+	LogA.innerText = "Fetched ".concat(endPointString," in ",(TS2-TS1)/1000," sec.");
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
 	}
 	if(reps[4]!=0)
 	{
@@ -110,64 +113,50 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
 	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
-	perfshelper("bullet");
-	perfshelper("blitz");
-	perfshelper("rapid");
-	perfshelper("classical");
-	perfshelper("correspondence");
-	lister(JO["perfs"]?(JO["perfs"]["chess960"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("chess960");
-	lister(JO["perfs"]?(JO["perfs"]["crazyhouse"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("crazyhouse");
-	lister(JO["perfs"]?(JO["perfs"]["antichess"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("antichess");
-	lister(JO["perfs"]?(JO["perfs"]["atomic"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("atomic");
-	lister(JO["perfs"]?(JO["perfs"]["horde"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("horde");
-	lister(JO["perfs"]?(JO["perfs"]["kingOfTheHill"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("kingOfTheHill");
-	lister(JO["perfs"]?(JO["perfs"]["racingKings"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("racingKings");
-	lister(JO["perfs"]?(JO["perfs"]["threeCheck"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("threeCheck");
-	lister(JO["perfs"]?(JO["perfs"]["puzzle"]?"yes":"no"):NA,tablRw,'td');
-	perfshelper("puzzle");
-	lister(JO["createdAt"]??"",tablRw,'td');
-	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleDateString()):"",tablRw,'td');
-	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleTimeString()):"",tablRw,'td');
-	lister(JO["createdAt"]?(new Date(JO["createdAt"]).toUTCString()):"",tablRw,'td');
-	lister(JO["seenAt"]??"",tablRw,'td');
-	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleDateString()):"",tablRw,'td');
-	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toLocaleTimeString()):"",tablRw,'td');
-	lister(JO["seenAt"]?(new Date(JO["seenAt"]).toUTCString()):"",tablRw,'td');
+	const perflist = ["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"];
+	const perfoptn = [false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true];
+	for(let i=0;i<perflist.length;i++)
+	{
+		perfshelper(perflist[i],perfoptn[i]);
+	}
+	datehelper("createdAt");
+	datehelper("seenAt");
 	lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
-	lister(JO["profile"]?(Object.keys(JO["profile"]).length):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["location"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["bio"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["rcfRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["flag"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["dsbRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["fideRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["ecfRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["uscfRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["realName"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["cfcRating"]?"yes":"no"):NA,tablRw,'td');
-	lister(JO["profile"]?(JO["profile"]["links"]?"yes":"no"):NA,tablRw,'td');
+	blisthelper("profile",["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]);
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["flair"]?"yes":"no",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
 	lister(JO["verified"]??"",tablRw,'td');
 	lister(JO["tosViolation"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
-	function perfshelper(X)
+	function perfshelper(X,optnl)
 	{
+		if(optnl)
+		{
+			lister(JO["perfs"]?(JO["perfs"][X]?"yes":"no"):NA,tablRw,'td');
+		}
 		lister(JO["perfs"]?.[X]?.["games"]??"",tablRw,'td');
 		lister(JO["perfs"]?.[X]?.["rating"]??"",tablRw,'td');
 		lister(JO["perfs"]?.[X]?.["rd"]??"",tablRw,'td');
 		lister(JO["perfs"]?.[X]?.["prog"]??"",tablRw,'td');
 		lister(JO["perfs"]?.[X]?.["prov"]??"",tablRw,'td');
+	}
+	function datehelper(X)
+	{
+		const TS = new Date(JO[X]);
+		lister(JO[X]??"",tablRw,'td');
+		lister(JO[X]?(TS.toLocaleDateString()):"",tablRw,'td');
+		lister(JO[X]?(TS.toLocaleTimeString()):"",tablRw,'td');
+		lister(JO[X]?(TS.toUTCString()):"",tablRw,'td');
+	}
+	function blisthelper(T,A)
+	{
+		lister(JO[T]?(Object.keys(JO[T]).length):NA,tablRw,'td');
+		for(let i=0;i<A.length;i++)
+		{
+			lister(JO[T]?(JO[T][A[i]]?"yes":"no"):NA,tablRw,'td');
+		}
 	}
 }
 function a(ctsb, lth)
@@ -211,8 +200,8 @@ span
 </style>
 </head>
 <body>
-<input type=text id="NofBotsToGet" value="180"> <input type=button value="Get this many bots" onClick=initialGet(this)>
-<pre id="er"></pre>
+<input type=text id="NofBotsToGet" value="190"> <input type=button value="Get this many bots" onClick=initialGet(this)>
+<div id="logA">Log space</div>
 <hr>
 <div id="stts"></div>
 <ul id="hdrs"></ul>

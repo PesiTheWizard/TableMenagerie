@@ -16,7 +16,7 @@ function initialGet(clbt)
 		const svr = document.getElementById("svar");
 		const gt = document.getElementById("st");
 		const fEP = `https://${Tsite}.org/api/bot/online?nb=${tv}`;
-		DlogA.innerText = `Fetching data of ${tv} ${Tsite} bot(s)`;
+		DlogA.innerText = `Fetching data of ${tv} ${Tsite} bot${tv===1?"":"s"}`;
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
@@ -51,11 +51,11 @@ async function fetchHandler(EndPointAPI,statusHolder,headerHolder,netLogger,t,Lo
 	const brokenLines = reps[1];
 	if(brokenLines===0)
 	{
-		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} lines parsed)`;
+		netLogger.innerText = `Response fully received in ${ChCt} chunk${ChCt==1?"":"s"}. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
 	}
 	else
 	{
-		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} lines parsed)`;
+		netLogger.innerText = `Response received in ${ChCt} chunk${ChCt==1?"":"s"} with ${brokenLines} broken line${brokenLines==1?"":"s"}; ${reps[2]} of which salvaged into ${reps[3]} whole one${reps[3]==1?"":"s"}, ${reps[4]} discarded. (${reps[5]} line${reps[5]==1?"":"s"} parsed)`;
 	}
 	if(reps[4]!=0)
 	{

@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>NES emulator test</title>
+<script>
+const IllegalOpcode = () => {};
+const NESCPU = [
+	() => {},//$00 BRK Cycles=7 Bytes=1; Implied
+	() => {},//$01 ORA Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$02
+	IllegalOpcode,//$03
+	IllegalOpcode,//$04
+	() => {},//$05 ORA Cycles=3 Bytes=2; Zero Page
+	() => {},//$06 ASL Cycles=5 Bytes=2; Zero Page
+	IllegalOpcode,//$07
+	() => {},//$08 PHP Cycles=3 Bytes=1; Implied
+	() => {},//$09 ORA Cycles=2 Bytes=2; Immediate
+	() => {},//$0A ASL Cycles=2 Bytes=1; Accumulator
+	IllegalOpcode,//$0B
+	IllegalOpcode,//$0C
+	() => {},//$0D ORA Cycles=4 Bytes=3; Absolute
+	() => {},//$0E ASL Cycles=6 Bytes=3; Absolute
+	IllegalOpcode,//$0F
+	() => {},//$10 BPL Cycles=2-4 Bytes=2; Relative
+	() => {},//$11 ORA Cycles=5-6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$12
+	IllegalOpcode,//$13
+	IllegalOpcode,//$14
+	() => {},//$15 ORA Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$16 ASL Cycles=6 Bytes=2; Zero Page,X
+	IllegalOpcode,//$17
+	() => {},//$18 CLC Cycles=2 Bytes=1; Implied
+	() => {},//$19 ORA Cycles=4-5 Bytes=3; Absolute,Y
+	IllegalOpcode,//$1A
+	IllegalOpcode,//$1B
+	IllegalOpcode,//$1C
+	() => {},//$1D ORA Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$1E ASL Cycles=7 Bytes=3; Absolute,X
+	IllegalOpcode,//$1F
+	() => {},//#20 JSR Cycles=6 Bytes=3; Absolute
+	() => {},//#21 AND Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$22
+	IllegalOpcode,//$23
+	() => {},//$24 BIT Cycles=3 Bytes=2; Zero Page
+	() => {},//$25 AND Cycles=3 Bytes=2; Zero Page
+	() => {},//$26 ROL Cycles=5 Bytes=2; Zero Page
+	IllegalOpcode,//$27
+	() => {},//$28 PLP Cycles=4 Bytes=1; Implied
+	() => {},//$29 AND Cycles=2 Bytes=2; Immediate
+	() => {},//$2A ROL Cycles=2 Bytes=1; Accumulator
+	IllegalOpcode,//$2B
+	() => {},//$2C BIT Cycles=4 Bytes=3; Absolute
+	() => {},//$2D AND Cycles=4 Bytes=3; Absolute
+	() => {},//$2E ROL Cycles=6 Bytes=3; Absolute
+	IllegalOpcode,//$2F
+	() => {},//$30 BMI Cycles=2-5 Bytes=2; Relative
+	() => {},//$31 AND Cycles=5-6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$32
+	IllegalOpcode,//$33
+	IllegalOpcode,//$34
+	() => {},//$35 AND Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$36 ROL Cycles=6 Bytes=2; Zero Page,X
+	IllegalOpcode,//$37
+	() => {},//$38 SEC Cycles=2 Bytes=1; Implied
+	() => {},//$39 AND Cycles=4-5 Bytes=3; Absolute,Y
+	IllegalOpcode,//$3A
+	IllegalOpcode,//$3B
+	IllegalOpcode,//$3C
+	() => {},//$3D AND Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$3E ROL Cycles=7 Bytes=3; Absolute,X
+	IllegalOpcode,//$3F
+	() => {},//$40 RTI Cycles=6 Bytes=1; Implied
+	() => {},//$41 EOR Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$42
+	IllegalOpcode,//$43
+	IllegalOpcode,//$44
+	() => {},//$45 EOR Cycles=3 Bytes=2; Zero Page
+	() => {},//$46 LSR Cycles=5 Bytes=2; Zero Page
+	IllegalOpcode,//$47
+	() => {},//$48 PHA Cycles=3 Bytes=1; Implied
+	() => {},//$49 EOR Cycles=2 Bytes=2; Immediate
+	() => {},//$4A LSR Cycles=2 Bytes=1; Accumulator
+	IllegalOpcode,//$4B
+	() => {},//$4C JMP Cycles=3 Bytes=3; Absolute
+	() => {},//$4D EOR Cycles=4 Bytes=3; Absolute
+	() => {},//$4E LSR Cycles=6 Bytes=3; Absolute
+	IllegalOpcode,//$4F
+	() => {},//$50 BVC Cycles=2-5 Bytes=2; Relative
+	() => {},//$51 EOR Cycles=5-6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$52
+	IllegalOpcode,//$53
+	IllegalOpcode,//$54
+	() => {},//$55 EOR Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$56 LSR Cycles=6 Bytes=2; Zero Page,X
+	IllegalOpcode,//$57
+	() => {},//$58 CLI Cycles=2 Bytes=1; Implied
+	() => {},//$59 EOR Cycles=4-5 Bytes=3; Absolute,Y
+	IllegalOpcode,//$5A
+	IllegalOpcode,//$5B
+	IllegalOpcode,//$5C
+	() => {},//$5D EOR Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$5E LSR Cycles=7 Bytes=3; Absolute,X
+	IllegalOpcode,//$5F
+	() => {},//$60 RTS Cycles=6 Bytes=1; Implied
+	() => {},//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$62
+	IllegalOpcode,//$63
+	IllegalOpcode,//$64
+	() => {},//$65 ADC Cycles=3 Bytes=2; Zero Page
+	() => {},//$66 ROR Cycles=5 Bytes=2; Zero Page
+	IllegalOpcode,//$67
+	() => {},//$68 PLA Cycles=4 Bytes=1; Implied
+	() => {},//$69 ADC Cycles=2 Bytes=2; Immediate
+	() => {},//$6A ROR Cycles=2 Bytes=1; Accumulator
+	IllegalOpcode,//$6B
+	() => {},//$6C JMP Cycles=5 Bytes=3; Indirect
+	() => {},//$6D ADC Cycles=4 Bytes=3; Absolute
+	() => {},//$6E ROR Cycles=6 Bytes=3; Absolute
+	IllegalOpcode,//$6F
+	() => {},//$70 BVS Cycles=2-5 Bytes=2; Relative
+	() => {},//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$72
+	IllegalOpcode,//$73
+	IllegalOpcode,//$74
+	() => {},//$75 ADC Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$76 ROR Cycles=6 Bytes=2; Zero Page,X
+	IllegalOpcode,//$77
+	() => {},//$78 SEI Cycles=2 Bytes=1; Implied
+	() => {},//$79 ADC Cycles=4-5 Bytes=3; Absolute,Y
+	IllegalOpcode,//$7A
+	IllegalOpcode,//$7B
+	IllegalOpcode,//$7C
+	() => {},//$7D ADC Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$7E ROR Cycles=7 Bytes=3; Absolute,X
+	IllegalOpcode,//$7F
+	IllegalOpcode,//$80
+	() => {},//$81 STA Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$82
+	IllegalOpcode,//$83
+	() => {},//$84 STY Cycles=3 Bytes=2; Zero Page
+	() => {},//$85 STA Cycles=3 Bytes=2; Zero Page
+	() => {},//$86 STX Cycles=3 Bytes=2; Zero Page
+	IllegalOpcode,//$87
+	() => {},//$88 DEY Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$89
+	() => {},//$8A TXA Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$8B
+	() => {},//$8C STY Cycles=4 Bytes=3; Absolute
+	() => {},//$8D STA Cycles=4 Bytes=2; Absolute
+	() => {},//$8E STX Cycles=4 Bytes=3; Absolute
+	IllegalOpcode,//$8F
+	() => {},//$90 BCC Cycles=2-5 Bytes=2; Relative
+	() => {},//$91 STA Cycles=6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$92
+	IllegalOpcode,//$93
+	() => {},//$94 STY Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$95 STA Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$96 STX Cycles=4 Bytes=2; Zero Page,Y
+	IllegalOpcode,//$97
+	() => {},//$98 TYA Cycles=2 Bytes=1; Implied
+	() => {},//$99 STA Cycles=5 Bytes=3; Absolute,Y
+	() => {},//$9A TXS Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$9B
+	IllegalOpcode,//$9C
+	() => {},//$9D STA Cycles=5 Bytes=3; Absolute,X
+	IllegalOpcode,//$9E
+	IllegalOpcode,//$9F
+	() => {},//$A0 LDY Cycles=2 Bytes=2; Immediate
+	() => {},//$A1 LDA Cycles=6 Bytes=2; (Indirect,X)
+	() => {},//$A2 LDX Cycles=2 Bytes=2; Immediate
+	IllegalOpcode,//$A3
+	() => {},//$A4 LDY Cycles=3 Bytes=2; Zero Page
+	() => {},//$A5 LDA Cycles=3 Bytes=2; Zero Page
+	() => {},//$A6 LDX Cycles=3 Bytes=2; Zero Page
+	IllegalOpcode,//$A7
+	() => {},//$A8 TAY Cycles=2 Bytes=1; Implied
+	() => {},//$A9 LDA Cycles=2 Bytes=2; Immediate
+	() => {},//$AA TAX Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$AB
+	() => {},//$AC LDY Cycles=4 Bytes=3; Absolute
+	() => {},//$AD LDA Cycles=4 Bytes=3; Absolute
+	() => {},//$AE LDX Cycles=4 Bytes=3; Absolute
+	IllegalOpcode,//$AF
+	() => {},//$B0 BCS Cycles=2-5 Bytes=2; Relative
+	() => {},//$B1 LDA Cycles=5-6 Bytes=2; (Indirect),Y
+	IllegalOpcode,//$B2
+	IllegalOpcode,//$B3
+	() => {},//$B4 LDY Cycles=4 Bytes=3; Zero Page,X
+	() => {},//$B5 LDA Cycles=4 Bytes=2; Zero Page,X
+	() => {},//$B6 LDX Cycles=4 Bytes=2; Zero Page,Y
+	IllegalOpcode,//$B7
+	() => {},//$B8 CLV Cycles=2 Bytes=1; Implied
+	() => {},//$B9 LDA Cycles=4-5 Bytes=3; Absolute,Y
+	() => {},//$BA TSX Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$BB
+	() => {},//$BC LDY Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$BD LDA Cycles=4-5 Bytes=3; Absolute,X
+	() => {},//$BE LDX Cycles=4-5 Bytes=3; Absolute,Y
+	IllegalOpcode,//$BF
+	() => {},//$C0 CPY Cycles=2 Bytes=2; Immediate
+	() => {},//$C1 CMP Cycles=6 Bytes=2; (Indirect,X)
+	IllegalOpcode,//$C2
+	IllegalOpcode,//$C3
+	() => {},//$C4 CPY Cycles=3 Bytes=2; Zero Page
+	() => {},//$C5 CMP Cycles=3 Bytes=2; Zero Page
+	() => {},//$C6 DEC Cycles=5 Bytes=2; Zero Page
+	IllegalOpcode,//$C7
+	() => {},//$C8 INY Cycles=2 Bytes=1; Implied
+	() => {},//$C9 CMP Cycles=2 Bytes=2; Immediate
+	() => {},//$CA DEX Cycles=2 Bytes=1; Implied
+	IllegalOpcode,//$CB
+	() => {},//$CC CPY Cycles=4 Bytes=2; Absolute
+	() => {},//$CD CMP Cycles=4 Bytes=3; Absolute
+	() => {},//$CE DEC Cycles=6 Bytes=3; Absolute
+	IllegalOpcode,//$CF
+	() => {},//$D0 BNE Cycles=2-5 Bytes=2; Relative
+	() => {//$D1 CMP Cycles=5-6 Bytes=2; (Indirect),Y
+	},
+	IllegalOpcode,//$D2
+	IllegalOpcode,//$D3
+	IllegalOpcode,//$D4
+	() => {//$D5 CMP Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$D6 DEC Cycles=6 Bytes=2; Zero Page,X
+	},
+	IllegalOpcode,//$D7
+	() => {//$D8 CLD Cycles=2 Bytes=1; Implied
+	},
+	() => {//$D9 CMP Cycles=4-5 Bytes=3; Absolute,Y
+	},
+	IllegalOpcode,//$DA
+	IllegalOpcode,//$DB
+	IllegalOpcode,//$DC
+	() => {//$DD CMP Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$DE DEC Cycles=7 Bytes=3; Absolute,X
+	},
+	IllegalOpcode,//$DF
+	() => {//$E0 CPX Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$E1 SBC Cycles=6 Bytes=1; (Indirect,X)
+	},
+	IllegalOpcode,//$E2
+	IllegalOpcode,//$E3
+	() => {//$E4 CPX Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$E5 SBC Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$E6 INC Cycles=5 Bytes=2; Zero Page
+	},
+	IllegalOpcode,//$E7
+	() => {//$E8 INX Cycles=2 Bytes=1; Implied
+	},
+	() => {//$E9 SBC Cycles=2 Bytes=1; Immediate
+	},
+	() => {//$EA NOP Cycles=2 Bytes=1; Implied
+	},
+	IllegalOpcode,//$EB
+	() => {//$EC CPX Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$ED SBC Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$EE INC Cycles=6 Bytes=3; Absolute
+	},
+	IllegalOpcode,//$EF
+	() => {//$F0 BEQ Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$F1 SBC Cycles=5-6 Bytes=2; (Indirect),Y
+	},
+	IllegalOpcode,//$F2
+	IllegalOpcode,//$F3
+	IllegalOpcode,//$F4
+	() => {//$F5 SBC Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$F6 INC Cycles=6 Bytes=2; Zero Page,X
+	},
+	IllegalOpcode,//$F7
+	() => {//$F8 SED Cycles=2 Bytes=1; Implied
+	},
+	() => {//$F9 SBC Cycles=4-5 Bytes=3; Absolute,Y
+	},
+	IllegalOpcode,//$FA
+	IllegalOpcode,//$FB
+	IllegalOpcode,//$FC
+	() => {//$FD SBC Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$FE INC Cycles=7 Bytes=3; Absolute,X
+	},
+	IllegalOpcode //$FF
+];
+Object.freeze(NESCPU);
+const HC_NMI_PC = 0xFFFA;
+const HC_startup_PC = 0xFFFC;
+const HC_IRQ_PC = 0xFFFE;
+const RawMemory = new ArrayBuffer(0x10000);//constructor arg is 1 more than highest index
+const AllMemoryBytes = new Uint8Array(RawMemory);
+const Stack = AllMemoryBytes.subarray(0x100,0x200);//$01__ <- the stack
+const WritableMemoryBytes = AllMemoryBytes.subarray(0,0x8000);//ignore writes to ROM
+const HCVectors = new Uint16Array(RawMemory,0xFFFA,3);
+const tempbuffer = new ArrayBuffer(2);
+const MU8 = new Uint8Array(tempbuffer);
+const MN = new Int8Array(tempbuffer);//for reading negative values
+const MU16 = new Uint16Array(tempbuffer);
+const indbuffer = new ArrayBuffer(2);//Exists to simulate the indirect mode page overflow bug; as temp values elsewhere
+const indU8 = new Uint8Array(indbuffer);
+const indU16 = new Uint16Array(indbuffer);
+const RawRegisterBuffer = new ArrayBuffer(4);
+const Register = new Uint8Array(RawRegisterBuffer);
+const A = 0;
+const X = 1;
+const Y = 2;
+const SP = 3;
+//Status
+let Flag_Negative=false,Flag_Overflow=false, Flag_B=false,Flag_Decimal=false,Flag_ID=false,Flag_Zero=false,Flag_Carry=false;
+
+const PPU_Memory = new ArrayBuffer(0x4000);
+/*
+2 pulse wave channels
+1 triangle wave channel
+1 noise channel
+1 sample playing channel
+*/
+</script>
+</head>
+<body>
+...
+</body>
+</html>

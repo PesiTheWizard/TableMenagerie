@@ -4,12 +4,25 @@
 <script>
 function initialGet(clbt)
 {
+	"use strict";
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
+		const siteDiffs = [
+			{//Lichess
+				"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
+				"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
+				"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
+			},
+			{//Lishogi
+				"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
+				"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+				"profile":["location","bio","firstName","lastName","country","links"]
+			}
+		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
 		const OGresp = document.getElementById("stts");
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
@@ -18,7 +31,7 @@ function initialGet(clbt)
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler("https://lichess.org/api/bot/online?nb=".concat(tv),OGresp,HL,svr,gt,DlogA);
+		fetchHandler(`https://lichess.org/api/bot/online?nb=${tv}`,OGresp,HL,svr,gt,DlogA,siteDiffs[0]);
 	}
 	else
 	{
@@ -26,7 +39,7 @@ function initialGet(clbt)
 		clbt.disabled = false;
 	}
 }
-async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA)
+async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA,diffObj)
 {
 	statusHolder.innerText = "Making request...";
 	const TS1 = Date.now();
@@ -42,7 +55,7 @@ async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t
 	{
 		const {value,done} = await reader.read();//typeof(value) is string
 		if(done){break;}
-		textToJSONhandler(value.trim(),t,reps);
+		textToJSONhandler(value.trim(),t,reps,diffObj);
 		ChCt++;
 	}
 	LogA.innerText = "Fetched ".concat(endPointString," in ",(TS2-TS1)/1000," sec.");
@@ -67,7 +80,7 @@ function lister(listedText, PN, ElType)
 	listEntry.appendChild(entryText);
 	PN.appendChild(listEntry);
 }
-function textToJSONhandler(stuff,t,als)
+function textToJSONhandler(stuff,t,als,arrObj)
 {
 	const conveyorBelt = stuff.split("\n");
 	let jp;
@@ -102,19 +115,19 @@ function textToJSONhandler(stuff,t,als)
 			als[3]++;//how many whole lines were made from the broken parts
 			als[4]=0;
 		}
-		makeTableEntry(jp,t);
+		makeTableEntry(jp,t,arrObj);
 		als[5]++;//parsed lines counter
 	}
 }
-function makeTableEntry(JO,tableElem)
+function makeTableEntry(JO,tableElem,listObj)
 {
 	const NA = "N/A";
 	const tablRw = document.createElement('tr');
 	lister(JO["id"]??"",tablRw,'td');
 	lister(JO["username"]??"",tablRw,'td');
 	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
-	const perflist = ["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"];
-	const perfoptn = [false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true];
+	const perflist = listObj["perflist"];
+	const perfoptn = listObj["perfoptn"];
 	for(let i=0;i<perflist.length;i++)
 	{
 		perfshelper(perflist[i],perfoptn[i]);
@@ -123,12 +136,12 @@ function makeTableEntry(JO,tableElem)
 	datehelper("seenAt");
 	lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
 	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
-	blisthelper("profile",["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]);
+	blisthelper("profile",listObj["profile"]);
 	lister(JO["title"]??"",tablRw,'td');
 	lister(JO["flair"]?"yes":"no",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
 	lister(JO["verified"]??"",tablRw,'td');
-	lister(JO["tosViolation"]??"",tablRw,'td');
+	//lister(JO["tosViolation"]??"",tablRw,'td');//these have been excluded from the bot list
 	tableElem.appendChild(tablRw);
 	function perfshelper(X,optnl)
 	{
@@ -230,7 +243,7 @@ span
 <th>(Timestamp)</th><th>(Date)</th><th>(Time)</th><th>(UTC)</th>
 <th>total</th><th>tv</th>
 <th>#</th><th>location</th><th>bio</th><th>rcfRating</th><th>flag</th><th>dsbRating</th><th>fideRating</th><th>ecfRating</th><th>uscfRating</th><th>realName</th><th>cfcRating</th><th>links</th>
-<th>title</th><th>flair?</th><th>patron</th><th>verified</th><th>tosViolation</th></tr>
+<th>title</th><th>flair?</th><th>patron</th><th>verified</th></tr>
 <tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
@@ -340,7 +353,6 @@ span
 <th><span onClick=a(105,true)>&#9650;</span> <span onClick=a(105,false)>&#9660;</span></th>
 <th><span onClick=a(106,true)>&#9650;</span> <span onClick=a(106,false)>&#9660;</span></th>
 <th><span onClick=a(107,true)>&#9650;</span> <span onClick=a(107,false)>&#9660;</span></th>
-<th><span onClick=a(108,true)>&#9650;</span> <span onClick=a(108,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

@@ -143,7 +143,7 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["flair"]?"yes":"no",tablRw,'td');
 	lister(JO["patron"]??"",tablRw,'td');
 	lister(JO["verified"]??"",tablRw,'td');
-	lister(JO["tosViolation"]??"",tablRw,'td');
+	//lister(JO["tosViolation"]??"",tablRw,'td');//these have been excluded from the bot list
 	tableElem.appendChild(tablRw);
 }
 function a(ctsb, lth)
@@ -206,7 +206,7 @@ span
 <th>(Timestamp)</th><th>(Date)</th>
 <th>(Timestamp)</th><th>(Date)</th>
 <th>total</th><th>tv</th>
-<th>#profile</th><th>title</th><th>flair?</th><th>patron</th><th>verified</th><th>tosViolation</th></tr>
+<th>#profile</th><th>title</th><th>flair?</th><th>patron</th><th>verified</th></tr>
 <tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
@@ -241,7 +241,6 @@ span
 <th><span onClick=a(30,true)>&#9650;</span> <span onClick=a(30,false)>&#9660;</span></th>
 <th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
 <th><span onClick=a(32,true)>&#9650;</span> <span onClick=a(32,false)>&#9660;</span></th>
-<th><span onClick=a(33,true)>&#9650;</span> <span onClick=a(33,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

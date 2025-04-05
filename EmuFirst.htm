@@ -4,215 +4,387 @@
 <script>
 const IllegalOpcode = () => {};
 const NESCPU = [
-	() => {},//$00 BRK Cycles=7 Bytes=1; Implied
-	() => {},//$01 ORA Cycles=6 Bytes=2; (Indirect,X)
+	() => {//$00 BRK Cycles=7 Bytes=1; Implied
+	},
+	() => {//$01 ORA Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$02
 	IllegalOpcode,//$03
 	IllegalOpcode,//$04
-	() => {},//$05 ORA Cycles=3 Bytes=2; Zero Page
-	() => {},//$06 ASL Cycles=5 Bytes=2; Zero Page
+	() => {//$05 ORA Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$06 ASL Cycles=5 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$07
-	() => {},//$08 PHP Cycles=3 Bytes=1; Implied
-	() => {},//$09 ORA Cycles=2 Bytes=2; Immediate
-	() => {},//$0A ASL Cycles=2 Bytes=1; Accumulator
+	() => {//$08 PHP Cycles=3 Bytes=1; Implied
+	},
+	() => {//$09 ORA Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$0A ASL Cycles=2 Bytes=1; Accumulator
+		Flag_Carry = (Register[A]&(0x80))==0x80;
+		Register[A] = Register[A]<<1;
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
 	IllegalOpcode,//$0B
 	IllegalOpcode,//$0C
-	() => {},//$0D ORA Cycles=4 Bytes=3; Absolute
-	() => {},//$0E ASL Cycles=6 Bytes=3; Absolute
+	() => {//$0D ORA Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$0E ASL Cycles=6 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$0F
-	() => {},//$10 BPL Cycles=2-4 Bytes=2; Relative
-	() => {},//$11 ORA Cycles=5-6 Bytes=2; (Indirect),Y
+	() => {//$10 BPL Cycles=2-4 Bytes=2; Relative
+	},
+	() => {//$11 ORA Cycles=5-6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$12
 	IllegalOpcode,//$13
 	IllegalOpcode,//$14
-	() => {},//$15 ORA Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$16 ASL Cycles=6 Bytes=2; Zero Page,X
+	() => {//$15 ORA Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$16 ASL Cycles=6 Bytes=2; Zero Page,X
+	},
 	IllegalOpcode,//$17
-	() => {},//$18 CLC Cycles=2 Bytes=1; Implied
-	() => {},//$19 ORA Cycles=4-5 Bytes=3; Absolute,Y
+	() => {//$18 CLC Cycles=2 Bytes=1; Implied
+		Flag_Carry = false;
+	},
+	() => {//$19 ORA Cycles=4-5 Bytes=3; Absolute,Y
+	},
 	IllegalOpcode,//$1A
 	IllegalOpcode,//$1B
 	IllegalOpcode,//$1C
-	() => {},//$1D ORA Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$1E ASL Cycles=7 Bytes=3; Absolute,X
+	() => {//$1D ORA Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$1E ASL Cycles=7 Bytes=3; Absolute,X
+	},
 	IllegalOpcode,//$1F
-	() => {},//#20 JSR Cycles=6 Bytes=3; Absolute
-	() => {},//#21 AND Cycles=6 Bytes=2; (Indirect,X)
+	() => {//#20 JSR Cycles=6 Bytes=3; Absolute
+	},
+	() => {//#21 AND Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$22
 	IllegalOpcode,//$23
-	() => {},//$24 BIT Cycles=3 Bytes=2; Zero Page
-	() => {},//$25 AND Cycles=3 Bytes=2; Zero Page
-	() => {},//$26 ROL Cycles=5 Bytes=2; Zero Page
+	() => {//$24 BIT Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$25 AND Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$26 ROL Cycles=5 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$27
-	() => {},//$28 PLP Cycles=4 Bytes=1; Implied
-	() => {},//$29 AND Cycles=2 Bytes=2; Immediate
-	() => {},//$2A ROL Cycles=2 Bytes=1; Accumulator
+	() => {//$28 PLP Cycles=4 Bytes=1; Implied
+	},
+	() => {//$29 AND Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$2A ROL Cycles=2 Bytes=1; Accumulator
+		const newCarry = !!(Register[A]>>>7);
+		Register[A] = (Register[A]<<1)|Flag_Carry;
+		Flag_Carry = newCarry;
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
 	IllegalOpcode,//$2B
-	() => {},//$2C BIT Cycles=4 Bytes=3; Absolute
-	() => {},//$2D AND Cycles=4 Bytes=3; Absolute
-	() => {},//$2E ROL Cycles=6 Bytes=3; Absolute
+	() => {//$2C BIT Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$2D AND Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$2E ROL Cycles=6 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$2F
-	() => {},//$30 BMI Cycles=2-5 Bytes=2; Relative
-	() => {},//$31 AND Cycles=5-6 Bytes=2; (Indirect),Y
+	() => {//$30 BMI Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$31 AND Cycles=5-6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$32
 	IllegalOpcode,//$33
 	IllegalOpcode,//$34
-	() => {},//$35 AND Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$36 ROL Cycles=6 Bytes=2; Zero Page,X
+	() => {//$35 AND Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$36 ROL Cycles=6 Bytes=2; Zero Page,X
+	},
 	IllegalOpcode,//$37
-	() => {},//$38 SEC Cycles=2 Bytes=1; Implied
-	() => {},//$39 AND Cycles=4-5 Bytes=3; Absolute,Y
+	() => {//$38 SEC Cycles=2 Bytes=1; Implied
+		Flag_Carry = true;
+	},
+	() => {//$39 AND Cycles=4-5 Bytes=3; Absolute,Y
+	},
 	IllegalOpcode,//$3A
 	IllegalOpcode,//$3B
 	IllegalOpcode,//$3C
-	() => {},//$3D AND Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$3E ROL Cycles=7 Bytes=3; Absolute,X
+	() => {//$3D AND Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$3E ROL Cycles=7 Bytes=3; Absolute,X
+	},
 	IllegalOpcode,//$3F
-	() => {},//$40 RTI Cycles=6 Bytes=1; Implied
-	() => {},//$41 EOR Cycles=6 Bytes=2; (Indirect,X)
+	() => {//$40 RTI Cycles=6 Bytes=1; Implied
+	},
+	() => {//$41 EOR Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$42
 	IllegalOpcode,//$43
 	IllegalOpcode,//$44
-	() => {},//$45 EOR Cycles=3 Bytes=2; Zero Page
-	() => {},//$46 LSR Cycles=5 Bytes=2; Zero Page
+	() => {//$45 EOR Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$46 LSR Cycles=5 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$47
-	() => {},//$48 PHA Cycles=3 Bytes=1; Implied
-	() => {},//$49 EOR Cycles=2 Bytes=2; Immediate
-	() => {},//$4A LSR Cycles=2 Bytes=1; Accumulator
+	() => {//$48 PHA Cycles=3 Bytes=1; Implied
+	},
+	() => {//$49 EOR Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$4A LSR Cycles=2 Bytes=1; Accumulator
+		Flag_Carry = !!(Register[A]&1);
+		Register[A] = Register[A]>>>1;
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
 	IllegalOpcode,//$4B
-	() => {},//$4C JMP Cycles=3 Bytes=3; Absolute
-	() => {},//$4D EOR Cycles=4 Bytes=3; Absolute
-	() => {},//$4E LSR Cycles=6 Bytes=3; Absolute
+	() => {//$4C JMP Cycles=3 Bytes=3; Absolute
+	},
+	() => {//$4D EOR Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$4E LSR Cycles=6 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$4F
-	() => {},//$50 BVC Cycles=2-5 Bytes=2; Relative
-	() => {},//$51 EOR Cycles=5-6 Bytes=2; (Indirect),Y
+	() => {//$50 BVC Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$51 EOR Cycles=5-6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$52
 	IllegalOpcode,//$53
 	IllegalOpcode,//$54
-	() => {},//$55 EOR Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$56 LSR Cycles=6 Bytes=2; Zero Page,X
+	() => {//$55 EOR Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$56 LSR Cycles=6 Bytes=2; Zero Page,X
+	},
 	IllegalOpcode,//$57
-	() => {},//$58 CLI Cycles=2 Bytes=1; Implied
-	() => {},//$59 EOR Cycles=4-5 Bytes=3; Absolute,Y
+	() => {//$58 CLI Cycles=2 Bytes=1; Implied
+	},
+	() => {//$59 EOR Cycles=4-5 Bytes=3; Absolute,Y
+	},
 	IllegalOpcode,//$5A
 	IllegalOpcode,//$5B
 	IllegalOpcode,//$5C
-	() => {},//$5D EOR Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$5E LSR Cycles=7 Bytes=3; Absolute,X
+	() => {//$5D EOR Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$5E LSR Cycles=7 Bytes=3; Absolute,X
+	},
 	IllegalOpcode,//$5F
-	() => {},//$60 RTS Cycles=6 Bytes=1; Implied
-	() => {},//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
+	() => {//$60 RTS Cycles=6 Bytes=1; Implied
+	},
+	() => {//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$62
 	IllegalOpcode,//$63
 	IllegalOpcode,//$64
-	() => {},//$65 ADC Cycles=3 Bytes=2; Zero Page
-	() => {},//$66 ROR Cycles=5 Bytes=2; Zero Page
+	() => {//$65 ADC Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$66 ROR Cycles=5 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$67
-	() => {},//$68 PLA Cycles=4 Bytes=1; Implied
-	() => {},//$69 ADC Cycles=2 Bytes=2; Immediate
-	() => {},//$6A ROR Cycles=2 Bytes=1; Accumulator
+	() => {//$68 PLA Cycles=4 Bytes=1; Implied
+	},
+	() => {//$69 ADC Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$6A ROR Cycles=2 Bytes=1; Accumulator
+		const newCarry = !!(Register[A]&1);
+		Register[A] = (Register[A]>>>1)|(Flag_Carry<<7);
+		Flag_Carry = newCarry;
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
 	IllegalOpcode,//$6B
-	() => {},//$6C JMP Cycles=5 Bytes=3; Indirect
-	() => {},//$6D ADC Cycles=4 Bytes=3; Absolute
-	() => {},//$6E ROR Cycles=6 Bytes=3; Absolute
+	() => {//$6C JMP Cycles=5 Bytes=3; Indirect
+	},
+	() => {//$6D ADC Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$6E ROR Cycles=6 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$6F
-	() => {},//$70 BVS Cycles=2-5 Bytes=2; Relative
-	() => {},//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
+	() => {//$70 BVS Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$72
 	IllegalOpcode,//$73
 	IllegalOpcode,//$74
-	() => {},//$75 ADC Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$76 ROR Cycles=6 Bytes=2; Zero Page,X
+	() => {//$75 ADC Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$76 ROR Cycles=6 Bytes=2; Zero Page,X
+	},
 	IllegalOpcode,//$77
-	() => {},//$78 SEI Cycles=2 Bytes=1; Implied
-	() => {},//$79 ADC Cycles=4-5 Bytes=3; Absolute,Y
+	() => {//$78 SEI Cycles=2 Bytes=1; Implied
+		Flag_ID = true;
+	},
+	() => {//$79 ADC Cycles=4-5 Bytes=3; Absolute,Y
+	},
 	IllegalOpcode,//$7A
 	IllegalOpcode,//$7B
 	IllegalOpcode,//$7C
-	() => {},//$7D ADC Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$7E ROR Cycles=7 Bytes=3; Absolute,X
+	() => {//$7D ADC Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$7E ROR Cycles=7 Bytes=3; Absolute,X
+	},
 	IllegalOpcode,//$7F
 	IllegalOpcode,//$80
-	() => {},//$81 STA Cycles=6 Bytes=2; (Indirect,X)
+	() => {//$81 STA Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$82
 	IllegalOpcode,//$83
-	() => {},//$84 STY Cycles=3 Bytes=2; Zero Page
-	() => {},//$85 STA Cycles=3 Bytes=2; Zero Page
-	() => {},//$86 STX Cycles=3 Bytes=2; Zero Page
+	() => {//$84 STY Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$85 STA Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$86 STX Cycles=3 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$87
-	() => {},//$88 DEY Cycles=2 Bytes=1; Implied
+	() => {//$88 DEY Cycles=2 Bytes=1; Implied
+		Register[Y]--;
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
+	},
 	IllegalOpcode,//$89
-	() => {},//$8A TXA Cycles=2 Bytes=1; Implied
+	() => {//$8A TXA Cycles=2 Bytes=1; Implied
+		Register[A] = Register[X];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
 	IllegalOpcode,//$8B
-	() => {},//$8C STY Cycles=4 Bytes=3; Absolute
-	() => {},//$8D STA Cycles=4 Bytes=2; Absolute
-	() => {},//$8E STX Cycles=4 Bytes=3; Absolute
+	() => {//$8C STY Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$8D STA Cycles=4 Bytes=2; Absolute
+	},
+	() => {//$8E STX Cycles=4 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$8F
-	() => {},//$90 BCC Cycles=2-5 Bytes=2; Relative
-	() => {},//$91 STA Cycles=6 Bytes=2; (Indirect),Y
+	() => {//$90 BCC Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$91 STA Cycles=6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$92
 	IllegalOpcode,//$93
-	() => {},//$94 STY Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$95 STA Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$96 STX Cycles=4 Bytes=2; Zero Page,Y
+	() => {//$94 STY Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$95 STA Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$96 STX Cycles=4 Bytes=2; Zero Page,Y
+	},
 	IllegalOpcode,//$97
-	() => {},//$98 TYA Cycles=2 Bytes=1; Implied
-	() => {},//$99 STA Cycles=5 Bytes=3; Absolute,Y
-	() => {},//$9A TXS Cycles=2 Bytes=1; Implied
+	() => {//$98 TYA Cycles=2 Bytes=1; Implied
+		Register[A] = Register[Y];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+	},
+	() => {//$99 STA Cycles=5 Bytes=3; Absolute,Y
+	},
+	() => {//$9A TXS Cycles=2 Bytes=1; Implied
+		Register[SP] = Register[X];
+	},
 	IllegalOpcode,//$9B
 	IllegalOpcode,//$9C
-	() => {},//$9D STA Cycles=5 Bytes=3; Absolute,X
+	() => {//$9D STA Cycles=5 Bytes=3; Absolute,X
+	},
 	IllegalOpcode,//$9E
 	IllegalOpcode,//$9F
-	() => {},//$A0 LDY Cycles=2 Bytes=2; Immediate
-	() => {},//$A1 LDA Cycles=6 Bytes=2; (Indirect,X)
-	() => {},//$A2 LDX Cycles=2 Bytes=2; Immediate
+	() => {//$A0 LDY Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$A1 LDA Cycles=6 Bytes=2; (Indirect,X)
+	},
+	() => {//$A2 LDX Cycles=2 Bytes=2; Immediate
+	},
 	IllegalOpcode,//$A3
-	() => {},//$A4 LDY Cycles=3 Bytes=2; Zero Page
-	() => {},//$A5 LDA Cycles=3 Bytes=2; Zero Page
-	() => {},//$A6 LDX Cycles=3 Bytes=2; Zero Page
+	() => {//$A4 LDY Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$A5 LDA Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$A6 LDX Cycles=3 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$A7
-	() => {},//$A8 TAY Cycles=2 Bytes=1; Implied
-	() => {},//$A9 LDA Cycles=2 Bytes=2; Immediate
-	() => {},//$AA TAX Cycles=2 Bytes=1; Implied
+	() => {//$A8 TAY Cycles=2 Bytes=1; Implied
+		Register[Y] = Register[A];
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
+	},
+	() => {//$A9 LDA Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$AA TAX Cycles=2 Bytes=1; Implied
+		Register[X] = Register[A];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
+	},
 	IllegalOpcode,//$AB
-	() => {},//$AC LDY Cycles=4 Bytes=3; Absolute
-	() => {},//$AD LDA Cycles=4 Bytes=3; Absolute
-	() => {},//$AE LDX Cycles=4 Bytes=3; Absolute
+	() => {//$AC LDY Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$AD LDA Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$AE LDX Cycles=4 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$AF
-	() => {},//$B0 BCS Cycles=2-5 Bytes=2; Relative
-	() => {},//$B1 LDA Cycles=5-6 Bytes=2; (Indirect),Y
+	() => {//$B0 BCS Cycles=2-5 Bytes=2; Relative
+	},
+	() => {//$B1 LDA Cycles=5-6 Bytes=2; (Indirect),Y
+	},
 	IllegalOpcode,//$B2
 	IllegalOpcode,//$B3
-	() => {},//$B4 LDY Cycles=4 Bytes=3; Zero Page,X
-	() => {},//$B5 LDA Cycles=4 Bytes=2; Zero Page,X
-	() => {},//$B6 LDX Cycles=4 Bytes=2; Zero Page,Y
+	() => {//$B4 LDY Cycles=4 Bytes=3; Zero Page,X
+	},
+	() => {//$B5 LDA Cycles=4 Bytes=2; Zero Page,X
+	},
+	() => {//$B6 LDX Cycles=4 Bytes=2; Zero Page,Y
+	},
 	IllegalOpcode,//$B7
-	() => {},//$B8 CLV Cycles=2 Bytes=1; Implied
-	() => {},//$B9 LDA Cycles=4-5 Bytes=3; Absolute,Y
-	() => {},//$BA TSX Cycles=2 Bytes=1; Implied
+	() => {//$B8 CLV Cycles=2 Bytes=1; Implied
+		Flag_Overflow = false;
+	},
+	() => {//$B9 LDA Cycles=4-5 Bytes=3; Absolute,Y
+	},
+	() => {//$BA TSX Cycles=2 Bytes=1; Implied
+		Register[X] = Register[SP];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
+	},
 	IllegalOpcode,//$BB
-	() => {},//$BC LDY Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$BD LDA Cycles=4-5 Bytes=3; Absolute,X
-	() => {},//$BE LDX Cycles=4-5 Bytes=3; Absolute,Y
+	() => {//$BC LDY Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$BD LDA Cycles=4-5 Bytes=3; Absolute,X
+	},
+	() => {//$BE LDX Cycles=4-5 Bytes=3; Absolute,Y
+	},
 	IllegalOpcode,//$BF
-	() => {},//$C0 CPY Cycles=2 Bytes=2; Immediate
-	() => {},//$C1 CMP Cycles=6 Bytes=2; (Indirect,X)
+	() => {//$C0 CPY Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$C1 CMP Cycles=6 Bytes=2; (Indirect,X)
+	},
 	IllegalOpcode,//$C2
 	IllegalOpcode,//$C3
-	() => {},//$C4 CPY Cycles=3 Bytes=2; Zero Page
-	() => {},//$C5 CMP Cycles=3 Bytes=2; Zero Page
-	() => {},//$C6 DEC Cycles=5 Bytes=2; Zero Page
+	() => {//$C4 CPY Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$C5 CMP Cycles=3 Bytes=2; Zero Page
+	},
+	() => {//$C6 DEC Cycles=5 Bytes=2; Zero Page
+	},
 	IllegalOpcode,//$C7
-	() => {},//$C8 INY Cycles=2 Bytes=1; Implied
-	() => {},//$C9 CMP Cycles=2 Bytes=2; Immediate
-	() => {},//$CA DEX Cycles=2 Bytes=1; Implied
+	() => {//$C8 INY Cycles=2 Bytes=1; Implied
+		Register[Y]++;
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
+	},
+	() => {//$C9 CMP Cycles=2 Bytes=2; Immediate
+	},
+	() => {//$CA DEX Cycles=2 Bytes=1; Implied
+		Register[X]--;
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
+	},
 	IllegalOpcode,//$CB
-	() => {},//$CC CPY Cycles=4 Bytes=2; Absolute
-	() => {},//$CD CMP Cycles=4 Bytes=3; Absolute
-	() => {},//$CE DEC Cycles=6 Bytes=3; Absolute
+	() => {//$CC CPY Cycles=4 Bytes=2; Absolute
+	},
+	() => {//$CD CMP Cycles=4 Bytes=3; Absolute
+	},
+	() => {//$CE DEC Cycles=6 Bytes=3; Absolute
+	},
 	IllegalOpcode,//$CF
-	() => {},//$D0 BNE Cycles=2-5 Bytes=2; Relative
+	() => {//$D0 BNE Cycles=2-5 Bytes=2; Relative
+	},
 	() => {//$D1 CMP Cycles=5-6 Bytes=2; (Indirect),Y
 	},
 	IllegalOpcode,//$D2
@@ -224,6 +396,7 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$D7
 	() => {//$D8 CLD Cycles=2 Bytes=1; Implied
+		Flag_Decimal = false;
 	},
 	() => {//$D9 CMP Cycles=4-5 Bytes=3; Absolute,Y
 	},
@@ -237,7 +410,7 @@ const NESCPU = [
 	IllegalOpcode,//$DF
 	() => {//$E0 CPX Cycles=2 Bytes=2; Immediate
 	},
-	() => {//$E1 SBC Cycles=6 Bytes=1; (Indirect,X)
+	() => {//$E1 SBC Cycles=6 Bytes=2; (Indirect,X)
 	},
 	IllegalOpcode,//$E2
 	IllegalOpcode,//$E3
@@ -249,10 +422,14 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$E7
 	() => {//$E8 INX Cycles=2 Bytes=1; Implied
+		Register[X]++;
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	() => {//$E9 SBC Cycles=2 Bytes=1; Immediate
 	},
 	() => {//$EA NOP Cycles=2 Bytes=1; Implied
+		//You get nothing! Good day, sir!
 	},
 	IllegalOpcode,//$EB
 	() => {//$EC CPX Cycles=4 Bytes=3; Absolute
@@ -275,6 +452,7 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$F7
 	() => {//$F8 SED Cycles=2 Bytes=1; Implied
+		Flag_Decimal = true;
 	},
 	() => {//$F9 SBC Cycles=4-5 Bytes=3; Absolute,Y
 	},
@@ -291,28 +469,110 @@ Object.freeze(NESCPU);
 const HC_NMI_PC = 0xFFFA;
 const HC_startup_PC = 0xFFFC;
 const HC_IRQ_PC = 0xFFFE;
-const RawMemory = new ArrayBuffer(0x10000);//constructor arg is 1 more than highest index
+const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
+const RawRAM = new ArrayBuffer(0x800);
+const RAMpart1 = new Uint8Array(RawRAM,0,0x100);
+const RAMpart2 = new Uint8Array(RawRAM,0x100,0x100);
+const RAMpart3 = new Uint8Array(RawRAM,0x200,0x100);
+const RAMpart4 = new Uint8Array(RawRAM,0x300,0x100);
+const RAMpart5 = new Uint8Array(RawRAM,0x400,0x100);
+const RAMpart6 = new Uint8Array(RawRAM,0x500,0x100);
+const RAMpart7 = new Uint8Array(RawRAM,0x600,0x100);
+const RAMpart8 = new Uint8Array(RawRAM,0x700,0x100);
+const RawPPUregs = new ArrayBuffer(0x100);
+const PPUregs = new Uint8Array(RawPPUregs);
+MemoryIn2Parts[0] = RAMpart1;
+MemoryIn2Parts[1] = RAMpart2;
+MemoryIn2Parts[2] = RAMpart3;
+MemoryIn2Parts[3] = RAMpart4;
+MemoryIn2Parts[4] = RAMpart5;
+MemoryIn2Parts[5] = RAMpart6;
+MemoryIn2Parts[6] = RAMpart7;
+MemoryIn2Parts[7] = RAMpart8;
+MemoryIn2Parts[8] = RAMpart1;
+MemoryIn2Parts[9] = RAMpart2;
+MemoryIn2Parts[10] = RAMpart3;
+MemoryIn2Parts[11] = RAMpart4;
+MemoryIn2Parts[12] = RAMpart5;
+MemoryIn2Parts[13] = RAMpart6;
+MemoryIn2Parts[14] = RAMpart7;
+MemoryIn2Parts[15] = RAMpart8;
+MemoryIn2Parts[16] = RAMpart1;
+MemoryIn2Parts[17] = RAMpart2;
+MemoryIn2Parts[18] = RAMpart3;
+MemoryIn2Parts[19] = RAMpart4;
+MemoryIn2Parts[20] = RAMpart5;
+MemoryIn2Parts[21] = RAMpart6;
+MemoryIn2Parts[22] = RAMpart7;
+MemoryIn2Parts[23] = RAMpart8;
+MemoryIn2Parts[24] = RAMpart1;
+MemoryIn2Parts[25] = RAMpart2;
+MemoryIn2Parts[26] = RAMpart3;
+MemoryIn2Parts[27] = RAMpart4;
+MemoryIn2Parts[28] = RAMpart5;
+MemoryIn2Parts[29] = RAMpart6;
+MemoryIn2Parts[30] = RAMpart7;
+MemoryIn2Parts[31] = RAMpart8;
+
+MemoryIn2Parts[32] = PPUregs;
+MemoryIn2Parts[33] = PPUregs;
+MemoryIn2Parts[34] = PPUregs;
+MemoryIn2Parts[35] = PPUregs;
+MemoryIn2Parts[36] = PPUregs;
+MemoryIn2Parts[37] = PPUregs;
+MemoryIn2Parts[38] = PPUregs;
+MemoryIn2Parts[39] = PPUregs;
+MemoryIn2Parts[40] = PPUregs;
+MemoryIn2Parts[41] = PPUregs;
+MemoryIn2Parts[42] = PPUregs;
+MemoryIn2Parts[43] = PPUregs;
+MemoryIn2Parts[44] = PPUregs;
+MemoryIn2Parts[45] = PPUregs;
+MemoryIn2Parts[46] = PPUregs;
+MemoryIn2Parts[47] = PPUregs;
+MemoryIn2Parts[48] = PPUregs;
+MemoryIn2Parts[49] = PPUregs;
+MemoryIn2Parts[50] = PPUregs;
+MemoryIn2Parts[51] = PPUregs;
+MemoryIn2Parts[52] = PPUregs;
+MemoryIn2Parts[53] = PPUregs;
+MemoryIn2Parts[54] = PPUregs;
+MemoryIn2Parts[55] = PPUregs;
+MemoryIn2Parts[56] = PPUregs;
+MemoryIn2Parts[57] = PPUregs;
+MemoryIn2Parts[58] = PPUregs;
+MemoryIn2Parts[59] = PPUregs;
+MemoryIn2Parts[60] = PPUregs;
+MemoryIn2Parts[61] = PPUregs;
+MemoryIn2Parts[62] = PPUregs;
+MemoryIn2Parts[63] = PPUregs;
+
+const RawMemory = new ArrayBuffer(0x10000);//Not doing things this way anymore...
 const AllMemoryBytes = new Uint8Array(RawMemory);
 const Stack = AllMemoryBytes.subarray(0x100,0x200);//$01__ <- the stack
 const WritableMemoryBytes = AllMemoryBytes.subarray(0,0x8000);//ignore writes to ROM
-const HCVectors = new Uint16Array(RawMemory,0xFFFA,3);
-const tempbuffer = new ArrayBuffer(2);
-const MU8 = new Uint8Array(tempbuffer);
-const MN = new Int8Array(tempbuffer);//for reading negative values
-const MU16 = new Uint16Array(tempbuffer);
-const indbuffer = new ArrayBuffer(2);//Exists to simulate the indirect mode page overflow bug; as temp values elsewhere
-const indU8 = new Uint8Array(indbuffer);
-const indU16 = new Uint16Array(indbuffer);
+const HCVectors = new Uint16Array(RawMemory,0xFFFA,3);//All of the above will probably be removed
+const indbuffer = new ArrayBuffer(2);//Exists to simulate the indirect mode page overflow bug; as temp values elsewhere.
+const indU8 = new Uint8Array(indbuffer);//Do NOT rely on this keeping its value between operations.
+const ind8 = new Int8Array(indbuffer);//For reading negative numbers
+const indU16 = new Uint16Array(indbuffer);//For overflow checking
 const RawRegisterBuffer = new ArrayBuffer(4);
 const Register = new Uint8Array(RawRegisterBuffer);
+const SignedRegister = new Int8Array(RawRegisterBuffer);
 const A = 0;
 const X = 1;
 const Y = 2;
 const SP = 3;
-//Status
+//For status - I decided on a bunch of booleans. Shifting treats true as 1
 let Flag_Negative=false,Flag_Overflow=false, Flag_B=false,Flag_Decimal=false,Flag_ID=false,Flag_Zero=false,Flag_Carry=false;
-
+const PCbuffer = new ArrayBuffer(2);
+const PC8 = new Uint8Array(PCbuffer);
+const PC16 = new Uint16Array(PCbuffer);
 const PPU_Memory = new ArrayBuffer(0x4000);
+const statusToByte = () => {
+	"use strict";
+	return (Flag_Negative<<7)|(Flag_Overflow<<6)|(1<<5)|(Flag_B<<4)|(Flag_Decimal<<3)|(Flag_ID<<2)|(Flag_Zero<<1)|(Flag_Carry<<0);
+};
 /*
 2 pulse wave channels
 1 triangle wave channel

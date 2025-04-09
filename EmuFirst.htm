@@ -580,8 +580,92 @@ const statusToByte = () => {
 1 sample playing channel
 */
 </script>
+<style>
+canvas
+{
+	background: #000000;/*Because it's turned off*/
+}
+</style>
 </head>
 <body>
-...
+<canvas id="tvcanvas" width="682" height="522">
+<script type="text/javascript" src="webgl-utils.txt"></script>
+<script type="text/javascript" src="MV.txt"></script>
+<script>
+const pRows = 261;
+const pCols = 341;
+const buffer = 0.00;
+const rStep = (2.0-2*buffer)/pRows;
+const cStep = (2.0-2*buffer)/pCols;
+const rAdd = rStep/2.0;
+const cAdd = rStep/2.0;
+const pixelArray = [];
+for(let aY=pRows-1;aY>=0;aY--)
+{
+	for(let aX=0;aX<pCols;aX++)
+	{
+		pixelArray.push(vec2(cAdd+aX*cStep-1,rAdd+aY*rStep-1));
+	}
+}
+const FPA = flatten(pixelArray);
+const PPUpalette = [];
+const Dcanvas = document.getElementById("tvcanvas");
+const gl = WebGLUtils.setupWebGL(Dcanvas);
+if(!gl){alert("WebGL isn't available");}
+gl.viewport(0,0,Dcanvas.width,Dcanvas.height);
+gl.clearColor(0.95,0.95,0.95,1.0);
+//gl.enable(gl.DEPTH_TEST);//probably not
+const vertShdr = gl.createShader(gl.VERTEX_SHADER);
+const fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
+const program = gl.createProgram();
+const VertexShaderCode =
+"attribute vec4 pixPos;\
+void main()\
+{\
+	gl_PointSize = 2.0;\
+	gl_Position = pixPos;\
+}";
+gl.shaderSource(vertShdr,VertexShaderCode);
+gl.compileShader(vertShdr);
+/*
+Check gl.getShaderParameter(vertShdr,gl.COMPILE_STATUS) here
+and gl.getShaderInfoLog(vertShdr)
+*/
+const FragmentShaderCode =
+"precision mediump float;\
+void main()\
+{\
+	gl_FragColor = vec4(0.5,0.5,0.5,1.0);\
+}";
+gl.shaderSource(fragShdr,FragmentShaderCode);
+gl.compileShader(fragShdr);
+/*
+Check gl.getShaderParameter(fragShdr,gl.COMPILE_STATUS) here
+and gl.getShaderInfoLog(fragShdr)
+*/
+gl.attachShader(program,vertShdr);
+gl.attachShader(program,fragShdr);
+gl.linkProgram(program);
+/*
+Check gl.getProgramParameter(program,gl.LINK_STATUS) here
+and gl.getProgramInfoLog(program)
+*/
+gl.useProgram(program);
+
+const bufferId = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,bufferId);
+gl.bufferData(gl.ARRAY_BUFFER,FPA,gl.STATIC_DRAW);
+
+const JSpixPos = gl.getAttribLocation(program,"pixPos");
+gl.vertexAttribPointer(JSpixPos,2,gl.FLOAT,false,0,0);
+gl.enableVertexAttribArray(JSpixPos);
+
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.POINTS,0,pixelArray.length);
+function draw(a,b)
+{
+	gl.drawArrays(gl.POINTS,a,b);
+}
+</script>
 </body>
 </html>

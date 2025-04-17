@@ -7,18 +7,45 @@ const NESCPU = [
 	() => {//$00 BRK Cycles=7 Bytes=1; Implied
 	},
 	() => {//$01 ORA Cycles=6 Bytes=2; (Indirect,X)
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0]+=Register[X];
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		Register[A] |= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	IllegalOpcode,//$02
 	IllegalOpcode,//$03
 	IllegalOpcode,//$04
 	() => {//$05 ORA Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] |= ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$06 ASL Cycles=5 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Carry = ((ZeroPage[indU8[0]]>>>7)&1)==1;
+		ZeroPage[indU8[0]]<<=1;
+		indU8[0] = ZeroPage[indU8[0]];//to check the flags
+		Flag_Zero = !indU8[0];
+		Flag_Negative = (ind8[0] < 0);
 	},
 	IllegalOpcode,//$07
 	() => {//$08 PHP Cycles=3 Bytes=1; Implied
+		TheStack[Register[SP]] = statusToByte();
+		Register[SP]--;
 	},
 	() => {//$09 ORA Cycles=2 Bytes=2; Immediate
+		Register[A] |= MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$0A ASL Cycles=2 Bytes=1; Accumulator
 		Flag_Carry = (Register[A]&(0x80))==0x80;
@@ -29,11 +56,26 @@ const NESCPU = [
 	IllegalOpcode,//$0B
 	IllegalOpcode,//$0C
 	() => {//$0D ORA Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] |= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$0E ASL Cycles=6 Bytes=3; Absolute
 	},
 	IllegalOpcode,//$0F
 	() => {//$10 BPL Cycles=2-4 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(!Flag_Negative)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$11 ORA Cycles=5-6 Bytes=2; (Indirect),Y
 	},
@@ -41,6 +83,12 @@ const NESCPU = [
 	IllegalOpcode,//$13
 	IllegalOpcode,//$14
 	() => {//$15 ORA Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Register[A] |= ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$16 ASL Cycles=6 Bytes=2; Zero Page,X
 	},
@@ -59,6 +107,15 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$1F
 	() => {//#20 JSR Cycles=6 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		//Uniquely, this one doesn't increment Program Counter from 2nd read
+		TheStack[Register[SP]] = PC8[1];
+		Register[SP]--;
+		TheStack[Register[SP]] = PC8[0];
+		Register[SP]--;
+		PC16[0] = indU16[0];
 	},
 	() => {//#21 AND Cycles=6 Bytes=2; (Indirect,X)
 	},
@@ -72,6 +129,8 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$27
 	() => {//$28 PLP Cycles=4 Bytes=1; Implied
+		Register[SP]++;
+		byteToStatus(TheStack[Register[SP]]);
 	},
 	() => {//$29 AND Cycles=2 Bytes=2; Immediate
 	},
@@ -91,6 +150,14 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$2F
 	() => {//$30 BMI Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(Flag_Negative)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$31 AND Cycles=5-6 Bytes=2; (Indirect),Y
 	},
@@ -116,20 +183,54 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$3F
 	() => {//$40 RTI Cycles=6 Bytes=1; Implied
+		Register[SP]++;
+		byteToStatus(TheStack[Register[SP]]);
+		Register[SP]++;
+		indU8[0] = TheStack[Register[SP]];
+		Register[SP]++;
+		indU8[1] = TheStack[Register[SP]];
+		PC16[0] = indU16[0];
 	},
 	() => {//$41 EOR Cycles=6 Bytes=2; (Indirect,X)
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0]+=Register[X];
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		Register[A] ^= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	IllegalOpcode,//$42
 	IllegalOpcode,//$43
 	IllegalOpcode,//$44
 	() => {//$45 EOR Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] ^= ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$46 LSR Cycles=5 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Carry = (ZeroPage[indU8[0]]&1)==1;
+		ZeroPage[indU8[0]]>>>=1;
+		indU8[0] = ZeroPage[indU8[0]];//to check the flags
+		Flag_Zero = !indU8[0];
+		Flag_Negative = (ind8[0] < 0);
 	},
 	IllegalOpcode,//$47
 	() => {//$48 PHA Cycles=3 Bytes=1; Implied
+		TheStack[Register[SP]] = Register[A];
+		Register[SP]--;
 	},
 	() => {//$49 EOR Cycles=2 Bytes=2; Immediate
+		Register[A] ^= MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$4A LSR Cycles=2 Bytes=1; Accumulator
 		Flag_Carry = !!(Register[A]&1);
@@ -139,20 +240,55 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$4B
 	() => {//$4C JMP Cycles=3 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0] = indU16[0];
 	},
 	() => {//$4D EOR Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] ^= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$4E LSR Cycles=6 Bytes=3; Absolute
 	},
 	IllegalOpcode,//$4F
 	() => {//$50 BVC Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(!Flag_Overflow)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$51 EOR Cycles=5-6 Bytes=2; (Indirect),Y
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		//done using anotherTempByte here, may reuse
+		indU16[0]+=Register[Y];
+		Register[A] ^= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	IllegalOpcode,//$52
 	IllegalOpcode,//$53
 	IllegalOpcode,//$54
 	() => {//$55 EOR Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Register[A] ^= ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$56 LSR Cycles=6 Bytes=2; Zero Page,X
 	},
@@ -170,6 +306,12 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$5F
 	() => {//$60 RTS Cycles=6 Bytes=1; Implied
+		Register[SP]++;
+		indU8[0] = TheStack[Register[SP]];
+		Register[SP]++;
+		indU8[1] = TheStack[Register[SP]];
+		PC16[0] = indU16[0];
+		PC16[0]++;
 	},
 	() => {//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
 	},
@@ -182,6 +324,10 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$67
 	() => {//$68 PLA Cycles=4 Bytes=1; Implied
+		Register[SP]++;
+		Register[A] = TheStack[Register[SP]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$69 ADC Cycles=2 Bytes=2; Immediate
 	},
@@ -192,8 +338,15 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$6B
+	IllegalOpcode,//$6B (Undocumented:ARR)
 	() => {//$6C JMP Cycles=5 Bytes=3; Indirect
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		//indirect pointer now in indU16
+		PC8[0] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		indU8[1]++;//bumping only this part simulates the page-bug correctly
+		PC8[1] = MemoryIn2Parts[indU8[1]][indU8[0]];
 	},
 	() => {//$6D ADC Cycles=4 Bytes=3; Absolute
 	},
@@ -201,6 +354,14 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$6F
 	() => {//$70 BVS Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(Flag_Overflow)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
 	},
@@ -231,12 +392,26 @@ const NESCPU = [
 	IllegalOpcode,//$82
 	IllegalOpcode,//$83
 	() => {//$84 STY Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]] = Register[Y];
 	},
 	() => {//$85 STA Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]] = Register[A];
 	},
 	() => {//$86 STX Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]] = Register[X];
 	},
-	IllegalOpcode,//$87
+	() => {//IllegalOpcode, $87 SAX Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]] = (Register[A] & Register[X]);
+		//Unknown what this opcode does to the flags
+	},
 	() => {//$88 DEY Cycles=2 Bytes=1; Implied
 		Register[Y]--;
 		Flag_Zero = !Register[Y];
@@ -248,7 +423,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$8B
+	IllegalOpcode,//$8B (Undocumented:ANE)
 	() => {//$8C STY Cycles=4 Bytes=3; Absolute
 	},
 	() => {//$8D STA Cycles=4 Bytes=2; Absolute
@@ -257,16 +432,36 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$8F
 	() => {//$90 BCC Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(!Flag_Carry)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$91 STA Cycles=6 Bytes=2; (Indirect),Y
 	},
 	IllegalOpcode,//$92
-	IllegalOpcode,//$93
+	IllegalOpcode,//$93 (Undocumented:SHA)
 	() => {//$94 STY Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];
+		ZeroPage[indU8[0]] = Register[Y];
 	},
 	() => {//$95 STA Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];
+		ZeroPage[indU8[0]] = Register[A];
 	},
 	() => {//$96 STX Cycles=4 Bytes=2; Zero Page,Y
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[Y];
+		ZeroPage[indU8[0]] = Register[X];
 	},
 	IllegalOpcode,//$97
 	() => {//$98 TYA Cycles=2 Bytes=1; Implied
@@ -279,24 +474,56 @@ const NESCPU = [
 	() => {//$9A TXS Cycles=2 Bytes=1; Implied
 		Register[SP] = Register[X];
 	},
-	IllegalOpcode,//$9B
-	IllegalOpcode,//$9C
+	IllegalOpcode,//$9B (Undocumented:SHS)
+	IllegalOpcode,//$9C (Undocumented:SHY)
 	() => {//$9D STA Cycles=5 Bytes=3; Absolute,X
 	},
-	IllegalOpcode,//$9E
-	IllegalOpcode,//$9F
+	IllegalOpcode,//$9E (Undocumented:SHX)
+	IllegalOpcode,//$9F (Undocumented:SHA)
 	() => {//$A0 LDY Cycles=2 Bytes=2; Immediate
+		Register[Y] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$A1 LDA Cycles=6 Bytes=2; (Indirect,X)
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0]+=Register[X];
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		Register[A] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$A2 LDX Cycles=2 Bytes=2; Immediate
+		Register[X] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	IllegalOpcode,//$A3
 	() => {//$A4 LDY Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[Y] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$A5 LDA Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$A6 LDX Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[X] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	IllegalOpcode,//$A7
 	() => {//$A8 TAY Cycles=2 Bytes=1; Implied
@@ -305,37 +532,106 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$A9 LDA Cycles=2 Bytes=2; Immediate
+		Register[A] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$AA TAX Cycles=2 Bytes=1; Implied
 		Register[X] = Register[A];
 		Flag_Zero = !Register[X];
 		Flag_Negative = (SignedRegister[X] < 0);
 	},
-	IllegalOpcode,//$AB
+	IllegalOpcode,//$AB (Undocumented:LXA)
 	() => {//$AC LDY Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[Y] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$AD LDA Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$AE LDX Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[X] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	IllegalOpcode,//$AF
 	() => {//$B0 BCS Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(Flag_Carry)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$B1 LDA Cycles=5-6 Bytes=2; (Indirect),Y
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		indU16[0]+=Register[Y];
+		Register[A] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	IllegalOpcode,//$B2
 	IllegalOpcode,//$B3
-	() => {//$B4 LDY Cycles=4 Bytes=3; Zero Page,X
+	() => {//$B4 LDY Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Register[Y] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$B5 LDA Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Register[A] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$B6 LDX Cycles=4 Bytes=2; Zero Page,Y
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[Y];//automatically loops
+		Register[X] = ZeroPage[indU8[0]];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	IllegalOpcode,//$B7
 	() => {//$B8 CLV Cycles=2 Bytes=1; Implied
 		Flag_Overflow = false;
 	},
 	() => {//$B9 LDA Cycles=4-5 Bytes=3; Absolute,Y
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[Y];
+		//Possibly use anotherTempByte to check if page boundry crossed
+		Register[A] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$BA TSX Cycles=2 Bytes=1; Implied
 		Register[X] = Register[SP];
@@ -344,10 +640,37 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$BB
 	() => {//$BC LDY Cycles=4-5 Bytes=3; Absolute,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[X];
+		//Possibly use anotherTempByte to check if page boundry crossed
+		Register[Y] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[Y];
+		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$BD LDA Cycles=4-5 Bytes=3; Absolute,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[X];
+		//Possibly use anotherTempByte to check if page boundry crossed
+		Register[A] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$BE LDX Cycles=4-5 Bytes=3; Absolute,Y
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[Y];
+		//Possibly use anotherTempByte to check if page boundry crossed
+		Register[X] = MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[X];
+		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	IllegalOpcode,//$BF
 	() => {//$C0 CPY Cycles=2 Bytes=2; Immediate
@@ -361,6 +684,12 @@ const NESCPU = [
 	() => {//$C5 CMP Cycles=3 Bytes=2; Zero Page
 	},
 	() => {//$C6 DEC Cycles=5 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]]--;
+		indU8[0] = ZeroPage[indU8[0]];//to check the flags
+		Flag_Zero = !indU8[0];
+		Flag_Negative = (ind8[0] < 0);
 	},
 	IllegalOpcode,//$C7
 	() => {//$C8 INY Cycles=2 Bytes=1; Implied
@@ -375,7 +704,7 @@ const NESCPU = [
 		Flag_Zero = !Register[X];
 		Flag_Negative = (SignedRegister[X] < 0);
 	},
-	IllegalOpcode,//$CB
+	IllegalOpcode,//$CB (Undocumented:SBX)
 	() => {//$CC CPY Cycles=4 Bytes=2; Absolute
 	},
 	() => {//$CD CMP Cycles=4 Bytes=3; Absolute
@@ -384,6 +713,14 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$CF
 	() => {//$D0 BNE Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(!Flag_Zero)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$D1 CMP Cycles=5-6 Bytes=2; (Indirect),Y
 	},
@@ -427,6 +764,15 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[X] < 0);
 	},
 	() => {//$E9 SBC Cycles=2 Bytes=1; Immediate
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ind16[0] = Register[A]-anotherTempByte[0]-(!Flag_Carry);
+		Register[A] = ind16[0];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
+		Flag_Overflow = (ind8[0]==ind16[0]);
+		//TODO:handle carry. "Clear if overflow in bit 7". What exactly does that mean?
+		//TODO:check the rest of this for validity!
 	},
 	() => {//$EA NOP Cycles=2 Bytes=1; Implied
 		//You get nothing! Good day, sir!
@@ -440,6 +786,14 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$EF
 	() => {//$F0 BEQ Cycles=2-5 Bytes=2; Relative
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		if(Flag_Zero)//Branch condition
+		{
+			PC16[0]+=ind8[0];//operand counts as signed
+			//Possibly add 1 to cycle count
+			//also possibly compare PC8[0] to former for more cycle counts
+		}
 	},
 	() => {//$F1 SBC Cycles=5-6 Bytes=2; (Indirect),Y
 	},
@@ -466,13 +820,22 @@ const NESCPU = [
 	IllegalOpcode //$FF
 ];
 Object.freeze(NESCPU);
+/*
+Opcodes to do:
+$00, $0E, $11, $16, $19, $1D, $1E, $21, $24, $25, $26, $29, $2C, $2D, $2E,
+$31, $35, $36, $39, $3D, $3E, $4E, $56, $58, $59, $5D, $5E,
+$61, $65, $66, $69, $6D, $6E, $71, $75, $76, $79, $7D, $7E,
+$81, $8C, $8D, $8E, $91, $99, $9D,
+$C0, $C1, $C4, $C5, $C9, $CC, $CD, $CE, $D1, $D5, $D6, $D9, $DD, $DE,
+$E0, $E1, $E4, $E5, $E6,~$E9, $EC, $ED, $EE, $F1, $F5, $F6, $F9, $FD, $FE
+*/
 const HC_NMI_PC = 0xFFFA;
 const HC_startup_PC = 0xFFFC;
 const HC_IRQ_PC = 0xFFFE;
 const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
 const RawRAM = new ArrayBuffer(0x800);
-const RAMpart1 = new Uint8Array(RawRAM,0,0x100);
-const RAMpart2 = new Uint8Array(RawRAM,0x100,0x100);
+const RAMpart1 = new Uint8Array(RawRAM,0,0x100);//The Zero Page
+const RAMpart2 = new Uint8Array(RawRAM,0x100,0x100);//The stack?
 const RAMpart3 = new Uint8Array(RawRAM,0x200,0x100);
 const RAMpart4 = new Uint8Array(RawRAM,0x300,0x100);
 const RAMpart5 = new Uint8Array(RawRAM,0x400,0x100);
@@ -546,6 +909,11 @@ MemoryIn2Parts[60] = PPUregs;
 MemoryIn2Parts[61] = PPUregs;
 MemoryIn2Parts[62] = PPUregs;
 MemoryIn2Parts[63] = PPUregs;
+//64-95 = APU,I/O Registers and "Don't worry about this"
+//96-127 = SRAM/WRAM (8K)
+//128-255 = ROM (32K)
+const ZeroPage = MemoryIn2Parts[0];
+const TheStack = MemoryIn2Parts[1];
 
 const RawMemory = new ArrayBuffer(0x10000);//Not doing things this way anymore...
 const AllMemoryBytes = new Uint8Array(RawMemory);
@@ -556,23 +924,40 @@ const indbuffer = new ArrayBuffer(2);//Exists to simulate the indirect mode page
 const indU8 = new Uint8Array(indbuffer);//Do NOT rely on this keeping its value between operations.
 const ind8 = new Int8Array(indbuffer);//For reading negative numbers
 const indU16 = new Uint16Array(indbuffer);//For overflow checking
+const ind16 = new Int16Array(indbuffer);//Exclusively for setting the overflow flag on subtract-with-carry
 const RawRegisterBuffer = new ArrayBuffer(4);
 const Register = new Uint8Array(RawRegisterBuffer);
 const SignedRegister = new Int8Array(RawRegisterBuffer);
+const anotherTempByte = new Uint8Array(1);
 const A = 0;
 const X = 1;
 const Y = 2;
 const SP = 3;
 //For status - I decided on a bunch of booleans. Shifting treats true as 1
 let Flag_Negative=false,Flag_Overflow=false, Flag_B=false,Flag_Decimal=false,Flag_ID=false,Flag_Zero=false,Flag_Carry=false;
-const PCbuffer = new ArrayBuffer(2);
-const PC8 = new Uint8Array(PCbuffer);
-const PC16 = new Uint16Array(PCbuffer);
-const PPU_Memory = new ArrayBuffer(0x4000);
 const statusToByte = () => {
 	"use strict";
 	return (Flag_Negative<<7)|(Flag_Overflow<<6)|(1<<5)|(Flag_B<<4)|(Flag_Decimal<<3)|(Flag_ID<<2)|(Flag_Zero<<1)|(Flag_Carry<<0);
 };
+const byteToStatus = (B) => {
+	"use strict";
+	Flag_Carry = (B&1)==1;
+	Flag_Zero = ((B>>>1)&1)==1;
+	Flag_ID = ((B>>>2)&1)==1;
+	Flag_Decimal = ((B>>>3)&1)==1;
+	Flag_B = ((B>>>4)&1)==1;
+	Flag_Overflow = ((B>>>6)&1)==1;
+	Flag_Negative = ((B>>>7)&1)==1;
+};
+const PCbuffer = new ArrayBuffer(2);//Program Counter
+const PC8 = new Uint8Array(PCbuffer);
+const PC16 = new Uint16Array(PCbuffer);
+function nextCommand()
+{
+	indU16[0] = PC16[0]++;//Fetch opcode and increment it
+	NESCPU[ MemoryIn2Parts[indU8[1]][indU8[0]] ]();//run the fetched opcode
+}
+const PPU_Memory = new ArrayBuffer(0x4000);
 /*
 2 pulse wave channels
 1 triangle wave channel
@@ -588,7 +973,7 @@ canvas
 </style>
 </head>
 <body>
-<canvas id="tvcanvas" width="682" height="522">
+<canvas id="tvcanvas" width="682" height="522"></canvas>
 <script type="text/javascript" src="webgl-utils.txt"></script>
 <script type="text/javascript" src="MV.txt"></script>
 <script>
@@ -608,7 +993,9 @@ for(let aY=pRows-1;aY>=0;aY--)
 	}
 }
 const FPA = flatten(pixelArray);
-const PPUpalette = [];
+const ActualGLcolors = new Float32Array(pRows*pCols*3);//pre-flattened
+for(let i=0;i<ActualGLcolors.length;i++)
+{ActualGLcolors[i] = Math.random();}
 const Dcanvas = document.getElementById("tvcanvas");
 const gl = WebGLUtils.setupWebGL(Dcanvas);
 if(!gl){alert("WebGL isn't available");}
@@ -620,10 +1007,13 @@ const fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
 const program = gl.createProgram();
 const VertexShaderCode =
 "attribute vec4 pixPos;\
+attribute vec3 pixCol;\
+varying vec3 handoff;\
 void main()\
 {\
 	gl_PointSize = 2.0;\
 	gl_Position = pixPos;\
+	handoff = pixCol;\
 }";
 gl.shaderSource(vertShdr,VertexShaderCode);
 gl.compileShader(vertShdr);
@@ -633,9 +1023,11 @@ and gl.getShaderInfoLog(vertShdr)
 */
 const FragmentShaderCode =
 "precision mediump float;\
+varying vec3 handoff;\
 void main()\
 {\
-	gl_FragColor = vec4(0.5,0.5,0.5,1.0);\
+	gl_FragColor.xyz = handoff;\
+	gl_FragColor.w = 1.0;\
 }";
 gl.shaderSource(fragShdr,FragmentShaderCode);
 gl.compileShader(fragShdr);
@@ -652,19 +1044,26 @@ and gl.getProgramInfoLog(program)
 */
 gl.useProgram(program);
 
-const bufferId = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER,bufferId);
+const bufferId1 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,bufferId1);
 gl.bufferData(gl.ARRAY_BUFFER,FPA,gl.STATIC_DRAW);
 
 const JSpixPos = gl.getAttribLocation(program,"pixPos");
 gl.vertexAttribPointer(JSpixPos,2,gl.FLOAT,false,0,0);
 gl.enableVertexAttribArray(JSpixPos);
 
-gl.clear(gl.COLOR_BUFFER_BIT);
-gl.drawArrays(gl.POINTS,0,pixelArray.length);
-function draw(a,b)
+const bufferId2 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,bufferId2);
+gl.bufferData(gl.ARRAY_BUFFER,ActualGLcolors,gl.STATIC_DRAW);
+
+const JSpixCol = gl.getAttribLocation(program,"pixCol");
+gl.vertexAttribPointer(JSpixCol,3,gl.FLOAT,false,0,0);
+gl.enableVertexAttribArray(JSpixCol);
+
+function drawFrame()
 {
-	gl.drawArrays(gl.POINTS,a,b);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.drawArrays(gl.POINTS,0,pixelArray.length);
 }
 </script>
 </body>

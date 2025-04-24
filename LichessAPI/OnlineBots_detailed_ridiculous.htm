@@ -8,9 +8,14 @@ function initialGet(clbt)
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
+	//const SiteIndx = document.getElementById("selSite").selectedIndex;//not used yet
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
+		const siteURLs = [
+			`https://lichess.org/api/bot/online?nb=${tv}`,
+			`https://lishogi.org/api/bot/online?nb=${tv}`
+		];
 		const siteDiffs = [
 			{//Lichess
 				"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
@@ -31,7 +36,7 @@ function initialGet(clbt)
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler(`https://lichess.org/api/bot/online?nb=${tv}`,OGresp,HL,svr,gt,DlogA,siteDiffs[0]);
+		fetchHandler(siteURLs[0],OGresp,HL,svr,gt,DlogA,siteDiffs[0]);
 	}
 	else
 	{
@@ -175,34 +180,43 @@ function makeTableEntry(JO,tableElem,listObj)
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
-	const tl = gt.length - 2;//total length, stop if cup goes above this
-	let cup = 0;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup <= tl)//gnomesorting the rows
-	{
+	while(cup < tl)//a list of 1 is already sorted
+	{//trying insertionsort
 		fn = gt[cup];
-		sn = gt[cup+1];
+		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
-		if(s1 == s2)
-		{
-			cup++;
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
 		}
-		else if((s1 > s2) == lth)
-		{
-			fn.before(sn);//swap rows
-			cup--;
-			if(cup<0){cup=1;}
-		}
-		else
-		{
-			cup++;
-		}
+		cup++;
 	}
 }
 </script>
 <style>
-td, th
+td,th
 {
 	white-space: nowrap;
 }
@@ -210,9 +224,20 @@ span
 {
 	cursor: pointer;
 }
+select,input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
 </style>
 </head>
 <body>
+<!--
+Site = <select id="selSite">
+<option value="lichess" selected>lichess</option>
+<option value="lishogi">lishogi</option>
+</select><br>
+-->
 <input type=text id="NofBotsToGet" value="200"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <div id="logA">Log space</div>
 <hr>

@@ -8,10 +8,14 @@ function initialGet(clbt)
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
-	//const SiteIndx = document.getElementById("selSite").selectedIndex;//not used yet
+	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
+	const CR = document.getElementById("catRow");
+	const NR = document.getElementById("nameRow");
+	const SBR = document.getElementById("sortButtonRow");
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
+		const colCount = [108,85];
 		const siteURLs = [
 			`https://lichess.org/api/bot/online?nb=${tv}`,
 			`https://lishogi.org/api/bot/online?nb=${tv}`
@@ -28,11 +32,12 @@ function initialGet(clbt)
 				"profile":["location","bio","firstName","lastName","country","links"]
 			}
 		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
-		const SBR = document.getElementById("sortButtonRow");
-		for(let i=0;i<108;i++)
-		{
-			SBR.appendChild(sortbuttonCellmaker(i));
-		}
+		variantCombiner(siteDiffs[SiteIndx]);
+		timestamper("createdAt");
+		timestamper("seenAt");
+		playTime();
+		profileAndRemainder(siteDiffs[SiteIndx]["profile"]);
+		sortbuttonCellFactory(colCount[SiteIndx]);
 		const OGresp = document.getElementById("stts");
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
@@ -41,26 +46,87 @@ function initialGet(clbt)
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler(siteURLs[0],OGresp,HL,svr,gt,DlogA,siteDiffs[0]);
+		fetchHandler(siteURLs[SiteIndx],OGresp,HL,svr,gt,DlogA,siteDiffs[SiteIndx]);
 	}
 	else
 	{
 		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
 	}
-	function sortbuttonCellmaker(N)
+	function variantCombiner(O)
 	{
-		const hCell = document.createElement('th');
-		const S1 = document.createElement('span');
-		const S2 = document.createElement('span');
-		S1.innerHTML = "&#9650;";
-		S2.innerHTML = "&#9660;";
-		S1.setAttribute("onclick",`a(${N},true)`);
-		S2.setAttribute("onclick",`a(${N},false)`);
-		hCell.appendChild(S1);
-		hCell.appendChild(document.createTextNode(" "));
-		hCell.appendChild(S2);
-		return hCell;
+		const list = O["perflist"];
+		const optn = O["perfoptn"];
+		for(let i=0;i<list.length;i++)
+		{
+			variantMaker(list[i],optn[i]??false);
+		}
+	}
+	function variantMaker(N,Q)
+	{
+		const banner = document.createElement('th');
+		banner.appendChild(document.createTextNode(N));
+		banner.setAttribute("colspan", Q?6:5);
+		CR.appendChild(banner);
+		if(Q){lister("?", NR, 'th');}
+		lister("games", NR, 'th');
+		lister("rating", NR, 'th');
+		lister("rd", NR, 'th');
+		lister("prog", NR, 'th');
+		lister("prov", NR, 'th');
+	}
+	function timestamper(W)
+	{
+		const banner = document.createElement('th');
+		banner.appendChild(document.createTextNode(W));
+		banner.setAttribute("colspan", 4);
+		CR.appendChild(banner);
+		lister("(Timestamp)", NR, 'th');
+		lister("(Date)", NR, 'th');
+		lister("(Time)", NR, 'th');
+		lister("(UTC)", NR, 'th');
+	}
+	function playTime()
+	{
+		const ptban = document.createElement('th');
+		ptban.appendChild(document.createTextNode("playTime"));
+		ptban.setAttribute("colspan", 2);
+		CR.appendChild(ptban);
+		lister("total", NR, 'th');
+		lister("tv", NR, 'th');
+	}
+	function profileAndRemainder(wordlist)
+	{
+		const prban = document.createElement('th');
+		prban.appendChild(document.createTextNode("profile"));
+		prban.setAttribute("colspan", wordlist.length+1);
+		CR.appendChild(prban);
+		lister("#", NR, 'th');
+		for(let i=0;i<wordlist.length;i++)
+		{
+			lister(wordlist[i], NR, 'th');
+		}
+		lister("title", NR, 'th');
+		lister("flair?", NR, 'th');
+		lister("patron", NR, 'th');
+		lister("verified", NR, 'th');
+	}
+	function sortbuttonCellFactory(N)
+	{
+		for(let i=0;i<N;i++)
+		{
+			const hCell = document.createElement('th');
+			const S1 = document.createElement('span');
+			const S2 = document.createElement('span');
+			S1.innerHTML = "&#9650;";
+			S2.innerHTML = "&#9660;";
+			S1.setAttribute("onclick",`a(${i},true)`);
+			S2.setAttribute("onclick",`a(${i},false)`);
+			hCell.appendChild(S1);
+			hCell.appendChild(document.createTextNode(" "));
+			hCell.appendChild(S2);
+			SBR.appendChild(hCell);
+		}
 	}
 }
 async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA,diffObj)
@@ -256,12 +322,10 @@ select,input
 </style>
 </head>
 <body>
-<!--
 Site = <select id="selSite">
-<option value="lichess" selected>lichess</option>
-<option value="lishogi">lishogi</option>
+<option selected>lichess</option>
+<option>lishogi</option>
 </select><br>
--->
 <input type=text id="NofBotsToGet" value="200"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <div id="logA">Log space</div>
 <hr>
@@ -270,29 +334,8 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr><th colspan=3></th><th colspan=5>Bullet</th><th colspan=5>Blitz</th><th colspan=5>Rapid</th><th colspan=5>Classical</th><th colspan=5>Correspondence</th>
-<th colspan=6>Chess960</th><th colspan=6>Crazyhouse</th><th colspan=6>antichess</th><th colspan=6>atomic</th><th colspan=6>horde</th><th colspan=6>kingOfTheHill</th><th colspan=6>racingKings</th><th colspan=6>threeCheck</th><th colspan=6>puzzle</th>
-<th colspan=4>createdAt</th><th colspan=4>seenAt</th><th colspan=2>playTime</th><th colspan=12>profile</th></tr>
-<tr><th>id</th><th>username</th><th>#perfs</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>(Timestamp)</th><th>(Date)</th><th>(Time)</th><th>(UTC)</th>
-<th>(Timestamp)</th><th>(Date)</th><th>(Time)</th><th>(UTC)</th>
-<th>total</th><th>tv</th>
-<th>#</th><th>location</th><th>bio</th><th>rcfRating</th><th>flag</th><th>dsbRating</th><th>fideRating</th><th>ecfRating</th><th>uscfRating</th><th>realName</th><th>cfcRating</th><th>links</th>
-<th>title</th><th>flair?</th><th>patron</th><th>verified</th></tr>
+<tr id="catRow"><th colspan=3></th></tr>
+<tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th></tr>
 <tr id="sortButtonRow"></tr>
 </thead>
 <tbody id="st"></tbody>

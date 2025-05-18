@@ -67,6 +67,7 @@ function GetPublicTournaments(ClBt)
 				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):NA,tabRw,'td');
 				lister(CT["schedule"]?(CT["schedule"]["speed"]??""):NA,tabRw,'td');
 				lister(CT["winner"]?.["id"]??"",tabRw,'td');
+				lister(CT["winner"]?(CT["winner"]["flair"]?"yes":"no"):NA,tabRw,'td');
 				lister(CT["winner"]?.["title"]??"",tabRw,'td');
 				TB.appendChild(tabRw);
 			}
@@ -88,29 +89,38 @@ function lister(listedText, ParntNde, ElType)
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
-	const tl = gt.length - 2;//total length, stop if cup goes above this
-	let cup = 0;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup <= tl)//gnomesorting the rows
-	{
+	while(cup < tl)//a list of 1 is already sorted
+	{//trying insertionsort
 		fn = gt[cup];
-		sn = gt[cup+1];
+		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
-		if(s1 == s2)
-		{
-			cup++;
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
 		}
-		else if((s1 > s2) == lth)
-		{
-			fn.before(sn);//swap rows
-			cup--;
-			if(cup<0){cup=1;}
-		}
-		else
-		{
-			cup++;
-		}
+		cup++;
 	}
 }
 </script>
@@ -141,11 +151,11 @@ span
 <thead><tr><th colspan=5></th><th colspan=2>clock</th><th colspan=3></th><th>variant</th>
 <th colspan=3>startsAt</th><th colspan=3>finishesAt</th><th></th><th colspan=3>perf</th>
 <th></th><th colspan=2>maxRating</th><th colspan=2>minRatedGames</th>
-<th colspan=2>position</th><th colspan=2>schedule</th><th colspan=2>winner</th>
+<th colspan=2>position</th><th colspan=2>schedule</th><th colspan=3>winner</th>
 </tr><tr>
 <th>Group</th><th>id</th><th>createdBy</th>
 <th>system</th><th>minutes</th>
-<th>lim</th><th>incr</th>
+<th>limit</th><th>incr.</th>
 <th>rated</th>
 <th>fullName</th>
 <th>nbPlayers</th>
@@ -162,6 +172,7 @@ span
 <th>?</th><th>eco</th>
 <th>freq</th><th>speed</th>
 <th>id</th>
+<th>flair?</th>
 <th>title</th>
 </tr><tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
@@ -196,6 +207,7 @@ span
 <th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
 <th><span onClick=a(30,true)>&#9650;</span> <span onClick=a(30,false)>&#9660;</span></th>
 <th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
+<th><span onClick=a(32,true)>&#9650;</span> <span onClick=a(32,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

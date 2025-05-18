@@ -28,6 +28,11 @@ function initialGet(clbt)
 				"profile":["location","bio","firstName","lastName","country","links"]
 			}
 		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
+		const SBR = document.getElementById("sortButtonRow");
+		for(let i=0;i<108;i++)
+		{
+			SBR.appendChild(sortbuttonCellmaker(i));
+		}
 		const OGresp = document.getElementById("stts");
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
@@ -42,6 +47,20 @@ function initialGet(clbt)
 	{
 		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
+	}
+	function sortbuttonCellmaker(N)
+	{
+		const hCell = document.createElement('th');
+		const S1 = document.createElement('span');
+		const S2 = document.createElement('span');
+		S1.innerHTML = "&#9650;";
+		S2.innerHTML = "&#9660;";
+		S1.setAttribute("onclick",`a(${N},true)`);
+		S2.setAttribute("onclick",`a(${N},false)`);
+		hCell.appendChild(S1);
+		hCell.appendChild(document.createTextNode(" "));
+		hCell.appendChild(S2);
+		return hCell;
 	}
 }
 async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA,diffObj)
@@ -181,10 +200,16 @@ function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
-	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup < tl)//a list of 1 is already sorted
-	{//trying insertionsort
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
+	{
 		fn = gt[cup];
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
@@ -211,7 +236,6 @@ function a(ctsb, lth)
 			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
 			gt[rearguard].before(fn);
 		}
-		cup++;
 	}
 }
 </script>
@@ -269,116 +293,8 @@ Site = <select id="selSite">
 <th>total</th><th>tv</th>
 <th>#</th><th>location</th><th>bio</th><th>rcfRating</th><th>flag</th><th>dsbRating</th><th>fideRating</th><th>ecfRating</th><th>uscfRating</th><th>realName</th><th>cfcRating</th><th>links</th>
 <th>title</th><th>flair?</th><th>patron</th><th>verified</th></tr>
-<tr>
-<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
-<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
-<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
-<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
-<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
-<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
-<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
-<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
-<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
-<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
-<th><span onClick=a(10,true)>&#9650;</span> <span onClick=a(10,false)>&#9660;</span></th>
-<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
-<th><span onClick=a(12,true)>&#9650;</span> <span onClick=a(12,false)>&#9660;</span></th>
-<th><span onClick=a(13,true)>&#9650;</span> <span onClick=a(13,false)>&#9660;</span></th>
-<th><span onClick=a(14,true)>&#9650;</span> <span onClick=a(14,false)>&#9660;</span></th>
-<th><span onClick=a(15,true)>&#9650;</span> <span onClick=a(15,false)>&#9660;</span></th>
-<th><span onClick=a(16,true)>&#9650;</span> <span onClick=a(16,false)>&#9660;</span></th>
-<th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
-<th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
-<th><span onClick=a(19,true)>&#9650;</span> <span onClick=a(19,false)>&#9660;</span></th>
-<th><span onClick=a(20,true)>&#9650;</span> <span onClick=a(20,false)>&#9660;</span></th>
-<th><span onClick=a(21,true)>&#9650;</span> <span onClick=a(21,false)>&#9660;</span></th>
-<th><span onClick=a(22,true)>&#9650;</span> <span onClick=a(22,false)>&#9660;</span></th>
-<th><span onClick=a(23,true)>&#9650;</span> <span onClick=a(23,false)>&#9660;</span></th>
-<th><span onClick=a(24,true)>&#9650;</span> <span onClick=a(24,false)>&#9660;</span></th>
-<th><span onClick=a(25,true)>&#9650;</span> <span onClick=a(25,false)>&#9660;</span></th>
-<th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
-<th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
-<th><span onClick=a(28,true)>&#9650;</span> <span onClick=a(28,false)>&#9660;</span></th>
-<th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
-<th><span onClick=a(30,true)>&#9650;</span> <span onClick=a(30,false)>&#9660;</span></th>
-<th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
-<th><span onClick=a(32,true)>&#9650;</span> <span onClick=a(32,false)>&#9660;</span></th>
-<th><span onClick=a(33,true)>&#9650;</span> <span onClick=a(33,false)>&#9660;</span></th>
-<th><span onClick=a(34,true)>&#9650;</span> <span onClick=a(34,false)>&#9660;</span></th>
-<th><span onClick=a(35,true)>&#9650;</span> <span onClick=a(35,false)>&#9660;</span></th>
-<th><span onClick=a(36,true)>&#9650;</span> <span onClick=a(36,false)>&#9660;</span></th>
-<th><span onClick=a(37,true)>&#9650;</span> <span onClick=a(37,false)>&#9660;</span></th>
-<th><span onClick=a(38,true)>&#9650;</span> <span onClick=a(38,false)>&#9660;</span></th>
-<th><span onClick=a(39,true)>&#9650;</span> <span onClick=a(39,false)>&#9660;</span></th>
-<th><span onClick=a(40,true)>&#9650;</span> <span onClick=a(40,false)>&#9660;</span></th>
-<th><span onClick=a(41,true)>&#9650;</span> <span onClick=a(41,false)>&#9660;</span></th>
-<th><span onClick=a(42,true)>&#9650;</span> <span onClick=a(42,false)>&#9660;</span></th>
-<th><span onClick=a(43,true)>&#9650;</span> <span onClick=a(43,false)>&#9660;</span></th>
-<th><span onClick=a(44,true)>&#9650;</span> <span onClick=a(44,false)>&#9660;</span></th>
-<th><span onClick=a(45,true)>&#9650;</span> <span onClick=a(45,false)>&#9660;</span></th>
-<th><span onClick=a(46,true)>&#9650;</span> <span onClick=a(46,false)>&#9660;</span></th>
-<th><span onClick=a(47,true)>&#9650;</span> <span onClick=a(47,false)>&#9660;</span></th>
-<th><span onClick=a(48,true)>&#9650;</span> <span onClick=a(48,false)>&#9660;</span></th>
-<th><span onClick=a(49,true)>&#9650;</span> <span onClick=a(49,false)>&#9660;</span></th>
-<th><span onClick=a(50,true)>&#9650;</span> <span onClick=a(50,false)>&#9660;</span></th>
-<th><span onClick=a(51,true)>&#9650;</span> <span onClick=a(51,false)>&#9660;</span></th>
-<th><span onClick=a(52,true)>&#9650;</span> <span onClick=a(52,false)>&#9660;</span></th>
-<th><span onClick=a(53,true)>&#9650;</span> <span onClick=a(53,false)>&#9660;</span></th>
-<th><span onClick=a(54,true)>&#9650;</span> <span onClick=a(54,false)>&#9660;</span></th>
-<th><span onClick=a(55,true)>&#9650;</span> <span onClick=a(55,false)>&#9660;</span></th>
-<th><span onClick=a(56,true)>&#9650;</span> <span onClick=a(56,false)>&#9660;</span></th>
-<th><span onClick=a(57,true)>&#9650;</span> <span onClick=a(57,false)>&#9660;</span></th>
-<th><span onClick=a(58,true)>&#9650;</span> <span onClick=a(58,false)>&#9660;</span></th>
-<th><span onClick=a(59,true)>&#9650;</span> <span onClick=a(59,false)>&#9660;</span></th>
-<th><span onClick=a(60,true)>&#9650;</span> <span onClick=a(60,false)>&#9660;</span></th>
-<th><span onClick=a(61,true)>&#9650;</span> <span onClick=a(61,false)>&#9660;</span></th>
-<th><span onClick=a(62,true)>&#9650;</span> <span onClick=a(62,false)>&#9660;</span></th>
-<th><span onClick=a(63,true)>&#9650;</span> <span onClick=a(63,false)>&#9660;</span></th>
-<th><span onClick=a(64,true)>&#9650;</span> <span onClick=a(64,false)>&#9660;</span></th>
-<th><span onClick=a(65,true)>&#9650;</span> <span onClick=a(65,false)>&#9660;</span></th>
-<th><span onClick=a(66,true)>&#9650;</span> <span onClick=a(66,false)>&#9660;</span></th>
-<th><span onClick=a(67,true)>&#9650;</span> <span onClick=a(67,false)>&#9660;</span></th>
-<th><span onClick=a(68,true)>&#9650;</span> <span onClick=a(68,false)>&#9660;</span></th>
-<th><span onClick=a(69,true)>&#9650;</span> <span onClick=a(69,false)>&#9660;</span></th>
-<th><span onClick=a(70,true)>&#9650;</span> <span onClick=a(70,false)>&#9660;</span></th>
-<th><span onClick=a(71,true)>&#9650;</span> <span onClick=a(71,false)>&#9660;</span></th>
-<th><span onClick=a(72,true)>&#9650;</span> <span onClick=a(72,false)>&#9660;</span></th>
-<th><span onClick=a(73,true)>&#9650;</span> <span onClick=a(73,false)>&#9660;</span></th>
-<th><span onClick=a(74,true)>&#9650;</span> <span onClick=a(74,false)>&#9660;</span></th>
-<th><span onClick=a(75,true)>&#9650;</span> <span onClick=a(75,false)>&#9660;</span></th>
-<th><span onClick=a(76,true)>&#9650;</span> <span onClick=a(76,false)>&#9660;</span></th>
-<th><span onClick=a(77,true)>&#9650;</span> <span onClick=a(77,false)>&#9660;</span></th>
-<th><span onClick=a(78,true)>&#9650;</span> <span onClick=a(78,false)>&#9660;</span></th>
-<th><span onClick=a(79,true)>&#9650;</span> <span onClick=a(79,false)>&#9660;</span></th>
-<th><span onClick=a(80,true)>&#9650;</span> <span onClick=a(80,false)>&#9660;</span></th>
-<th><span onClick=a(81,true)>&#9650;</span> <span onClick=a(81,false)>&#9660;</span></th>
-<th><span onClick=a(82,true)>&#9650;</span> <span onClick=a(82,false)>&#9660;</span></th>
-<th><span onClick=a(83,true)>&#9650;</span> <span onClick=a(83,false)>&#9660;</span></th>
-<th><span onClick=a(84,true)>&#9650;</span> <span onClick=a(84,false)>&#9660;</span></th>
-<th><span onClick=a(85,true)>&#9650;</span> <span onClick=a(85,false)>&#9660;</span></th>
-<th><span onClick=a(86,true)>&#9650;</span> <span onClick=a(86,false)>&#9660;</span></th>
-<th><span onClick=a(87,true)>&#9650;</span> <span onClick=a(87,false)>&#9660;</span></th>
-<th><span onClick=a(88,true)>&#9650;</span> <span onClick=a(88,false)>&#9660;</span></th>
-<th><span onClick=a(89,true)>&#9650;</span> <span onClick=a(89,false)>&#9660;</span></th>
-<th><span onClick=a(90,true)>&#9650;</span> <span onClick=a(90,false)>&#9660;</span></th>
-<th><span onClick=a(91,true)>&#9650;</span> <span onClick=a(91,false)>&#9660;</span></th>
-<th><span onClick=a(92,true)>&#9650;</span> <span onClick=a(92,false)>&#9660;</span></th>
-<th><span onClick=a(93,true)>&#9650;</span> <span onClick=a(93,false)>&#9660;</span></th>
-<th><span onClick=a(94,true)>&#9650;</span> <span onClick=a(94,false)>&#9660;</span></th>
-<th><span onClick=a(95,true)>&#9650;</span> <span onClick=a(95,false)>&#9660;</span></th>
-<th><span onClick=a(96,true)>&#9650;</span> <span onClick=a(96,false)>&#9660;</span></th>
-<th><span onClick=a(97,true)>&#9650;</span> <span onClick=a(97,false)>&#9660;</span></th>
-<th><span onClick=a(98,true)>&#9650;</span> <span onClick=a(98,false)>&#9660;</span></th>
-<th><span onClick=a(99,true)>&#9650;</span> <span onClick=a(99,false)>&#9660;</span></th>
-<th><span onClick=a(100,true)>&#9650;</span> <span onClick=a(100,false)>&#9660;</span></th>
-<th><span onClick=a(101,true)>&#9650;</span> <span onClick=a(101,false)>&#9660;</span></th>
-<th><span onClick=a(102,true)>&#9650;</span> <span onClick=a(102,false)>&#9660;</span></th>
-<th><span onClick=a(103,true)>&#9650;</span> <span onClick=a(103,false)>&#9660;</span></th>
-<th><span onClick=a(104,true)>&#9650;</span> <span onClick=a(104,false)>&#9660;</span></th>
-<th><span onClick=a(105,true)>&#9650;</span> <span onClick=a(105,false)>&#9660;</span></th>
-<th><span onClick=a(106,true)>&#9650;</span> <span onClick=a(106,false)>&#9660;</span></th>
-<th><span onClick=a(107,true)>&#9650;</span> <span onClick=a(107,false)>&#9660;</span></th>
-</tr></thead>
+<tr id="sortButtonRow"></tr>
+</thead>
 <tbody id="st"></tbody>
 </table>
 </body>

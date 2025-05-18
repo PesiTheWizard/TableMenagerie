@@ -72,34 +72,48 @@ function lister(listedText, ParntNde, ElType)
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
-	const tl = gt.length - 2;//total length, stop if cup goes above this
-	let cup = 0;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup <= tl)//gnomesorting the rows
-	{
+	while(cup < tl)//a list of 1 is already sorted
+	{//trying insertionsort
 		fn = gt[cup];
-		sn = gt[cup+1];
+		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
-		if(s1 == s2)
-		{
-			cup++;
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
 		}
-		else if((s1 > s2) == lth)
-		{
-			fn.before(sn);//swap rows
-			cup--;
-			if(cup<0){cup=1;}
-		}
-		else
-		{
-			cup++;
-		}
+		cup++;
 	}
 }
 </script>
 <style>
-td, th
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+td,th
 {
 	white-space: nowrap;
 }
@@ -117,26 +131,6 @@ span
 <div id="svar"></div>
 <table border=1>
 <thead><tr>
-<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
-<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
-<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
-<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
-<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
-<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
-<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
-<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
-<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
-<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
-<th><span onClick=a(10,true)>&#9650;</span> <span onClick=a(10,false)>&#9660;</span></th>
-<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
-<th><span onClick=a(12,true)>&#9650;</span> <span onClick=a(12,false)>&#9660;</span></th>
-<th><span onClick=a(13,true)>&#9650;</span> <span onClick=a(13,false)>&#9660;</span></th>
-<th><span onClick=a(14,true)>&#9650;</span> <span onClick=a(14,false)>&#9660;</span></th>
-<th><span onClick=a(15,true)>&#9650;</span> <span onClick=a(15,false)>&#9660;</span></th>
-<th><span onClick=a(16,true)>&#9650;</span> <span onClick=a(16,false)>&#9660;</span></th>
-<th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
-<th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
-</tr><tr>
 <th>Group</th>
 <th>id</th>
 <th>createdBy</th>
@@ -156,6 +150,26 @@ span
 <th>schedule/freq</th>
 <th>openingTable</th>
 <th>winner/id</th>
+</tr><tr>
+<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
+<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
+<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
+<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
+<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
+<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
+<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
+<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
+<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
+<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
+<th><span onClick=a(10,true)>&#9650;</span> <span onClick=a(10,false)>&#9660;</span></th>
+<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
+<th><span onClick=a(12,true)>&#9650;</span> <span onClick=a(12,false)>&#9660;</span></th>
+<th><span onClick=a(13,true)>&#9650;</span> <span onClick=a(13,false)>&#9660;</span></th>
+<th><span onClick=a(14,true)>&#9650;</span> <span onClick=a(14,false)>&#9660;</span></th>
+<th><span onClick=a(15,true)>&#9650;</span> <span onClick=a(15,false)>&#9660;</span></th>
+<th><span onClick=a(16,true)>&#9650;</span> <span onClick=a(16,false)>&#9660;</span></th>
+<th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
+<th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

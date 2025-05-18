@@ -149,29 +149,38 @@ function makeTableEntry(JO,tableElem)
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
-	const tl = gt.length - 2;//total length, stop if cup goes above this
-	let cup = 0;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup <= tl)//gnomesorting the rows
-	{
+	while(cup < tl)//a list of 1 is already sorted
+	{//trying insertionsort
 		fn = gt[cup];
-		sn = gt[cup+1];
+		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
-		if(s1 == s2)
-		{
-			cup++;
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
 		}
-		else if((s1 > s2) == lth)
-		{
-			fn.before(sn);//swap rows
-			cup--;
-			if(cup<0){cup=1;}
-		}
-		else
-		{
-			cup++;
-		}
+		cup++;
 	}
 }
 </script>

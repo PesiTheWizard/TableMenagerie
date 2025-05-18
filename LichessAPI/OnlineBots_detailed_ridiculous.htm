@@ -8,9 +8,18 @@ function initialGet(clbt)
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
+	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
+	const CR = document.getElementById("catRow");
+	const NR = document.getElementById("nameRow");
+	const SBR = document.getElementById("sortButtonRow");
 	const tv = parseInt(t);
 	if(tv>=1)
 	{
+		const colCount = [108,85];
+		const siteURLs = [
+			`https://lichess.org/api/bot/online?nb=${tv}`,
+			`https://lishogi.org/api/bot/online?nb=${tv}`
+		];
 		const siteDiffs = [
 			{//Lichess
 				"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
@@ -23,6 +32,12 @@ function initialGet(clbt)
 				"profile":["location","bio","firstName","lastName","country","links"]
 			}
 		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
+		variantCombiner(siteDiffs[SiteIndx]);
+		timestamper("createdAt");
+		timestamper("seenAt");
+		playTime();
+		profileAndRemainder(siteDiffs[SiteIndx]["profile"]);
+		sortbuttonCellFactory(colCount[SiteIndx]);
 		const OGresp = document.getElementById("stts");
 		const HL = document.getElementById("hdrs");
 		const svr = document.getElementById("svar");
@@ -31,12 +46,87 @@ function initialGet(clbt)
 		OGresp.innerText = "Preparing...";
 		HL.innerHTML = "";
 		svr.innerText = "Waiting for response...";
-		fetchHandler(`https://lichess.org/api/bot/online?nb=${tv}`,OGresp,HL,svr,gt,DlogA,siteDiffs[0]);
+		fetchHandler(siteURLs[SiteIndx],OGresp,HL,svr,gt,DlogA,siteDiffs[SiteIndx]);
 	}
 	else
 	{
 		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
+	}
+	function variantCombiner(O)
+	{
+		const list = O["perflist"];
+		const optn = O["perfoptn"];
+		for(let i=0;i<list.length;i++)
+		{
+			variantMaker(list[i],optn[i]??false);
+		}
+	}
+	function variantMaker(N,Q)
+	{
+		const banner = document.createElement('th');
+		banner.appendChild(document.createTextNode(N));
+		banner.setAttribute("colspan", Q?6:5);
+		CR.appendChild(banner);
+		if(Q){lister("?", NR, 'th');}
+		lister("games", NR, 'th');
+		lister("rating", NR, 'th');
+		lister("rd", NR, 'th');
+		lister("prog", NR, 'th');
+		lister("prov", NR, 'th');
+	}
+	function timestamper(W)
+	{
+		const banner = document.createElement('th');
+		banner.appendChild(document.createTextNode(W));
+		banner.setAttribute("colspan", 4);
+		CR.appendChild(banner);
+		lister("(Timestamp)", NR, 'th');
+		lister("(Date)", NR, 'th');
+		lister("(Time)", NR, 'th');
+		lister("(UTC)", NR, 'th');
+	}
+	function playTime()
+	{
+		const ptban = document.createElement('th');
+		ptban.appendChild(document.createTextNode("playTime"));
+		ptban.setAttribute("colspan", 2);
+		CR.appendChild(ptban);
+		lister("total", NR, 'th');
+		lister("tv", NR, 'th');
+	}
+	function profileAndRemainder(wordlist)
+	{
+		const prban = document.createElement('th');
+		prban.appendChild(document.createTextNode("profile"));
+		prban.setAttribute("colspan", wordlist.length+1);
+		CR.appendChild(prban);
+		lister("#", NR, 'th');
+		for(let i=0;i<wordlist.length;i++)
+		{
+			lister(wordlist[i], NR, 'th');
+		}
+		lister("title", NR, 'th');
+		lister("flair?", NR, 'th');
+		lister("patron", NR, 'th');
+		lister("verified", NR, 'th');
+	}
+	function sortbuttonCellFactory(N)
+	{
+		for(let i=0;i<N;i++)
+		{
+			const hCell = document.createElement('th');
+			const S1 = document.createElement('span');
+			const S2 = document.createElement('span');
+			S1.innerHTML = "&#9650;";
+			S2.innerHTML = "&#9660;";
+			S1.setAttribute("onclick",`a(${i},true)`);
+			S2.setAttribute("onclick",`a(${i},false)`);
+			hCell.appendChild(S1);
+			hCell.appendChild(document.createTextNode(" "));
+			hCell.appendChild(S2);
+			SBR.appendChild(hCell);
+		}
 	}
 }
 async function fetchHandler(endPointString,statusHolder,headerHolder,netLogger,t,LogA,diffObj)
@@ -175,34 +265,48 @@ function makeTableEntry(JO,tableElem,listObj)
 function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
-	const tl = gt.length - 2;//total length, stop if cup goes above this
-	let cup = 0;
+	const tl = gt.length;//total length, stop if cup reaches this
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup <= tl)//gnomesorting the rows
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
 	{
 		fn = gt[cup];
-		sn = gt[cup+1];
+		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
-		if(s1 == s2)
-		{
-			cup++;
-		}
-		else if((s1 > s2) == lth)
-		{
-			fn.before(sn);//swap rows
-			cup--;
-			if(cup<0){cup=1;}
-		}
-		else
-		{
-			cup++;
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
 		}
 	}
 }
 </script>
 <style>
-td, th
+td,th
 {
 	white-space: nowrap;
 }
@@ -210,9 +314,18 @@ span
 {
 	cursor: pointer;
 }
+select,input
+{
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
 </style>
 </head>
 <body>
+Site = <select id="selSite">
+<option selected>lichess</option>
+<option>lishogi</option>
+</select><br>
 <input type=text id="NofBotsToGet" value="200"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <div id="logA">Log space</div>
 <hr>
@@ -221,139 +334,10 @@ span
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr><th colspan=3></th><th colspan=5>Bullet</th><th colspan=5>Blitz</th><th colspan=5>Rapid</th><th colspan=5>Classical</th><th colspan=5>Correspondence</th>
-<th colspan=6>Chess960</th><th colspan=6>Crazyhouse</th><th colspan=6>antichess</th><th colspan=6>atomic</th><th colspan=6>horde</th><th colspan=6>kingOfTheHill</th><th colspan=6>racingKings</th><th colspan=6>threeCheck</th><th colspan=6>puzzle</th>
-<th colspan=4>createdAt</th><th colspan=4>seenAt</th><th colspan=2>playTime</th><th colspan=12>profile</th></tr>
-<tr><th>id</th><th>username</th><th>#perfs</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>?</th><th>games</th><th>rating</th><th>rd</th><th>prog</th><th>prov</th>
-<th>(Timestamp)</th><th>(Date)</th><th>(Time)</th><th>(UTC)</th>
-<th>(Timestamp)</th><th>(Date)</th><th>(Time)</th><th>(UTC)</th>
-<th>total</th><th>tv</th>
-<th>#</th><th>location</th><th>bio</th><th>rcfRating</th><th>flag</th><th>dsbRating</th><th>fideRating</th><th>ecfRating</th><th>uscfRating</th><th>realName</th><th>cfcRating</th><th>links</th>
-<th>title</th><th>flair?</th><th>patron</th><th>verified</th></tr>
-<tr>
-<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
-<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
-<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
-<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
-<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
-<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
-<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
-<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
-<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
-<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
-<th><span onClick=a(10,true)>&#9650;</span> <span onClick=a(10,false)>&#9660;</span></th>
-<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
-<th><span onClick=a(12,true)>&#9650;</span> <span onClick=a(12,false)>&#9660;</span></th>
-<th><span onClick=a(13,true)>&#9650;</span> <span onClick=a(13,false)>&#9660;</span></th>
-<th><span onClick=a(14,true)>&#9650;</span> <span onClick=a(14,false)>&#9660;</span></th>
-<th><span onClick=a(15,true)>&#9650;</span> <span onClick=a(15,false)>&#9660;</span></th>
-<th><span onClick=a(16,true)>&#9650;</span> <span onClick=a(16,false)>&#9660;</span></th>
-<th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
-<th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
-<th><span onClick=a(19,true)>&#9650;</span> <span onClick=a(19,false)>&#9660;</span></th>
-<th><span onClick=a(20,true)>&#9650;</span> <span onClick=a(20,false)>&#9660;</span></th>
-<th><span onClick=a(21,true)>&#9650;</span> <span onClick=a(21,false)>&#9660;</span></th>
-<th><span onClick=a(22,true)>&#9650;</span> <span onClick=a(22,false)>&#9660;</span></th>
-<th><span onClick=a(23,true)>&#9650;</span> <span onClick=a(23,false)>&#9660;</span></th>
-<th><span onClick=a(24,true)>&#9650;</span> <span onClick=a(24,false)>&#9660;</span></th>
-<th><span onClick=a(25,true)>&#9650;</span> <span onClick=a(25,false)>&#9660;</span></th>
-<th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
-<th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
-<th><span onClick=a(28,true)>&#9650;</span> <span onClick=a(28,false)>&#9660;</span></th>
-<th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
-<th><span onClick=a(30,true)>&#9650;</span> <span onClick=a(30,false)>&#9660;</span></th>
-<th><span onClick=a(31,true)>&#9650;</span> <span onClick=a(31,false)>&#9660;</span></th>
-<th><span onClick=a(32,true)>&#9650;</span> <span onClick=a(32,false)>&#9660;</span></th>
-<th><span onClick=a(33,true)>&#9650;</span> <span onClick=a(33,false)>&#9660;</span></th>
-<th><span onClick=a(34,true)>&#9650;</span> <span onClick=a(34,false)>&#9660;</span></th>
-<th><span onClick=a(35,true)>&#9650;</span> <span onClick=a(35,false)>&#9660;</span></th>
-<th><span onClick=a(36,true)>&#9650;</span> <span onClick=a(36,false)>&#9660;</span></th>
-<th><span onClick=a(37,true)>&#9650;</span> <span onClick=a(37,false)>&#9660;</span></th>
-<th><span onClick=a(38,true)>&#9650;</span> <span onClick=a(38,false)>&#9660;</span></th>
-<th><span onClick=a(39,true)>&#9650;</span> <span onClick=a(39,false)>&#9660;</span></th>
-<th><span onClick=a(40,true)>&#9650;</span> <span onClick=a(40,false)>&#9660;</span></th>
-<th><span onClick=a(41,true)>&#9650;</span> <span onClick=a(41,false)>&#9660;</span></th>
-<th><span onClick=a(42,true)>&#9650;</span> <span onClick=a(42,false)>&#9660;</span></th>
-<th><span onClick=a(43,true)>&#9650;</span> <span onClick=a(43,false)>&#9660;</span></th>
-<th><span onClick=a(44,true)>&#9650;</span> <span onClick=a(44,false)>&#9660;</span></th>
-<th><span onClick=a(45,true)>&#9650;</span> <span onClick=a(45,false)>&#9660;</span></th>
-<th><span onClick=a(46,true)>&#9650;</span> <span onClick=a(46,false)>&#9660;</span></th>
-<th><span onClick=a(47,true)>&#9650;</span> <span onClick=a(47,false)>&#9660;</span></th>
-<th><span onClick=a(48,true)>&#9650;</span> <span onClick=a(48,false)>&#9660;</span></th>
-<th><span onClick=a(49,true)>&#9650;</span> <span onClick=a(49,false)>&#9660;</span></th>
-<th><span onClick=a(50,true)>&#9650;</span> <span onClick=a(50,false)>&#9660;</span></th>
-<th><span onClick=a(51,true)>&#9650;</span> <span onClick=a(51,false)>&#9660;</span></th>
-<th><span onClick=a(52,true)>&#9650;</span> <span onClick=a(52,false)>&#9660;</span></th>
-<th><span onClick=a(53,true)>&#9650;</span> <span onClick=a(53,false)>&#9660;</span></th>
-<th><span onClick=a(54,true)>&#9650;</span> <span onClick=a(54,false)>&#9660;</span></th>
-<th><span onClick=a(55,true)>&#9650;</span> <span onClick=a(55,false)>&#9660;</span></th>
-<th><span onClick=a(56,true)>&#9650;</span> <span onClick=a(56,false)>&#9660;</span></th>
-<th><span onClick=a(57,true)>&#9650;</span> <span onClick=a(57,false)>&#9660;</span></th>
-<th><span onClick=a(58,true)>&#9650;</span> <span onClick=a(58,false)>&#9660;</span></th>
-<th><span onClick=a(59,true)>&#9650;</span> <span onClick=a(59,false)>&#9660;</span></th>
-<th><span onClick=a(60,true)>&#9650;</span> <span onClick=a(60,false)>&#9660;</span></th>
-<th><span onClick=a(61,true)>&#9650;</span> <span onClick=a(61,false)>&#9660;</span></th>
-<th><span onClick=a(62,true)>&#9650;</span> <span onClick=a(62,false)>&#9660;</span></th>
-<th><span onClick=a(63,true)>&#9650;</span> <span onClick=a(63,false)>&#9660;</span></th>
-<th><span onClick=a(64,true)>&#9650;</span> <span onClick=a(64,false)>&#9660;</span></th>
-<th><span onClick=a(65,true)>&#9650;</span> <span onClick=a(65,false)>&#9660;</span></th>
-<th><span onClick=a(66,true)>&#9650;</span> <span onClick=a(66,false)>&#9660;</span></th>
-<th><span onClick=a(67,true)>&#9650;</span> <span onClick=a(67,false)>&#9660;</span></th>
-<th><span onClick=a(68,true)>&#9650;</span> <span onClick=a(68,false)>&#9660;</span></th>
-<th><span onClick=a(69,true)>&#9650;</span> <span onClick=a(69,false)>&#9660;</span></th>
-<th><span onClick=a(70,true)>&#9650;</span> <span onClick=a(70,false)>&#9660;</span></th>
-<th><span onClick=a(71,true)>&#9650;</span> <span onClick=a(71,false)>&#9660;</span></th>
-<th><span onClick=a(72,true)>&#9650;</span> <span onClick=a(72,false)>&#9660;</span></th>
-<th><span onClick=a(73,true)>&#9650;</span> <span onClick=a(73,false)>&#9660;</span></th>
-<th><span onClick=a(74,true)>&#9650;</span> <span onClick=a(74,false)>&#9660;</span></th>
-<th><span onClick=a(75,true)>&#9650;</span> <span onClick=a(75,false)>&#9660;</span></th>
-<th><span onClick=a(76,true)>&#9650;</span> <span onClick=a(76,false)>&#9660;</span></th>
-<th><span onClick=a(77,true)>&#9650;</span> <span onClick=a(77,false)>&#9660;</span></th>
-<th><span onClick=a(78,true)>&#9650;</span> <span onClick=a(78,false)>&#9660;</span></th>
-<th><span onClick=a(79,true)>&#9650;</span> <span onClick=a(79,false)>&#9660;</span></th>
-<th><span onClick=a(80,true)>&#9650;</span> <span onClick=a(80,false)>&#9660;</span></th>
-<th><span onClick=a(81,true)>&#9650;</span> <span onClick=a(81,false)>&#9660;</span></th>
-<th><span onClick=a(82,true)>&#9650;</span> <span onClick=a(82,false)>&#9660;</span></th>
-<th><span onClick=a(83,true)>&#9650;</span> <span onClick=a(83,false)>&#9660;</span></th>
-<th><span onClick=a(84,true)>&#9650;</span> <span onClick=a(84,false)>&#9660;</span></th>
-<th><span onClick=a(85,true)>&#9650;</span> <span onClick=a(85,false)>&#9660;</span></th>
-<th><span onClick=a(86,true)>&#9650;</span> <span onClick=a(86,false)>&#9660;</span></th>
-<th><span onClick=a(87,true)>&#9650;</span> <span onClick=a(87,false)>&#9660;</span></th>
-<th><span onClick=a(88,true)>&#9650;</span> <span onClick=a(88,false)>&#9660;</span></th>
-<th><span onClick=a(89,true)>&#9650;</span> <span onClick=a(89,false)>&#9660;</span></th>
-<th><span onClick=a(90,true)>&#9650;</span> <span onClick=a(90,false)>&#9660;</span></th>
-<th><span onClick=a(91,true)>&#9650;</span> <span onClick=a(91,false)>&#9660;</span></th>
-<th><span onClick=a(92,true)>&#9650;</span> <span onClick=a(92,false)>&#9660;</span></th>
-<th><span onClick=a(93,true)>&#9650;</span> <span onClick=a(93,false)>&#9660;</span></th>
-<th><span onClick=a(94,true)>&#9650;</span> <span onClick=a(94,false)>&#9660;</span></th>
-<th><span onClick=a(95,true)>&#9650;</span> <span onClick=a(95,false)>&#9660;</span></th>
-<th><span onClick=a(96,true)>&#9650;</span> <span onClick=a(96,false)>&#9660;</span></th>
-<th><span onClick=a(97,true)>&#9650;</span> <span onClick=a(97,false)>&#9660;</span></th>
-<th><span onClick=a(98,true)>&#9650;</span> <span onClick=a(98,false)>&#9660;</span></th>
-<th><span onClick=a(99,true)>&#9650;</span> <span onClick=a(99,false)>&#9660;</span></th>
-<th><span onClick=a(100,true)>&#9650;</span> <span onClick=a(100,false)>&#9660;</span></th>
-<th><span onClick=a(101,true)>&#9650;</span> <span onClick=a(101,false)>&#9660;</span></th>
-<th><span onClick=a(102,true)>&#9650;</span> <span onClick=a(102,false)>&#9660;</span></th>
-<th><span onClick=a(103,true)>&#9650;</span> <span onClick=a(103,false)>&#9660;</span></th>
-<th><span onClick=a(104,true)>&#9650;</span> <span onClick=a(104,false)>&#9660;</span></th>
-<th><span onClick=a(105,true)>&#9650;</span> <span onClick=a(105,false)>&#9660;</span></th>
-<th><span onClick=a(106,true)>&#9650;</span> <span onClick=a(106,false)>&#9660;</span></th>
-<th><span onClick=a(107,true)>&#9650;</span> <span onClick=a(107,false)>&#9660;</span></th>
-</tr></thead>
+<tr id="catRow"><th colspan=3></th></tr>
+<tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th></tr>
+<tr id="sortButtonRow"></tr>
+</thead>
 <tbody id="st"></tbody>
 </table>
 </body>

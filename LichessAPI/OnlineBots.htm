@@ -130,10 +130,16 @@ function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
-	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup < tl)//a list of 1 is already sorted
-	{//trying insertionsort
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
+	{
 		fn = gt[cup];
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
@@ -160,12 +166,11 @@ function a(ctsb, lth)
 			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
 			gt[rearguard].before(fn);
 		}
-		cup++;
 	}
 }
 </script>
 <style>
-td, th
+td,th
 {
 	white-space: nowrap;
 }
@@ -173,8 +178,9 @@ span
 {
 	cursor: pointer;
 }
-select
+select,input
 {
+	margin-top:1px;
 	margin-bottom: 1px;
 }
 </style>

@@ -40,7 +40,7 @@ function GetPublicTournaments(ClBt)
 				lister(CT["minutes"]??"",tabRw,'td');
 				lister(CT["clock"]?(CT["clock"]["limit"]??""):NA,tabRw,'td');
 				lister(CT["clock"]?(CT["clock"]["increment"]??""):NA,tabRw,'td');
-				//lister(CT["clock"]?(CT["clock"]["delay"]??""):NA,tabRw,'td');//not used anymore
+				lister(CT["clock"]?(CT["clock"]["delay"]??""):NA,tabRw,'td');//still used!
 				lister(CT["rated"]??"",tabRw,'td');
 				lister(CT["fullName"]??"",tabRw,'td');
 				lister(CT["nbPlayers"]??"",tabRw,'td');
@@ -148,7 +148,7 @@ span
 <table border=1>
 <thead><tr>
 <th colspan=5></th>
-<th colspan=2>clock</th>
+<th colspan=3>clock</th>
 <th colspan=3></th>
 <th colspan=2>variant</th>
 <th colspan=3>startsAt</th>
@@ -166,6 +166,7 @@ span
 <th>minutes</th>
 <th>limit</th>
 <th>incr.</th>
+<th>delay</th>
 <th>rated</th>
 <th>fullName</th>
 <th>nbPlayers</th>
@@ -218,6 +219,7 @@ span
 <th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
 <th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
 <th><span onClick=a(28,true)>&#9650;</span> <span onClick=a(28,false)>&#9660;</span></th>
+<th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

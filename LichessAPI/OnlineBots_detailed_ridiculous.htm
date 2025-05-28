@@ -8,108 +8,76 @@ function initialGet(clbt)
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
+	const tv = parseInt(t);
+	if(!(tv>=1))
+	{
+		DlogA.innerText = `${tv} is not at least 1`;
+		clbt.disabled = false;
+		return;
+	}
+	const colCount = [108,85];
+	const siteURLs = [
+		`https://lichess.org/api/bot/online?nb=${tv}`,
+		`https://lishogi.org/api/bot/online?nb=${tv}`
+	];
+	const siteDiffs = [
+		{//Lichess
+			"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
+			"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
+			"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
+		},
+		{//Lishogi
+			"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
+			"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+			"profile":["location","bio","firstName","lastName","country","links"]
+		}
+	];
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
 	const CR = document.getElementById("catRow");
 	const NR = document.getElementById("nameRow");
 	const SBR = document.getElementById("sortButtonRow");
-	const tv = parseInt(t);
-	if(tv>=1)
-	{
-		const colCount = [108,85];
-		const siteURLs = [
-			`https://lichess.org/api/bot/online?nb=${tv}`,
-			`https://lishogi.org/api/bot/online?nb=${tv}`
-		];
-		const siteDiffs = [
-			{//Lichess
-				"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
-				"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
-				"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
-			},
-			{//Lishogi
-				"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
-				"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
-				"profile":["location","bio","firstName","lastName","country","links"]
-			}
-		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
-		variantCombiner(siteDiffs[SiteIndx]);
-		timestamper("createdAt");
-		timestamper("seenAt");
-		playTime();
-		profileAndRemainder(siteDiffs[SiteIndx]["profile"]);
-		sortbuttonCellFactory(colCount[SiteIndx]);
-		const OGresp = document.getElementById("stts");
-		const HL = document.getElementById("hdrs");
-		const svr = document.getElementById("svar");
-		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
-		DlogA.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
-		OGresp.innerText = "Preparing...";
-		HL.innerHTML = "";
-		svr.innerText = "Waiting for response...";
-		fetchHandler(siteURLs[SiteIndx],OGresp,HL,svr,gt,DlogA,siteDiffs[SiteIndx]);
-	}
-	else
-	{
-		DlogA.innerText = `${tv} is not at least 1`;
-		clbt.disabled = false;
-	}
+	const VC1 = ["games","rating","rd","prog","prov"];
+	variantCombiner(siteDiffs[SiteIndx]);
+	const timestampCols = ["(Timestamp)","(Date)","(Time)","(UTC)"];
+	headerMaker("createdAt",timestampCols);
+	headerMaker("seenAt",timestampCols);
+	headerMaker("playTime",["total","tv"]);
+	headerMaker("profile",["#"].concat(siteDiffs[SiteIndx]["profile"]));
+	lister("title", NR, 'th');
+	lister("flair?", NR, 'th');
+	lister("patron", NR, 'th');
+	lister("verified", NR, 'th');
+	sortbuttonCellFactory(colCount[SiteIndx]);
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
+	DlogA.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
+	OGresp.innerText = "Preparing...";
+	HL.innerHTML = "";
+	svr.innerText = "Waiting for response...";
+	fetchHandler(siteURLs[SiteIndx],OGresp,HL,svr,gt,DlogA,siteDiffs[SiteIndx]);
+
 	function variantCombiner(O)
 	{
 		const list = O["perflist"];
 		const optn = O["perfoptn"];
+		const VC2 = ["?"].concat(VC1);
 		for(let i=0;i<list.length;i++)
 		{
-			variantMaker(list[i],optn[i]??false);
+			headerMaker(list[i],optn[i]?VC2:VC1);
 		}
 	}
-	function variantMaker(N,Q)
+	function headerMaker(U,D)
 	{
 		const banner = document.createElement('th');
-		banner.appendChild(document.createTextNode(N));
-		banner.setAttribute("colspan", Q?6:5);
+		banner.appendChild(document.createTextNode(U));
+		banner.setAttribute("colspan", D.length);
 		CR.appendChild(banner);
-		if(Q){lister("?", NR, 'th');}
-		lister("games", NR, 'th');
-		lister("rating", NR, 'th');
-		lister("rd", NR, 'th');
-		lister("prog", NR, 'th');
-		lister("prov", NR, 'th');
-	}
-	function timestamper(W)
-	{
-		const banner = document.createElement('th');
-		banner.appendChild(document.createTextNode(W));
-		banner.setAttribute("colspan", 4);
-		CR.appendChild(banner);
-		lister("(Timestamp)", NR, 'th');
-		lister("(Date)", NR, 'th');
-		lister("(Time)", NR, 'th');
-		lister("(UTC)", NR, 'th');
-	}
-	function playTime()
-	{
-		const ptban = document.createElement('th');
-		ptban.appendChild(document.createTextNode("playTime"));
-		ptban.setAttribute("colspan", 2);
-		CR.appendChild(ptban);
-		lister("total", NR, 'th');
-		lister("tv", NR, 'th');
-	}
-	function profileAndRemainder(wordlist)
-	{
-		const prban = document.createElement('th');
-		prban.appendChild(document.createTextNode("profile"));
-		prban.setAttribute("colspan", wordlist.length+1);
-		CR.appendChild(prban);
-		lister("#", NR, 'th');
-		for(let i=0;i<wordlist.length;i++)
+		for(let i=0;i<D.length;i++)
 		{
-			lister(wordlist[i], NR, 'th');
+			lister(D[i],NR,'th');
 		}
-		lister("title", NR, 'th');
-		lister("flair?", NR, 'th');
-		lister("patron", NR, 'th');
-		lister("verified", NR, 'th');
 	}
 	function sortbuttonCellFactory(N)
 	{

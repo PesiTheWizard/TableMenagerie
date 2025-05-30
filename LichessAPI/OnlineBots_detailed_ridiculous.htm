@@ -47,7 +47,7 @@ function initialGet(clbt)
 	lister("flair?", NR, 'th');
 	lister("patron", NR, 'th');
 	lister("verified", NR, 'th');
-	sortbuttonCellFactory(colCount);
+	sortbuttonCellFactory();
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -79,9 +79,9 @@ function initialGet(clbt)
 			lister(D[i],NR,'th');
 		}
 	}
-	function sortbuttonCellFactory(N)
+	function sortbuttonCellFactory()
 	{
-		for(let i=0;i<N;i++)
+		for(let i=0;i<colCount;i++)
 		{
 			const hCell = document.createElement('th');
 			const S1 = document.createElement('span');

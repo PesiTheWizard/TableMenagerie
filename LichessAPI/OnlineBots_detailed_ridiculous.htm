@@ -8,112 +8,80 @@ function initialGet(clbt)
 	clbt.disabled = true;
 	const DlogA = document.getElementById("logA");
 	const t = document.getElementById("NofBotsToGet").value;
-	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
-	const CR = document.getElementById("catRow");
-	const NR = document.getElementById("nameRow");
-	const SBR = document.getElementById("sortButtonRow");
 	const tv = parseInt(t);
-	if(tv>=1)
-	{
-		const colCount = [108,85];
-		const siteURLs = [
-			`https://lichess.org/api/bot/online?nb=${tv}`,
-			`https://lishogi.org/api/bot/online?nb=${tv}`
-		];
-		const siteDiffs = [
-			{//Lichess
-				"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
-				"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
-				"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
-			},
-			{//Lishogi
-				"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
-				"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
-				"profile":["location","bio","firstName","lastName","country","links"]
-			}
-		];//at some point I want to include the lishogi option and have the table headers build themselves accordingly.
-		variantCombiner(siteDiffs[SiteIndx]);
-		timestamper("createdAt");
-		timestamper("seenAt");
-		playTime();
-		profileAndRemainder(siteDiffs[SiteIndx]["profile"]);
-		sortbuttonCellFactory(colCount[SiteIndx]);
-		const OGresp = document.getElementById("stts");
-		const HL = document.getElementById("hdrs");
-		const svr = document.getElementById("svar");
-		const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
-		DlogA.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
-		OGresp.innerText = "Preparing...";
-		HL.innerHTML = "";
-		svr.innerText = "Waiting for response...";
-		fetchHandler(siteURLs[SiteIndx],OGresp,HL,svr,gt,DlogA,siteDiffs[SiteIndx]);
-	}
-	else
+	if(!(tv>=1))
 	{
 		DlogA.innerText = `${tv} is not at least 1`;
 		clbt.disabled = false;
+		return;
 	}
-	function variantCombiner(O)
+	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
+	const colCount = [108,85][SiteIndx];
+	const siteURL = [
+		`https://lichess.org/api/bot/online?nb=${tv}`,
+		`https://lishogi.org/api/bot/online?nb=${tv}`
+	][SiteIndx];
+	const siteProps = [
+		{//Lichess
+			"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
+			"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
+			"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
+		},
+		{//Lishogi
+			"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
+			"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+			"profile":["location","bio","firstName","lastName","country","links"]
+		}
+	][SiteIndx];
+	const CR = document.getElementById("catRow");
+	const NR = document.getElementById("nameRow");
+	const SBR = document.getElementById("sortButtonRow");
+	const VC1 = ["games","rating","rd","prog","prov"];
+	variantCombiner();
+	const timestampCols = ["(Timestamp)","(Date)","(Time)","(UTC)"];
+	headerMaker("createdAt",timestampCols);
+	headerMaker("seenAt",timestampCols);
+	headerMaker("playTime",["total","tv"]);
+	headerMaker("profile",["#"].concat(siteProps["profile"]));
+	lister("title", NR, 'th');
+	lister("flair?", NR, 'th');
+	lister("patron", NR, 'th');
+	lister("verified", NR, 'th');
+	sortbuttonCellFactory();
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	const gt = document.getElementById("st");//the tbody into which the processed response goes; called t henceforth
+	DlogA.innerText = `Fetching data of ${tv} bot${tv===1?"":"s"}`;
+	OGresp.innerText = "Preparing...";
+	HL.innerHTML = "";
+	svr.innerText = "Waiting for response...";
+	fetchHandler(siteURL,OGresp,HL,svr,gt,DlogA,siteProps);
+
+	function variantCombiner()
 	{
-		const list = O["perflist"];
-		const optn = O["perfoptn"];
+		const list = siteProps["perflist"];
+		const optn = siteProps["perfoptn"];
+		const VC2 = ["?"].concat(VC1);
 		for(let i=0;i<list.length;i++)
 		{
-			variantMaker(list[i],optn[i]??false);
+			headerMaker(list[i],optn[i]?VC2:VC1);
 		}
 	}
-	function variantMaker(N,Q)
+	function headerMaker(U,D)
 	{
 		const banner = document.createElement('th');
-		banner.appendChild(document.createTextNode(N));
-		banner.setAttribute("colspan", Q?6:5);
+		banner.appendChild(document.createTextNode(U));
+		banner.setAttribute("colspan", D.length);
 		CR.appendChild(banner);
-		if(Q){lister("?", NR, 'th');}
-		lister("games", NR, 'th');
-		lister("rating", NR, 'th');
-		lister("rd", NR, 'th');
-		lister("prog", NR, 'th');
-		lister("prov", NR, 'th');
-	}
-	function timestamper(W)
-	{
-		const banner = document.createElement('th');
-		banner.appendChild(document.createTextNode(W));
-		banner.setAttribute("colspan", 4);
-		CR.appendChild(banner);
-		lister("(Timestamp)", NR, 'th');
-		lister("(Date)", NR, 'th');
-		lister("(Time)", NR, 'th');
-		lister("(UTC)", NR, 'th');
-	}
-	function playTime()
-	{
-		const ptban = document.createElement('th');
-		ptban.appendChild(document.createTextNode("playTime"));
-		ptban.setAttribute("colspan", 2);
-		CR.appendChild(ptban);
-		lister("total", NR, 'th');
-		lister("tv", NR, 'th');
-	}
-	function profileAndRemainder(wordlist)
-	{
-		const prban = document.createElement('th');
-		prban.appendChild(document.createTextNode("profile"));
-		prban.setAttribute("colspan", wordlist.length+1);
-		CR.appendChild(prban);
-		lister("#", NR, 'th');
-		for(let i=0;i<wordlist.length;i++)
+		for(let i=0;i<D.length;i++)
 		{
-			lister(wordlist[i], NR, 'th');
+			lister(D[i],NR,'th');
 		}
-		lister("title", NR, 'th');
-		lister("flair?", NR, 'th');
-		lister("patron", NR, 'th');
-		lister("verified", NR, 'th');
 	}
-	function sortbuttonCellFactory(N)
+	function sortbuttonCellFactory()
 	{
-		for(let i=0;i<N;i++)
+		for(let i=0;i<colCount;i++)
 		{
 			const hCell = document.createElement('th');
 			const S1 = document.createElement('span');
@@ -172,6 +140,7 @@ function lister(listedText, PN, ElType)
 }
 function textToJSONhandler(stuff,t,als,arrObj)
 {
+	const NA = "N/A";
 	const conveyorBelt = stuff.split("\n");
 	let jp;
 	let fs = false;//failstep
@@ -205,60 +174,60 @@ function textToJSONhandler(stuff,t,als,arrObj)
 			als[3]++;//how many whole lines were made from the broken parts
 			als[4]=0;
 		}
-		makeTableEntry(jp,t,arrObj);
+		makeTableEntry(jp);
 		als[5]++;//parsed lines counter
 	}
-}
-function makeTableEntry(JO,tableElem,listObj)
-{
-	const NA = "N/A";
-	const tablRw = document.createElement('tr');
-	lister(JO["id"]??"",tablRw,'td');
-	lister(JO["username"]??"",tablRw,'td');
-	lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
-	const perflist = listObj["perflist"];
-	const perfoptn = listObj["perfoptn"];
-	for(let i=0;i<perflist.length;i++)
+
+	function makeTableEntry(JO)
 	{
-		perfshelper(perflist[i],perfoptn[i]);
-	}
-	datehelper("createdAt");
-	datehelper("seenAt");
-	lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
-	lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
-	blisthelper("profile",listObj["profile"]);
-	lister(JO["title"]??"",tablRw,'td');
-	lister(JO["flair"]?"yes":"no",tablRw,'td');
-	lister(JO["patron"]??"",tablRw,'td');
-	lister(JO["verified"]??"",tablRw,'td');
-	//lister(JO["tosViolation"]??"",tablRw,'td');//these have been excluded from the bot list
-	tableElem.appendChild(tablRw);
-	function perfshelper(X,optnl)
-	{
-		if(optnl)
+		const tablRw = document.createElement('tr');
+		lister(JO["id"]??"",tablRw,'td');
+		lister(JO["username"]??"",tablRw,'td');
+		lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
+		const perflist = arrObj["perflist"];
+		const perfoptn = arrObj["perfoptn"];
+		for(let i=0;i<perflist.length;i++)
 		{
-			lister(JO["perfs"]?(JO["perfs"][X]?"yes":"no"):NA,tablRw,'td');
+			perfshelper(perflist[i],perfoptn[i]);
 		}
-		lister(JO["perfs"]?.[X]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.[X]?.["rating"]??"",tablRw,'td');
-		lister(JO["perfs"]?.[X]?.["rd"]??"",tablRw,'td');
-		lister(JO["perfs"]?.[X]?.["prog"]??"",tablRw,'td');
-		lister(JO["perfs"]?.[X]?.["prov"]??"",tablRw,'td');
-	}
-	function datehelper(X)
-	{
-		const TS = new Date(JO[X]);
-		lister(JO[X]??"",tablRw,'td');
-		lister(JO[X]?(TS.toLocaleDateString()):"",tablRw,'td');
-		lister(JO[X]?(TS.toLocaleTimeString()):"",tablRw,'td');
-		lister(JO[X]?(TS.toUTCString()):"",tablRw,'td');
-	}
-	function blisthelper(T,A)
-	{
-		lister(JO[T]?(Object.keys(JO[T]).length):NA,tablRw,'td');
-		for(let i=0;i<A.length;i++)
+		datehelper("createdAt");
+		datehelper("seenAt");
+		lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
+		lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
+		blisthelper("profile",arrObj["profile"]);
+		lister(JO["title"]??"",tablRw,'td');
+		lister(JO["flair"]?"yes":"no",tablRw,'td');
+		lister(JO["patron"]??"",tablRw,'td');
+		lister(JO["verified"]??"",tablRw,'td');
+		//lister(JO["tosViolation"]??"",tablRw,'td');//these have been excluded from the bot list
+		t.appendChild(tablRw);//t is textToJSONhandler's 2nd parameter
+		function perfshelper(X,optnl)
 		{
-			lister(JO[T]?(JO[T][A[i]]?"yes":"no"):NA,tablRw,'td');
+			if(optnl)
+			{
+				lister(JO["perfs"]?(JO["perfs"][X]?"yes":"no"):NA,tablRw,'td');
+			}
+			lister(JO["perfs"]?.[X]?.["games"]??"",tablRw,'td');
+			lister(JO["perfs"]?.[X]?.["rating"]??"",tablRw,'td');
+			lister(JO["perfs"]?.[X]?.["rd"]??"",tablRw,'td');
+			lister(JO["perfs"]?.[X]?.["prog"]??"",tablRw,'td');
+			lister(JO["perfs"]?.[X]?.["prov"]??"",tablRw,'td');
+		}
+		function datehelper(X)
+		{
+			const TS = new Date(JO[X]);
+			lister(JO[X]??"",tablRw,'td');
+			lister(JO[X]?(TS.toLocaleDateString()):"",tablRw,'td');
+			lister(JO[X]?(TS.toLocaleTimeString()):"",tablRw,'td');
+			lister(JO[X]?(TS.toUTCString()):"",tablRw,'td');
+		}
+		function blisthelper(T,A)
+		{
+			lister(JO[T]?(Object.keys(JO[T]).length):NA,tablRw,'td');
+			for(let i=0;i<A.length;i++)
+			{
+				lister(JO[T]?(JO[T][A[i]]?"yes":"no"):NA,tablRw,'td');
+			}
 		}
 	}
 }

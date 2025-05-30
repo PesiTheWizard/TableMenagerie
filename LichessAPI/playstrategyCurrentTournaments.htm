@@ -40,20 +40,29 @@ function GetPublicTournaments(ClBt)
 				lister(CT["minutes"]??"",tabRw,'td');
 				lister(CT["clock"]?(CT["clock"]["limit"]??""):NA,tabRw,'td');
 				lister(CT["clock"]?(CT["clock"]["increment"]??""):NA,tabRw,'td');
-				//lister(CT["clock"]?(CT["clock"]["delay"]??""):NA,tabRw,'td');//not used anymore
+				lister(CT["clock"]?(CT["clock"]["delay"]??""):NA,tabRw,'td');//still used!
 				lister(CT["rated"]??"",tabRw,'td');
 				lister(CT["fullName"]??"",tabRw,'td');
 				lister(CT["nbPlayers"]??"",tabRw,'td');
 				lister(CT["variant"]?(CT["variant"]["name"]??""):NA,tabRw,'td');
+				lister(CT["variant"]?(CT["variant"]["iconChar"]??""):NA,tabRw,'td');
 				lister(CT["startsAt"]??"",tabRw,'td');
+				lister(CT["startsAt"]?(new Date(CT["startsAt"]).toLocaleDateString()):"",tabRw,'td');
+				lister(CT["startsAt"]?(new Date(CT["startsAt"]).toLocaleTimeString()):"",tabRw,'td');
 				lister(CT["finishesAt"]??"",tabRw,'td');
+				lister(CT["finishesAt"]?(new Date(CT["finishesAt"]).toLocaleDateString()):"",tabRw,'td');
+				lister(CT["finishesAt"]?(new Date(CT["finishesAt"]).toLocaleTimeString()):"",tabRw,'td');
 				lister(CT["status"]??"",tabRw,'td');
 				lister(CT["perf"]?(CT["perf"]["name"]??""):NA,tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["position"]??""):NA,tabRw,'td');
+				lister(CT["perf"]?(CT["perf"]["icon"]??""):NA,tabRw,'td');
 				lister(CT["isMedley"]??"",tabRw,'td');
 				lister(CT["handicapped"]??"",tabRw,'td');
 				lister(CT["secondsToStart"]??"",tabRw,'td');
 				lister(CT["schedule"]?(CT["schedule"]["freq"]??""):NA,tabRw,'td');
+				lister(CT["schedule"]?(CT["schedule"]["speed"]??""):NA,tabRw,'td');
 				lister(CT["winner"]?.["id"]??"",tabRw,'td');
+				lister(CT["winner"]?.["title"]??"",tabRw,'td');
 				TB.appendChild(tabRw);
 			}
 		}
@@ -75,10 +84,16 @@ function a(ctsb, lth)
 {//ctsb - column to sort by, lth - low to high
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
-	let cup = 1;//start at 1 so you know there's one below
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
-	while(cup < tl)//a list of 1 is already sorted
-	{//trying insertionsort
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
+	{
 		fn = gt[cup];
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
@@ -105,7 +120,6 @@ function a(ctsb, lth)
 			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
 			gt[rearguard].before(fn);
 		}
-		cup++;
 	}
 }
 </script>
@@ -133,26 +147,48 @@ span
 <div id="svar"></div>
 <table border=1>
 <thead><tr>
+<th colspan=5></th>
+<th colspan=3>clock</th>
+<th colspan=3></th>
+<th colspan=2>variant</th>
+<th colspan=3>startsAt</th>
+<th colspan=3>finishesAt</th>
+<th colspan=1></th>
+<th colspan=3>perf</th>
+<th colspan=3></th>
+<th colspan=2>schedule</th>
+<th colspan=2>winner</th>
+</tr><tr>
 <th>Group</th>
 <th>id</th>
 <th>createdBy</th>
 <th>system</th>
 <th>minutes</th>
-<th>clk/lim</th>
-<th>clk/inc</th>
+<th>limit</th>
+<th>incr.</th>
+<th>delay</th>
 <th>rated</th>
 <th>fullName</th>
 <th>nbPlayers</th>
-<th>variant/name</th>
-<th>startsAt</th>
-<th>finishesAt</th>
+<th>name</th>
+<th>iconChar</th>
+<th>(timestamp)</th>
+<th>(Date)</th>
+<th>(Time)</th>
+<th>(timestamp)</th>
+<th>(Date)</th>
+<th>(Time)</th>
 <th>status</th>
-<th>perf/name</th>
+<th>name</th>
+<th>pos.</th>
+<th>icon</th>
 <th>isMedley</th>
 <th>handicapped</th>
 <th>secondsToStart</th>
-<th>schedule/freq</th>
-<th>winner/id</th>
+<th>freq</th>
+<th>speed</th>
+<th>id</th>
+<th>title</th>
 </tr><tr>
 <th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
 <th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
@@ -174,6 +210,16 @@ span
 <th><span onClick=a(17,true)>&#9650;</span> <span onClick=a(17,false)>&#9660;</span></th>
 <th><span onClick=a(18,true)>&#9650;</span> <span onClick=a(18,false)>&#9660;</span></th>
 <th><span onClick=a(19,true)>&#9650;</span> <span onClick=a(19,false)>&#9660;</span></th>
+<th><span onClick=a(20,true)>&#9650;</span> <span onClick=a(20,false)>&#9660;</span></th>
+<th><span onClick=a(21,true)>&#9650;</span> <span onClick=a(21,false)>&#9660;</span></th>
+<th><span onClick=a(22,true)>&#9650;</span> <span onClick=a(22,false)>&#9660;</span></th>
+<th><span onClick=a(23,true)>&#9650;</span> <span onClick=a(23,false)>&#9660;</span></th>
+<th><span onClick=a(24,true)>&#9650;</span> <span onClick=a(24,false)>&#9660;</span></th>
+<th><span onClick=a(25,true)>&#9650;</span> <span onClick=a(25,false)>&#9660;</span></th>
+<th><span onClick=a(26,true)>&#9650;</span> <span onClick=a(26,false)>&#9660;</span></th>
+<th><span onClick=a(27,true)>&#9650;</span> <span onClick=a(27,false)>&#9660;</span></th>
+<th><span onClick=a(28,true)>&#9650;</span> <span onClick=a(28,false)>&#9660;</span></th>
+<th><span onClick=a(29,true)>&#9650;</span> <span onClick=a(29,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

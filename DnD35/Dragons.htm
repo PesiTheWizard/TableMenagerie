@@ -2,6 +2,74 @@
 <head>
 <title>Dragons</title>
 <script>
+const TDSS = [//True Dragon Size Stuff
+	["Fine",8,-16],
+	["Diminutive",4,-12],
+	["Tiny",2,-8,"2-1/2 ft./0 ft. (5 ft. with bite)",30,15],
+	["Small",1,-4,"5 ft./5 ft.",40,20],
+	["Medium",0,0,"5 ft./5 ft.",60,30],
+	["Large",-1,4,"10 ft./5 ft. (10 ft. with bite)",80,40],
+	["Huge",-2,8,"15 ft./10 ft. (15 ft. with bite)",100,50],
+	["Gargantuan",-4,12,"20 ft./15 ft. (20 ft. with bite)",120,60],
+	["Colossal",-8,16,"30 ft./20 ft. (30 ft. with bite)",140,70]
+];
+Object.freeze(TDSS);
+function dragonCalc(HD,typeString,AgeCat,SizeCat,subTypeString,NatArm,Str,Dex,Con,Int,Wis,Cha)
+{
+	function Mod(N){return Math.floor((N-10)/2);}
+	function stfy(N){return (N<0?"":"+").concat(N);}
+	const AgeDesc = ["Egg?","Wyrmling","Very young","Young","Juvenile","Young adult","Adult","Mature adult","Old","Very old","Ancient","Wyrm","Great wyrm"][AgeCat];
+	const T = `${AgeDesc} ${typeString} dragon`;
+	const Info = TDSS[SizeCat];
+	const S = Info[0].concat(" dragon",subTypeString);
+	const StrMod = Mod(Str);
+	const ConMod = Mod(Con);
+	const DexMod = Mod(Dex);
+	const ChaMod = Mod(Cha);
+	const ConBonusHP = HD*ConMod;
+	const HDs = `${HD}d12${ConBonusHP?stfy(ConBonusHP):""} (${Math.floor(HD*6.5)+ConBonusHP} hp)`;
+	const Init = stfy(DexMod);
+	const BaseAC = 10+Info[1];
+	const ACsizeDesc = Info[1]?`${stfy(Info[1])} size, `:"";
+	const ACdexDesc = DexMod?`${stfy(DexMod)} Dex, `:"";
+	const ACnatDesc = `${stfy(NatArm)} natural`;
+	const ACs = `${BaseAC+DexMod+NatArm} (${ACsizeDesc}${ACdexDesc}${ACnatDesc}), touch ${BaseAC+DexMod}, flat-footed ${BaseAC+NatArm}`;
+	const PrimaryAtk = HD+Info[1]+StrMod;
+	const Grapple = HD+StrMod+Info[2];//Attacking size modifier does not apply to grappling
+	const BaGr = `${stfy(HD)}/${stfy(Grapple)}`;
+	const halfStrMod = Math.floor(StrMod/2);
+	const StrModString = StrMod?stfy(StrMod):"";
+	const halfStrModString = halfStrMod?stfy(halfStrMod):"";
+	const twohandedStrModString = StrMod?stfy(StrMod+halfStrMod):"";
+	const PAS = stfy(PrimaryAtk);
+	const SAS = stfy(PrimaryAtk-5);
+	const FullAtk = [
+		"No true dragon is this fine",
+		"No true dragon is this diminutive",
+		`Bite ${PAS} (1d4${StrModString}), 2 Claws ${SAS} (1d3${halfStrModString})`,
+		`Bite ${PAS} (1d6${StrModString}), 2 Claws ${SAS} (1d4${halfStrModString})`,
+		`Bite ${PAS} (1d8${StrModString}), 2 Claws ${SAS} (1d6${halfStrModString}), 2 Wings ${SAS} (1d4${halfStrModString})`,
+		`Bite ${PAS} (2d6${StrModString}), 2 Claws ${SAS} (1d8${halfStrModString}), 2 Wings ${SAS} (1d6${halfStrModString}), Tail Slap ${SAS} (1d8${twohandedStrModString})`,
+		`Bite ${PAS} (2d8${StrModString}), 2 Claws ${SAS} (2d6${halfStrModString}), 2 Wings ${SAS} (1d8${halfStrModString}), Tail Slap ${SAS} (2d6${twohandedStrModString})`,
+		`Bite ${PAS} (4d6${StrModString}), 2 Claws ${SAS} (2d8${halfStrModString}), 2 Wings ${SAS} (2d6${halfStrModString}), Tail Slap ${SAS} (2d8${twohandedStrModString})`,
+		`Bite ${PAS} (4d8${StrModString}), 2 Claws ${SAS} (4d6${halfStrModString}), 2 Wings ${SAS} (2d8${halfStrModString}), Tail Slap ${SAS} (4d6${twohandedStrModString})`
+	][SizeCat];
+	const ConBasedDC = 10+Math.floor(HD/2)+ConMod;
+	const ChaBasedDC = 10+Math.floor(HD/2)+ChaMod;
+	const SpAt = "Breath weapon(Su): ".concat(
+		`${Info[4]} ft. Line/${Info[5]} ft. Cone (DC${ConBasedDC})`,
+		(SizeCat>=6)?`; Crush(Ex) ${["2d8","4d6","4d8"][SizeCat-6]}${twohandedStrModString}`:"",
+		(SizeCat>=7)?`; Tail Sweep(Ex) ${["2d6","2d8"][SizeCat-7]}`:"",
+		(AgeCat>=5)?`; Frightful Presence(Ex) ${AgeCat*30} ft. (DC${ChaBasedDC})`:""
+	);
+	const SpRe = Info[3];
+	const BaseSave = Math.floor(HD/2)+2;
+	const Saves = `Fort ${stfy(BaseSave+ConMod)}, Ref ${stfy(BaseSave+DexMod)}, Will ${stfy(BaseSave+Mod(Wis))}`;
+	const Abils = `Str ${Str}, Dex ${Dex}, Con ${Con}, Int ${Int}, Wis ${Wis}, Cha ${Cha}`;
+	const Skills = (HD+3)*(6+Mod(Int));
+	const Feats = Math.floor(HD/3)+1;
+	Filltable(T,S,HDs,Init,"",ACs,BaGr,FullAtk,SpRe,SpAt,"",Saves,Abils,Skills,Feats);
+}
 function Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,SpQ,Saves,Abils,Skills,Feats)
 {
 	"use strict";
@@ -37,6 +105,7 @@ function Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,SpQ,Saves,Abil
 	Do.innerText = Feats;
 }
 //Filltable('','','','+0','','','','','','','','','',NaN,NaN)
+//dragonCalc(HD,AgeCat,SizeCat,NatArm,Str,Dex,Con,Int,Wis,Cha)
 </script>
 <style>
 input
@@ -52,9 +121,9 @@ input
 <tr><td></td><td>Wyrmling</td><td>Very young</td><td>Young</td><td>Juvenile</td><td>Young adult</td><td>Adult</td><td>Mature adult</td><td>Old</td><td>Very old</td><td>Ancient</td><td>Wyrm</td><td>Great wyrm</td></tr>
 <tr>
  <td>Black</td>
- <td><input type=button value="Regular" onclick="Filltable('Wyrmling black dragon','Tiny Dragon (Water)','4d12+4 (30 hp)','+0','60ft., fly 100ft. (average), swim 60ft.','15 (+2 size, +3 natural), touch 12, flat-footed 15','+4/–4','Bite +6 (1d4), 2 Claws +1 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','30 ft. Line of Acid(Su),2d4(DC13)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +5, Ref +4, Will +4','Str 11, Dex 10, Con 13, Int 8, Wis 11, Cha 8',35,2)"><br>
+ <td><input type=button value="Regular" onclick="Filltable('Wyrmling black dragon','Tiny Dragon (Water)','4d12+4 (30 hp)','+0','60 ft., fly 100 ft. (average), swim 60ft.','15 (+2 size, +3 natural), touch 12, flat-footed 15','+4/–4','Bite +6 (1d4), 2 Claws +1 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','30 ft. Line of Acid(Su),2d4(DC13)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +5, Ref +4, Will +4','Str 11, Dex 10, Con 13, Int 8, Wis 11, Cha 8',35,2)"><br>
 </td>
- <td><input type=button value="Regular" onclick="Filltable('Very young black dragon','Small Dragon (Water)','7d12+7 (52 hp)','+0','60ft., fly 100ft. (average), swim 60ft.','17 (+1 size, +6 natural), touch 11, flat-footed 17','+7/+4','Bite +9 (1d6+1), 2 Claws +4 (1d4)','5 ft./5 ft.','40 ft. Line of Acid(Su),4d4(DC14)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +6, Ref +5, Will +5','Str 13, Dex 10, Con 13, Int 8, Wis 11, Cha 8',50,3)">
+ <td><input type=button value="Regular" onclick="Filltable('Very young black dragon','Small Dragon (Water)','7d12+7 (52 hp)','+0','60 ft., fly 100 ft. (average), swim 60ft.','17 (+1 size, +6 natural), touch 11, flat-footed 17','+7/+4','Bite +9 (1d6+1), 2 Claws +4 (1d4)','5 ft./5 ft.','40 ft. Line of Acid(Su),4d4(DC14)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +6, Ref +5, Will +5','Str 13, Dex 10, Con 13, Int 8, Wis 11, Cha 8',50,3)">
 </td>
  <td><input type=button value="Regular" onclick="Filltable('Young black dragon','Medium Dragon (Water)','10d12+20 (85 hp)','+0','60 ft., fly 150 ft. (poor), swim 60 ft.','19 (+9 natural), touch 10, flat-footed 19','+10/+12','Bite +12 (1d8+2), 2 Claws +7 (1d6+1), 2 Wings +7 (1d4+1)','5 ft./5 ft.','60 ft. Line of Acid(Su),6d4(DC17)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +9, Ref +7, Will +7','Str 15, Dex 10, Con 15, Int 10, Wis 11, Cha 10',78,4)">
 </td>
@@ -77,8 +146,60 @@ input
  <td><input type=button value="Regular" onclick="Filltable('Great wyrm black dragon','Gargantuan Dragon (Water)','37d12+296 (536 hp)','+0','60 ft., fly 200 ft. (clumsy), swim 60 ft.','42 (–4 size, +36 natural), touch 6, flat-footed 42','+37/+62','Bite +46 (4d6+13), 2 Claws +41 (2d8+6), 2 Wings +41 (2d6+6), Tail Slap +41 (2d8+19)','20 ft./15 ft. (20 ft. with bite)','120 ft. Line of Acid(Su),24d4(DC36); Crush(Ex),4d6+19; Tail Sweep(Ex),2d6+19; Frightful Presence(Ex) 360 ft. (DC33); Darkness(Sp, radius 120 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day, Charm reptiles(Sp) 3/day; Sor CL 15','True Dragon Traits; Immunity to acid; Water breathing(Ex); DR 20/magic(Su); SR 28','Fort +28, Ref +20, Will +25','Str 37, Dex 10, Con 27, Int 20, Wis 21, Cha 20',440,13)">
 </td>
 </tr>
-<tr><td>Blue</td>  <td><input type=button value=""></td></tr>
-<tr><td>Green</td> <td><input type=button value=""></td></tr>
+<tr>
+ <td>Blue</td>
+ <td><input type=button value="Regular" onclick="Filltable('Wyrmling blue dragon','Small Dragon (Earth)','6d12+6 (45 hp)','+0','40 ft., burrow 20 ft., fly 100 ft. (average)','16 (+1 size, +5 natural), touch 11, flat-footed 16','+6/+3','Bite +8 (1d6+1), 2 Claws +3 (1d4)','5 ft./5 ft.','40 ft. Line of lightning(Su),2d8(DC14); Create/Destroy Water(Sp) 3/day(DC13)','True Dragon Traits; Immunity to electricity','Fort +6, Ref +5, Will +5','Str 13, Dex 10, Con 13, Int 10, Wis 11, Cha 10',54,3)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Very young blue dragon','Medium Dragon (Earth)','9d12+18 (76 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','18 (+8 natural), touch 10, flat-footed 18','+9/+11','Bite +11 (1d8+2), 2 Claws +6 (1d6+1), 2 Wings +6 (1d4+1)','5 ft./5 ft.','60 ft. Line of lightning(Su),4d8(DC16); Create/Destroy Water(Sp) 3/day(DC14)','True Dragon Traits; Immunity to electricity','Fort +8, Ref +6, Will +6','Str 15, Dex 10, Con 15, Int 10, Wis 11, Cha 10',72,4)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Young blue dragon','Medium Dragon (Earth)','12d12+24 (102 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','21 (+11 natural), touch 10, flat-footed 21','+12/+15','Bite +15 (1d8+3), 2 Claws +10 (1d6+1), 2 Wings +10 (1d4+1)','5 ft./5 ft.','60 ft. Line of lightning(Su),6d8(DC18); Create/Destroy Water(Sp) 3/day(DC17)','True Dragon Traits; Immunity to electricity','Fort +10, Ref +8, Will +9','Str 17, Dex 10, Con 15, Int 12, Wis 13, Cha 12',105,5)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Juvenile blue dragon','Large Dragon (Earth)','15d12+45 (142 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','23 (–1 size, +14 natural), touch 9, flat-footed 23','+15/+23','Bite +18 (2d6+4), 2 Claws +13 (1d8+2), 2 Wings +13 (1d6+2), Tail Slap +13 (1d8+6)','10 ft./5 ft. (10 ft. with bite)','80 ft. Line of lightning(Su),8d8(DC20); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day(DC19); Sor CL 1','True Dragon Traits; Immunity to electricity','Fort +12, Ref +9, Will +11','Str 19, Dex 10, Con 17, Int 14, Wis 15, Cha 14',144,6)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Young adult blue dragon','Large Dragon (Earth)','18d12+72 (189 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','26 (–1 size, +17 natural), touch 9, flat-footed 26','+18/+28','Bite +23 (2d6+6), 2 Claws +18 (1d8+3), 2 Wings +18 (1d6+3), Tail Slap +18 (1d8+9)','10 ft./5 ft. (10 ft. with bite)','80 ft. Line of lightning(Su),10d8(DC23); Frightful Presence(Ex) 150 ft. (DC21); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day; Sor CL 3','True Dragon Traits; Immunity to electricity; DR 5/magic(Su); SR 19','Fort +15, Ref +11, Will +13','Str 23, Dex 10, Con 19, Int 14, Wis 15, Cha 14',168,7)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Adult blue dragon','Huge Dragon (Earth)','21d12+105 (241 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','28 (–2 size, +20 natural), touch 8, flat-footed 28','+21/+37','Bite +27 (2d8+8), 2 Claws +22 (2d6+4), 2 Wings +22 (1d8+4), Tail Slap +22 (2d6+12)','15 ft./10 ft. (15 ft. with bite)','100 ft. Line of lightning(Su),12d8(DC25); Crush(Ex),2d8+12; Frightful Presence(Ex) 180 ft. (DC23); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day; Sor CL 5','True Dragon Traits; Immunity to electricity; DR 5/magic(Su); SR 21','Fort +17, Ref +12, Will +15','Str 27, Dex 10, Con 21, Int 16, Wis 17, Cha 16',216,8)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Mature adult blue dragon','Huge Dragon (Earth)','24d12+120 (276 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','31 (–2 size, +23 natural), touch 8, flat-footed 31','+24/+41','Bite +31 (2d8+9), 2 Claws +26 (2d6+4), 2 Wings +26 (1d8+4), Tail Slap +26 (2d6+13)','15 ft./10 ft. (15 ft. with bite)','100 ft. Line of lightning(Su),14d8(DC27); Crush(Ex),2d8+13; Frightful Presence(Ex) 210 ft. (DC25); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day; Sor CL 7','True Dragon Traits; Immunity to electricity; DR 10/magic(Su); SR 22','Fort +19, Ref +14, Will +17','Str 29, Dex 10, Con 21, Int 16, Wis 17, Cha 16',243,9)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Old blue dragon','Huge Dragon (Earth)','27d12+162 (337 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','34 (–2 size, +26 natural), touch 8, flat-footed 34','+27/+45','Bite +35 (2d8+10), 2 Claws +30 (2d6+5), 2 Wings +30 (1d8+5), Tail Slap +30 (2d6+15)','15 ft./10 ft. (15 ft. with bite)','100 ft. Line of lightning(Su),16d8(DC29); Crush(Ex),2d8+15; Frightful Presence(Ex) 240 ft. (DC27); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day; Sor CL 9','True Dragon Traits; Immunity to electricity; DR 10/magic(Su); SR 24','Fort +21, Ref +15, Will +19','Str 31, Dex 10, Con 23, Int 18, Wis 19, Cha 18',300,10)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Very old blue dragon','Huge Dragon (Earth)','30d12+180 (375 hp)','+0','40 ft., burrow 20 ft., fly 150 ft. (poor)','37 (–2 size, +29 natural), touch 8, flat-footed 37','+30/+49','Bite +39 (2d8+11), 2 Claws +34 (2d6+5), 2 Wings +34 (1d8+5), Tail Slap +34 (2d6+16)','15 ft./10 ft. (15 ft. with bite)','100 ft. Line of lightning(Su),18d8(DC31); Crush(Ex),2d8+16; Frightful Presence(Ex) 270 ft. (DC29); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day; Sor CL 11','True Dragon Traits; Immunity to electricity; DR 15/magic(Su); SR 25','Fort +23, Ref +17, Will +21','Str 33, Dex 10, Con 23, Int 18, Wis 19, Cha 18',330,11)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Ancient blue dragon','Gargantuan Dragon (Earth)','33d12+231 (445 hp)','+0','40 ft., burrow 20 ft., fly 200 ft. (clumsy)','38 (–4 size, +32 natural), touch 6, flat-footed 38','+33/+57','Bite +41 (4d6+12), 2 Claws +36 (2d8+6), 2 Wings +36 (2d6+6), Tail Slap +36 (2d8+18)','20 ft./15 ft. (20 ft. with bite)','120 ft. Line of lightning(Su),20d8(DC33); Crush(Ex),4d6+18; Tail Sweep(Ex),2d6+18; Frightful Presence(Ex) 300 ft. (DC31); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day; Sor CL 13','True Dragon Traits; Immunity to electricity; DR 15/magic(Su); SR 27','Fort +25, Ref +18, Will +23','Str 35, Dex 10, Con 25, Int 20, Wis 21, Cha 20',396,12)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Wyrm blue dragon','Gargantuan Dragon (Earth)','36d12+288 (522 hp)','+0','40 ft., burrow 20 ft., fly 200 ft. (clumsy)','41 (–4 size, +35 natural), touch 6, flat-footed 41','+36/+61','Bite +45 (4d6+13), 2 Claws +40 (2d8+6), 2 Wings +40 (2d6+6), Tail Slap +40 (2d8+19)','20 ft./15 ft. (20 ft. with bite)','120 ft. Line of lightning(Su),22d8(DC36); Crush(Ex),4d6+19; Tail Sweep(Ex),2d6+19; Frightful Presence(Ex) 330 ft. (DC33); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day; Sor CL 15','True Dragon Traits; Immunity to electricity; DR 20/magic(Su); SR 29','Fort +28, Ref +20, Will +25','Str 37, Dex 10, Con 27, Int 20, Wis 21, Cha 20',429,13)"><br>
+</td>
+ <td><input type=button value="Regular" onclick="Filltable('Great wyrm blue dragon','Gargantuan Dragon (Earth)','39d12+312 (565 hp)','+0','40 ft., burrow 20 ft., fly 200 ft. (clumsy)','44 (–4 size, +38 natural), touch 6, flat-footed 44','+39/+65','Bite +49 (4d6+14), 2 Claws +44 (2d8+7), 2 Wings +44 (2d6+7), Tail Slap +44 (2d8+21)','20 ft./15 ft. (20 ft. with bite)','120 ft. Line of lightning(Su),24d8(DC37); Crush(Ex),4d6+21; Tail Sweep(Ex),2d6+21; Frightful Presence(Ex) 360 ft. (DC35); Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day, Mirage arcana(Sp) 1/day; Sor CL 17','True Dragon Traits; Immunity to electricity; DR 20/magic(Su); SR 31','Fort +29, Ref +21, Will +27','Str 39, Dex 10, Con 27, Int 22, Wis 23, Cha 22',504,14)"><br>
+</td>
+</tr>
+<tr>
+ <td>Green</td>
+ <td><input type=button value="Regular" onclick="Filltable('Wyrmling green dragon','Small Dragon (Air)','5d12+5 (37 hp)','+0','40 ft., fly 100 ft. (average), swim 40 ft.','15 (+1 size, +4 natural), touch 11, flat-footed 15','+5/+2','Bite +7 (1d6+1), 2 Claws +2 (1d4)','5 ft./5 ft.','20 ft. Cone of Acid(Su),2d6(DC13)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +5, Ref +4, Will +4','Str 13, Dex 10, Con 13, Int 10, Wis 11, Cha 10',48,2)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,'green',2,4,' (Air)',7,15,10,15,10,11,10)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(11,'green',3,4,' (Air)',10,17,10,15,12,13,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(14,'green',4,5,' (Air)',13,19,10,17,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(17,'green',5,5,' (Air)',16,23,10,19,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(20,'green',6,6,' (Air)',19,27,10,21,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(23,'green',7,6,' (Air)',22,29,10,21,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(26,'green',8,6,' (Air)',25,31,10,23,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(29,'green',9,6,' (Air)',28,33,10,23,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(31,'green',10,7,' (Air)',31,35,10,25,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(35,'green',11,7,' (Air)',34,37,10,27,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(38,'green',12,7,' (Air)',37,39,10,27,22,23,22)"><br>
+</td>
+</tr>
 <tr>
  <td>Red</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling red dragon','Medium Dragon (Fire)','7d12+14 (59 hp)','+0','40 ft., fly 150 ft. (poor)','16 (+6 natural), touch 10, flat-footed 16','+7/+10','Bite +10 (1d8+3), 2 Claws +5 (1d6+1), 2 Wings +5 (1d4+1)','5 ft./5 ft.','30 ft. Cone of Fire(Su),2d10(DC15)','True Dragon Traits; Immunity to fire; Vulnerability to cold','Fort +7, Ref +5, Will +5','Str 17, Dex 10, Con 15, Int 10, Wis 11, Cha 10',60,3)"><br>
@@ -109,7 +230,7 @@ input
 </tr>
 <tr>
  <td>White</td>
- <td><input type=button value="Regular" onclick="Filltable('Wyrmling white dragon','Tiny Dragon (Cold)','3d12+3 (22 hp)','+0','60 ft., burrow 30 ft., fly 150 ft. (average), swim 60 ft.','14 (+2 size, +2 natural), touch 12, flat-footed 14','+3/–5','Bite +5 (1d4), 2 Claws +0 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','','','Fort +4, Ref +3, Will +3','Str 11, Dex 10, Con 13, Int 6, Wis 11, Cha 6',24,2)"><br>
+ <td><input type=button value="Regular" onclick="Filltable('Wyrmling white dragon','Tiny Dragon (Cold)','3d12+3 (22 hp)','+0','60 ft., burrow 30 ft., fly 150 ft. (average), swim 60 ft.','14 (+2 size, +2 natural), touch 12, flat-footed 14','+3/–5','Bite +5 (1d4), 2 Claws +0 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','15 ft. Cone of cold(Su),1d6(DC12)','True Dragon Traits; Immunity to cold; Vulnerability to fire; Icewalking(Ex)','Fort +4, Ref +3, Will +3','Str 11, Dex 10, Con 13, Int 6, Wis 11, Cha 6',24,2)"><br>
 </td>
 </tr>
 <tr>

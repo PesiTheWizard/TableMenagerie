@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>Upgrade to Bot - Lichess API
+</title>
+<script>
+function makeo(ClBt)
+{
+	"use strict";
+	ClBt.disabled = true;
+	const DlogA = document.getElementById("LogA");
+	if(DlogA==null)
+	{
+		console.log("Logger not found in DOM");
+		return;
+	}
+	const sSite = document.getElementById("selSite")?.value.trim();
+	if(typeof(sSite)!="string")
+	{
+		DlogA.innerText = `Site selector gave ${typeof(sSite)} instead of string`;
+		ClBt.disabled = false;
+		return;
+	}
+	const botAccUpgrdURL = `https://${sSite}.org/api/bot/account/upgrade`;
+	const tokInp = document.getElementById("OAT").value.trim();
+	if(tokInp.length==0)
+	{
+		DlogA.innerText = "bot:play token is required";
+		ClBt.disabled = false;
+		return;
+	}
+	DlogA.innerText = `Fetching ${botAccUpgrdURL}`;
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	if((OGresp==null)||(HL==null)||(svr==null))
+	{
+		DlogA.innerText = "DOM search fail";
+		ClBt.disabled = false;
+		return;
+	}
+	const tc = "Bearer "+tokInp;
+	const sv = {'method':'POST','headers':{'Authorization':tc}};
+	svr.innerText = "Waiting for response...";
+	fetch(botAccUpgrdURL,sv).then((response) => {
+		OGresp.innerText = "Response code = "+response.status;
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.text();
+	}).then((response) => {
+		svr.innerText = response;
+	}).then(() => {
+		DlogA.innerText = `Fetched ${botAccUpgrdURL}`;
+	}).catch((error) => {
+		console.log(error);
+		svr.appendChild(document.createTextNode("\nError. See console for details."));
+	});
+}
+function lister(listedText, PN, ElType)
+{
+	"use strict";
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	PN.appendChild(listEntry);
+}
+</script>
+<style>
+input,select
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+site = <select id="selSite">
+<option value="lichess">lichess</option>
+<option value="lishogi">lishogi</option>
+<option value="lidraughts">lidraughts</option>
+<option value="playstrategy">playstrategy</option>
+</select><br>
+bot:play token = <input type="password" id="OAT" size=30><br>
+<input type=button value="Upgrade to Bot" onClick=makeo(this)>
+<div id="LogA"> </div>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<pre id="svar"></pre>
+</body>
+</html>

@@ -2,36 +2,53 @@
 <head>
 <title>Dragons</title>
 <script>
-const TDSS = [//True Dragon Size Stuff
+const TDSS = [//True Dragon Size Stuff; name,combatBonus,grappleBonus,reach,line,cone,flyingSpeed,flyingManuverability
 	["Fine",8,-16],
 	["Diminutive",4,-12],
-	["Tiny",2,-8,"2-1/2 ft./0 ft. (5 ft. with bite)",30,15],
-	["Small",1,-4,"5 ft./5 ft.",40,20],
-	["Medium",0,0,"5 ft./5 ft.",60,30],
-	["Large",-1,4,"10 ft./5 ft. (10 ft. with bite)",80,40],
-	["Huge",-2,8,"15 ft./10 ft. (15 ft. with bite)",100,50],
-	["Gargantuan",-4,12,"20 ft./15 ft. (20 ft. with bite)",120,60],
-	["Colossal",-8,16,"30 ft./20 ft. (30 ft. with bite)",140,70]
+	["Tiny",2,-8,"2-1/2 ft./0 ft. (5 ft. with bite)",30,15,100,"average"],
+	["Small",1,-4,"5 ft./5 ft.",40,20,100,"average"],
+	["Medium",0,0,"5 ft./5 ft.",60,30,150,"poor"],
+	["Large",-1,4,"10 ft./5 ft. (10 ft. with bite)",80,40,150,"poor"],
+	["Huge",-2,8,"15 ft./10 ft. (15 ft. with bite)",100,50,150,"poor"],
+	["Gargantuan",-4,12,"20 ft./15 ft. (20 ft. with bite)",120,60,200,"clumsy"],
+	["Colossal",-8,16,"30 ft./20 ft. (30 ft. with bite)",140,70,200,"clumsy"]
 ];
 Object.freeze(TDSS);
-function dragonCalc(HD,typeString,AgeCat,SizeCat,subTypeString,NatArm,Str,Dex,Con,Int,Wis,Cha)
+const TyCo = [//Type Constants; name,subtype,baseHD,nonFlySpeeds,flySpeedBonus,baseNaturalArmor,diceMult,diceType,breathType,cone?
+	["black","Water",1,"60 ft., swim 60 ft.",0,0,2,4,"acid",false],
+	["blue","Earth",3,"40 ft., burrow 20 ft.",0,2,2,8,"lightning",false],
+	["green","Air",2,"40 ft., swim 40 ft.",0,1,2,6,"acid",true],
+	["red","Fire",4,"40 ft.",0,3,2,10,"fire",true],
+	["white","Cold",0,"60 ft., burrow 30 ft., swim 60 ft.",50,-1,1,6,"cold",true],
+	["brass","Fire",1,"60 ft., burrow 30 ft.",50,0,1,6,"fire",false],
+	["bronze","Water",3,"40 ft., swim 60 ft.",0,2,2,6,"lightning",false],
+	["copper","Earth",2,"40 ft.",0,1,2,4,"acid",false],
+	["gold","Fire",5,"60 ft., swim 60 ft.",50,4,2,10,"fire",true],
+	["silver","Cold",4,"40 ft.",0,3,2,8,"cold",true]
+];
+Object.freeze(TyCo);
+function dragonCalc(TypeID,AgeCat,SizeCat,Garbage2,Str,Dex,Con,Int,Wis,Cha)//Age Category = 1_indexed, Size Category = 0_indexed
 {
 	function Mod(N){return Math.floor((N-10)/2);}
 	function stfy(N){return (N<0?"":"+").concat(N);}
 	const AgeDesc = ["Egg?","Wyrmling","Very young","Young","Juvenile","Young adult","Adult","Mature adult","Old","Very old","Ancient","Wyrm","Great wyrm"][AgeCat];
-	const T = `${AgeDesc} ${typeString} dragon`;
+	const TC = TyCo[TypeID];
+	const T = `${AgeDesc} ${TC[0]} dragon`;
 	const Info = TDSS[SizeCat];
-	const S = Info[0].concat(" dragon",subTypeString);
+	const S = `${Info[0]} dragon (${TC[1]})`;
 	const StrMod = Mod(Str);
 	const ConMod = Mod(Con);
 	const DexMod = Mod(Dex);
 	const ChaMod = Mod(Cha);
+	const HD = TC[2]+(3*AgeCat);
 	const ConBonusHP = HD*ConMod;
 	const HDs = `${HD}d12${ConBonusHP?stfy(ConBonusHP):""} (${Math.floor(HD*6.5)+ConBonusHP} hp)`;
 	const Init = stfy(DexMod);
+	const Speeds = `${TC[3]}, fly ${Info[6]+TC[4]} ft. (${Info[7]})`;
 	const BaseAC = 10+Info[1];
 	const ACsizeDesc = Info[1]?`${stfy(Info[1])} size, `:"";
 	const ACdexDesc = DexMod?`${stfy(DexMod)} Dex, `:"";
+	const NatArm = TC[5]+(3*AgeCat);
 	const ACnatDesc = `${stfy(NatArm)} natural`;
 	const ACs = `${BaseAC+DexMod+NatArm} (${ACsizeDesc}${ACdexDesc}${ACnatDesc}), touch ${BaseAC+DexMod}, flat-footed ${BaseAC+NatArm}`;
 	const PrimaryAtk = HD+Info[1]+StrMod;
@@ -44,8 +61,8 @@ function dragonCalc(HD,typeString,AgeCat,SizeCat,subTypeString,NatArm,Str,Dex,Co
 	const PAS = stfy(PrimaryAtk);
 	const SAS = stfy(PrimaryAtk-5);
 	const FullAtk = [
-		"No true dragon is this fine",
-		"No true dragon is this diminutive",
+		"No true dragon is fine",
+		"No true dragon is diminutive",
 		`Bite ${PAS} (1d4${StrModString}), 2 Claws ${SAS} (1d3${halfStrModString})`,
 		`Bite ${PAS} (1d6${StrModString}), 2 Claws ${SAS} (1d4${halfStrModString})`,
 		`Bite ${PAS} (1d8${StrModString}), 2 Claws ${SAS} (1d6${halfStrModString}), 2 Wings ${SAS} (1d4${halfStrModString})`,
@@ -56,8 +73,9 @@ function dragonCalc(HD,typeString,AgeCat,SizeCat,subTypeString,NatArm,Str,Dex,Co
 	][SizeCat];
 	const ConBasedDC = 10+Math.floor(HD/2)+ConMod;
 	const ChaBasedDC = 10+Math.floor(HD/2)+ChaMod;
+	const BreathDesc = `${TC[6]*AgeCat}d${TC[7]}`;
 	const SpAt = "Breath weapon(Su): ".concat(
-		`${Info[4]} ft. Line/${Info[5]} ft. Cone (DC${ConBasedDC})`,
+		`${Info[4+TC[9]]} ft. ${TC[9]?"Cone":"Line"} (${BreathDesc} ${TC[8]},DC${ConBasedDC})`,
 		(SizeCat>=6)?`; Crush(Ex) ${["2d8","4d6","4d8"][SizeCat-6]}${twohandedStrModString}`:"",
 		(SizeCat>=7)?`; Tail Sweep(Ex) ${["2d6","2d8"][SizeCat-7]}`:"",
 		(AgeCat>=5)?`; Frightful Presence(Ex) ${AgeCat*30} ft. (DC${ChaBasedDC})`:""
@@ -68,7 +86,7 @@ function dragonCalc(HD,typeString,AgeCat,SizeCat,subTypeString,NatArm,Str,Dex,Co
 	const Abils = `Str ${Str}, Dex ${Dex}, Con ${Con}, Int ${Int}, Wis ${Wis}, Cha ${Cha}`;
 	const Skills = (HD+3)*(6+Mod(Int));
 	const Feats = Math.floor(HD/3)+1;
-	Filltable(T,S,HDs,Init,"",ACs,BaGr,FullAtk,SpRe,SpAt,"",Saves,Abils,Skills,Feats);
+	Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,"",Saves,Abils,Skills,Feats);
 }
 function Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,SpQ,Saves,Abils,Skills,Feats)
 {
@@ -177,27 +195,27 @@ input
  <td>Green</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling green dragon','Small Dragon (Air)','5d12+5 (37 hp)','+0','40 ft., fly 100 ft. (average), swim 40 ft.','15 (+1 size, +4 natural), touch 11, flat-footed 15','+5/+2','Bite +7 (1d6+1), 2 Claws +2 (1d4)','5 ft./5 ft.','20 ft. Cone of Acid(Su),2d6(DC13)','True Dragon Traits; Immunity to acid; Water breathing(Ex)','Fort +5, Ref +4, Will +4','Str 13, Dex 10, Con 13, Int 10, Wis 11, Cha 10',48,2)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(8,'green',2,4,' (Air)',7,15,10,15,10,11,10)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,2,4,'',15,10,15,10,11,10)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(11,'green',3,4,' (Air)',10,17,10,15,12,13,12)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,3,4,'',17,10,15,12,13,12)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(14,'green',4,5,' (Air)',13,19,10,17,14,15,14)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,4,5,'',19,10,17,14,15,14)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(17,'green',5,5,' (Air)',16,23,10,19,14,15,14)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,5,5,'',23,10,19,14,15,14)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(20,'green',6,6,' (Air)',19,27,10,21,16,17,16)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,6,6,'',27,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(23,'green',7,6,' (Air)',22,29,10,21,16,17,16)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,7,6,'',29,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(26,'green',8,6,' (Air)',25,31,10,23,18,19,18)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,8,6,'',31,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(29,'green',9,6,' (Air)',28,33,10,23,18,19,18)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,9,6,'',33,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(31,'green',10,7,' (Air)',31,35,10,25,20,21,20)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,10,7,'',35,10,25,20,21,20)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(35,'green',11,7,' (Air)',34,37,10,27,20,21,20)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,11,7,'',37,10,27,20,21,20)"><br>
 </td>
- <td><input type=button value="?" onclick="dragonCalc(38,'green',12,7,' (Air)',37,39,10,27,22,23,22)"><br>
+ <td><input type=button value="?" onclick="dragonCalc(2,12,7,'',39,10,27,22,23,22)"><br>
 </td>
 </tr>
 <tr>
@@ -232,30 +250,162 @@ input
  <td>White</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling white dragon','Tiny Dragon (Cold)','3d12+3 (22 hp)','+0','60 ft., burrow 30 ft., fly 150 ft. (average), swim 60 ft.','14 (+2 size, +2 natural), touch 12, flat-footed 14','+3/–5','Bite +5 (1d4), 2 Claws +0 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','15 ft. Cone of cold(Su),1d6(DC12)','True Dragon Traits; Immunity to cold; Vulnerability to fire; Icewalking(Ex)','Fort +4, Ref +3, Will +3','Str 11, Dex 10, Con 13, Int 6, Wis 11, Cha 6',24,2)"><br>
 </td>
+ <td><input type=button value="?" onclick="dragonCalc(4,2,3,'',13,10,13,6,11,6)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,3,4,'',15,10,15,6,11,6)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,4,4,'',17,10,15,8,11,8)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,5,5,'',19,10,17,8,11,10)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,6,5,'',23,10,19,10,11,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,7,6,'',27,10,21,12,13,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,8,6,'',29,10,21,12,13,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,9,6,'',31,10,23,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,10,6,'',33,10,23,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,11,7,'',35,10,25,14,15,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(4,12,7,'',37,10,27,18,19,18)"><br>
+</td>
 </tr>
 <tr>
  <td>Brass</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling brass dragon','Tiny Dragon (Fire)','4d12+4 (30 hp)','+0','60 ft., burrow 30 ft., fly 150 ft. (average)','15 (+2 size, +3 natural), touch 12, flat-footed 15','+4/–4','Bite +6 (1d4), 2 Claws +1 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','30 ft. line of fire(Su),1d6(DC13), 15 ft. cone of sleep(1d6+1 rounds); Speak with animals(Sp) at will','True Dragon Traits; Immunity to fire; Vulnerability to cold','Fort +5, Ref +4, Will +4','Str 11, Dex 10, Con 13, Int 10, Wis 11, Cha 10',42,2)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,2,3,'',13,10,13,10,11,10)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,3,4,'',13,10,13,10,11,10)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,4,4,'',17,10,15,12,13,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,5,5,'',19,10,17,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,6,5,'',23,10,19,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,7,6,'',27,10,21,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,8,6,'',29,10,21,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,9,6,'',31,10,23,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,10,6,'',33,10,23,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,11,7,'',35,10,25,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(5,12,7,'',37,10,27,20,21,20)"><br>
 </td>
 </tr>
 <tr>
  <td>Bronze</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling bronze dragon','Small Dragon (Water)','6d12+6 (45 hp)','+0','40 ft., fly 100 ft. (average), swim 60 ft.','16 (+1 size, +5 natural), touch 11, flat-footed 16','+6/+3','Bite +8 (1d6+1), 2 Claws +3 (1d4)','5 ft./5 ft.','40 ft. line of lightning(Su),2d6(DC14), 20 ft. cone of repulsion(1d6+1 rounds)','True Dragon Traits; Immunity to electricity; Water breathing(Ex)','Fort +6, Ref +5, Will +7','Str 13, Dex 10, Con 13, Int 14, Wis 15, Cha 14',72,3)"><br>
 </td>
+ <td><input type=button value="?" onclick="dragonCalc(6,2,4,'',15,10,15,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,3,4,'',17,10,15,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,4,5,'',19,10,17,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,5,5,'',23,10,19,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,6,6,'',27,10,21,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,7,6,'',29,10,21,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,8,6,'',31,10,23,22,23,22)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,9,6,'',33,10,23,22,23,22)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,10,7,'',35,10,25,24,25,24)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,11,7,'',37,10,27,26,27,26)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(6,12,7,'',39,10,27,26,27,26)"><br>
+</td>
 </tr>
 <tr>
  <td>Copper</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling copper dragon','Tiny Dragon (Earth)','5d12+5 (37 hp)','+0','40 ft., fly 100 ft. (average)','16 (+2 size, +4 natural), touch 12, flat-footed 16','+5/–3','Bite +7 (1d4), 2 Claws +2 (1d3)','2-1/2 ft./0 ft. (5 ft. with bite)','30 ft. line of acid(Su),2d4(DC13), 15 ft. cone of slow(1d6+1 rounds)','True Dragon Traits; Immunity to acid; Spider climb(Ex)','Fort +5, Ref +4, Will +5','Str 11, Dex 10, Con 13, Int 12, Wis 13, Cha 12',56,2)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,2,3,'',13,10,13,12,13,12)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,3,4,'',15,10,15,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,4,4,'',17,10,15,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,5,5,'',19,10,17,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,6,5,'',23,10,19,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,7,6,'',27,10,21,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,8,6,'',29,10,21,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,9,6,'',31,10,23,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,10,6,'',33,10,23,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,11,7,'',35,10,25,22,23,22)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(7,12,7,'',37,10,27,22,23,22)"><br>
 </td>
 </tr>
 <tr>
  <td>Gold</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling gold dragon','Medium Dragon (Fire)','8d12+16 (68 hp)','+0','60 ft., fly 200 ft. (poor), swim 60 ft.','17 (+7 natural), touch 10, flat-footed 17','+8/+11','Bite +11 (1d8+3), 2 Claws +6 (1d6+1), 2 Wings +6 (1d4+1)','5 ft./5 ft.','30 ft. Cone of Fire(Su),2d10(DC16), 30 ft. Cone of 1 STRdamage','True Dragon Traits; Immunity to fire; Vulnerability to cold; Alternate Form(Su); Water Breathing(Ex)','Fort +8, Ref +6, Will +8','Str 17, Dex 10, Con 15, Int 14, Wis 15, Cha 14',88,3)"><br>
 </td>
+ <td><input type=button value="?" onclick="dragonCalc(8,2,5,'',21,10,17,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,3,5,'',25,10,17,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,4,5,'',29,10,19,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,5,6,'',31,10,21,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,6,6,'',33,10,21,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,7,6,'',35,10,23,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,8,7,'',39,10,25,24,25,24)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,9,7,'',41,10,27,26,27,26)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,10,7,'',43,10,29,28,29,28)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,11,8,'',45,10,31,30,31,30)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(8,12,8,'',47,10,33,32,33,32)"><br>
+</td>
 </tr>
 <tr>
  <td>Silver</td>
  <td><input type=button value="Regular" onclick="Filltable('Wyrmling silver dragon','Small Dragon (Cold)','7d12+7 (52 hp)','+0','40 ft., fly 100 ft. (average)','17 (+1 size, +6 natural), touch 11, flat-footed 17','+7/+4','Bite +9 (1d6+1), 2 Claws +4 (1d4)','5 ft./5 ft.','20 ft. cone of cold(Su),2d8(DC14), 20 ft. cone of paralyze(1d6+1 rounds)','True Dragon Traits; Immunity to acid and cold; Vulnerability to fire; Alternate Form(Su); Cloudwalking(Su)','Fort +6, Ref +5, Will +7','Str 13, Dex 10, Con 13, Int 14, Wis 15, Cha 14',80,3)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,2,4,'',15,10,15,14,15,14)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,3,4,'',17,10,15,16,17,16)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,4,5,'',19,10,17,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,5,5,'',23,10,19,18,19,18)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,6,6,'',27,10,21,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,7,6,'',29,10,21,20,21,20)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,8,6,'',31,10,23,22,23,22)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,9,6,'',33,10,23,24,25,24)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,10,7,'',35,10,25,26,27,26)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,11,7,'',39,10,29,28,29,28)"><br>
+</td>
+ <td><input type=button value="?" onclick="dragonCalc(9,12,8,'',43,10,31,30,31,30)"><br>
 </td>
 </tr>
 </tbody>

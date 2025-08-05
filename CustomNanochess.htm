@@ -152,7 +152,7 @@ class CustomNanoChess
 							}
 						}
 					}while(!r&q>this.#RidersVar||(p=O,q|A>2|o>this.z&!r&&++C*--A));//the comparison to q determines which pieces are sliding.
-				}
+				}//end of if(q<7)
 			}
 		}while(++O>98?O=20:e-O);
 		return this.y^=8,this.G--,N+this.M*this.M&&N>-K+1924|d?N:0;
@@ -273,7 +273,7 @@ Object.freeze(b64svgs);
 //-->
 </script>
 <style>
-.chessboard td
+tbody.chessboard td
 {
 	width:10.5vmin;
 	height:10.5vmin;
@@ -286,11 +286,11 @@ Object.freeze(b64svgs);
 	background-size:contain;
 	background-position:center;
 }
-.chessboard>tr:nth-child(odd)>td:nth-child(odd),.chessboard>tr:nth-child(even)>td:nth-child(even)
+tbody.chessboard>tr:nth-child(odd)>td:nth-child(odd),tbody.chessboard>tr:nth-child(even)>td:nth-child(even)
 {
 	background-color: #c0c0ff;/*white squares*/
 }
-.chessboard>tr:nth-child(odd)>td:nth-child(even),.chessboard>tr:nth-child(even)>td:nth-child(odd)
+tbody.chessboard>tr:nth-child(odd)>td:nth-child(even),tbody.chessboard>tr:nth-child(even)>td:nth-child(odd)
 {
 	background-color: #9090d0;/*black squares*/
 }

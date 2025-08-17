@@ -6,40 +6,40 @@ const TDFS = [//True Dragon Fly Speed; flyingSpeed,flyingManuverability
 	[100,"average"],
 	[150,"poor"],
 	[200,"clumsy"]
-];
-Object.freeze(TDFS);
-const TDSS = [//True Dragon Size Stuff; name,combatBonus,grappleBonus,reach,line,cone,TDFS_index
+];Object.freeze(TDFS);
+
+const TDSS = [//True Dragon Size Stuff; name,combatBonus,grappleBonus,reach1,reach2,line,cone,TDFS_index
 	["Fine",8,-16],
 	["Diminutive",4,-12],
-	["Tiny",2,-8,"2-1/2 ft./0 ft. (5 ft. with bite)",30,15,0],
-	["Small",1,-4,"5 ft./5 ft.",40,20,0],
-	["Medium",0,0,"5 ft./5 ft.",60,30,1],
-	["Large",-1,4,"10 ft./5 ft. (10 ft. with bite)",80,40,1],
-	["Huge",-2,8,"15 ft./10 ft. (15 ft. with bite)",100,50,1],
-	["Gargantuan",-4,12,"20 ft./15 ft. (20 ft. with bite)",120,60,2],
-	["Colossal",-8,16,"30 ft./20 ft. (30 ft. with bite)",140,70,2]
-];
-Object.freeze(TDSS);
-const TyCo = [//Type Constants; name,subtype,baseHD,nonFlySpeeds,flySpeedBonus,baseNaturalArmor,diceMult,diceType,breathType,cone?,inherentSQs,SorAgeStart,classSkills,secondaryBreath
+	["Tiny",2,-8,"2-1/2 ft./0 ft."," (5 ft. with bite)",30,15,0],
+	["Small",1,-4,"5 ft./5 ft.","",40,20,0],
+	["Medium",0,0,"5 ft./5 ft.","",60,30,1],
+	["Large",-1,4,"10 ft./5 ft."," (10 ft. with bite)",80,40,1],
+	["Huge",-2,8,"15 ft./10 ft."," (15 ft. with bite)",100,50,1],
+	["Gargantuan",-4,12,"20 ft./15 ft."," (20 ft. with bite)",120,60,2],
+	["Colossal",-8,16,"30 ft./20 ft."," (30 ft. with bite)",140,70,2]
+];Object.freeze(TDSS);
+
+const TyCo = [//Type Constants; name,subtype,baseHD,nonFlySpeeds,flySpeedBonus,baseNaturalArmor,diceMult,diceType,breathType,cone?,inherentSQs,SorAgeStart,classSkills,secondaryBreath,skeletonInherentSQs
 	["black","Water",1,"60 ft., swim 60 ft.",0,0,2,4,"acid",false,"Immunity to acid; Water breathing(Ex)",5,"Hide, Move Silently, Swim",null],
 	["blue","Earth",3,"40 ft., burrow 20 ft.",0,2,2,8,"lightning",false,"Immunity to electricity",4,"Bluff, Hide, Spellcraft",null],
 	["green","Air",2,"40 ft., swim 40 ft.",0,1,2,6,"acid",true,"Immunity to acid; Water breathing(Ex)",4,"Bluff, Hide, Move Silently",null],
-	["red","Fire",4,"40 ft.",0,3,2,10,"fire",true,"Immunity to fire; Vulnerability to cold",3,"Appraise, Bluff, Jump",null],
+	["red","Fire",4,"40 ft.",0,3,2,10,"fire",true,"Immunity to fire; Vulnerability to cold",3,"Appraise, Bluff, Jump",null,"immunity to cold and fire"],
 	["white","Cold",0,"60 ft., burrow 30 ft., swim 60 ft.",50,-1,1,6,"cold",true,"Immunity to cold; Vulnerability to fire; Icewalking(Ex)",6,"Hide, Move Silently, Swim",null],
 	["brass","Fire",1,"60 ft., burrow 30 ft.",50,0,1,6,"fire",false,"Immunity to fire; Vulnerability to cold",3,"Bluff, Gather Information, Survival",["sleep","1d6+","rounds"]],
 	["bronze","Water",3,"40 ft., swim 60 ft.",0,2,2,6,"lightning",false,"Immunity to electricity; Water breathing(Ex)",3,"Disguise, Swim, Survival",["repulsion","1d6+","rounds"]],
 	["copper","Earth",2,"40 ft.",0,1,2,4,"acid",false,"Immunity to acid; Spider climb(Ex)",3,"Bluff, Hide, Jump",["slow","1d6+","rounds"]],
 	["gold","Fire",5,"60 ft., swim 60 ft.",50,4,2,10,"fire",true,"Immunity to fire; Vulnerability to cold; Water Breathing(Ex); Alternate Form(Su)",3,"Disguise, Heal, Swim",["weaken","","STRdamage"]],
 	["silver","Cold",4,"40 ft.",0,3,2,8,"cold",true,"Immunity to acid and cold; Vulnerability to fire; Cloudwalking(Su); Alternate Form(Su)",3,"Bluff, Disguise, Jump",["paralysis","1d6+","rounds"]]
-];
-Object.freeze(TyCo);
+];Object.freeze(TyCo);
+
 function Mod(N){return Math.floor((N-10)/2);}
 function stfy(N){return (N<0?"":"+").concat(N);}
 function dragonCalc(TypeID,AgeCat,SizeCat,SpAbs,LateSQ,SpRes,Str,Dex,Con,Int,Wis,Cha)//Age Category = 1_indexed, Size Category = 0_indexed
 {
-	const AgeDesc = ["Egg?","Wyrmling","Very young","Young","Juvenile","Young adult","Adult","Mature adult","Old","Very old","Ancient","Wyrm","Great wyrm"][AgeCat];
+	const AgeDesc = ["Egg?","Wyrmling","Very young","Young","Juvenile","Young adult","Adult","Mature adult","Old","Very old","Ancient","Wyrm","Great wyrm"][AgeCat];
 	const TC = TyCo[TypeID];
-	const T = `${AgeDesc} ${TC[0]} dragon`;
+	const T = `${AgeDesc} ${TC[0]} dragon`;
 	const Info = TDSS[SizeCat];
 	const S = `${Info[0]} Dragon (${TC[1]})`;
 	const StrMod = Mod(Str);
@@ -57,7 +57,7 @@ function dragonCalc(TypeID,AgeCat,SizeCat,SpAbs,LateSQ,SpRes,Str,Dex,Con,Int,Wis
 	const ConBonusHP = HD*ConMod;
 	const HDs = `${HD}d12${ConBonusHP?stfy(ConBonusHP):""} (${Math.floor(HD*6.5)+ConBonusHP} hp)`;
 	const Init = DexModStr;
-	const FlyLine = TDFS[Info[6]];
+	const FlyLine = TDFS[Info[7]];
 	const Speeds = `${TC[3]}, fly ${FlyLine[0]+TC[4]} ft. (${FlyLine[1]})`;
 	const BaseAC = 10+Info[1];
 	const ACsizeDesc = Info[1]?`${stfy(Info[1])} size, `:"";
@@ -85,15 +85,15 @@ function dragonCalc(TypeID,AgeCat,SizeCat,SpAbs,LateSQ,SpRes,Str,Dex,Con,Int,Wis
 		`Bite ${PAS} (4d6${StrModString}), 2 Claws ${SAS} (2d8${halfStrModString}), 2 Wings ${SAS} (2d6${halfStrModString}), Tail Slap ${SAS} (2d8${twohandedStrModString})`,
 		`Bite ${PAS} (4d8${StrModString}), 2 Claws ${SAS} (4d6${halfStrModString}), 2 Wings ${SAS} (2d8${halfStrModString}), Tail Slap ${SAS} (4d6${twohandedStrModString})`
 	][SizeCat];
-	const SpRe = Info[3];
+	const SpRe = Info[3].concat(Info[4]);
 	const ConBasedDC = 10+Math.floor(HD/2)+ConMod;
 	const ChaBasedDC = 10+Math.floor(HD/2)+ChaMod;
 	const BreathDesc = `${TC[6]*AgeCat}d${TC[7]}`;
 	const SorCL = (AgeCat-TC[11])*2+1;
 	const altBreath = TC[13];
 	const SpAt = "Breath weapon(Su): ".concat(
-		`${Info[4+TC[9]]} ft. ${TC[9]?"Cone":"Line"} (${BreathDesc} ${TC[8]},DC${ConBasedDC})`,
-		Array.isArray(altBreath)?` or ${Info[5]} ft. Cone of ${altBreath[0]} (${altBreath[1]}${AgeCat} ${altBreath[2]})`:"",
+		`${Info[5+TC[9]]} ft. ${TC[9]?"Cone":"Line"} (${BreathDesc} ${TC[8]},DC${ConBasedDC})`,
+		Array.isArray(altBreath)?` or ${Info[6]} ft. Cone of ${altBreath[0]} (${altBreath[1]}${AgeCat} ${altBreath[2]})`:"",
 		(SizeCat>=6)?`; Crush(Ex) ${["2d8","4d6","4d8"][SizeCat-6]}${twohandedStrModString}`:"",
 		(SizeCat>=7)?`; Tail Sweep(Ex) ${["2d6","2d8"][SizeCat-7]}${twohandedStrModString}`:"",
 		(AgeCat>=5)?`; Frightful Presence(Ex) ${AgeCat*30} ft. (DC${ChaBasedDC})`:"",
@@ -148,32 +148,54 @@ function Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,SpQ,Saves,Abil
 	Dn.innerText = Skills;
 	Do.innerText = Feats;
 }
-function skeleCalc(Desc,HD,SizeCat,subTypes,Speeds,NatArm,FullAtk,SpRe,SpAt,SQs,Str,Dex)
+function skeleCalc(TypeID,Desc,HD,SizeCat,SQs,Str,Dex)
 {
-	const T = `${Desc} skeleton`;
+	const TC = TyCo[TypeID];
+	const T = `${Desc} ${TC[0]} dragon skeleton`;
 	const Info = TDSS[SizeCat];
-	const S = `${Info[0]} Undead${subTypes}`;
+	const S = `${Info[0]} Undead (${TC[1]})`;
 	const HDs = `${HD}d12 (${Math.floor(HD*6.5)} hp)`;
 	const StrMod = Mod(Str);
 	const DexMod = Mod(Dex);
 	const Init = stfy(DexMod+4);
+	const Speeds = TC[3];
 	const BaseAC = 10+Info[1];
 	const DexModStr = stfy(DexMod);
+	const NatArm = [0,0,0,1,2,2,3,6,10][SizeCat];
 	const ACsizeDesc = Info[1]?`${stfy(Info[1])} size, `:"";
 	const ACdexDesc = DexMod?`${DexModStr} Dex, `:"";
 	const ACnatDesc = `${stfy(NatArm)} natural`;
 	const ACs = `${BaseAC+DexMod+NatArm} (${ACsizeDesc}${ACdexDesc}${ACnatDesc}), touch ${BaseAC+DexMod}, flat-footed ${BaseAC+NatArm}`;
 	const BAB = Math.floor(HD/2);
-	const PrimaryAtk = BAB+Info[1]+StrMod;
 	const Grapple = BAB+StrMod+Info[2];//Attacking size modifier does not apply to grappling
 	const BaGr = `${stfy(BAB)}/${stfy(Grapple)}`;
 
+	const PrimaryAtk = BAB+Info[1]+StrMod;
+	const halfStrMod = Math.floor(StrMod/2);
+	const StrModString = StrMod?stfy(StrMod):"";
+	const halfStrModString = halfStrMod?stfy(halfStrMod):"";
+	const twohandedStrModString = StrMod?stfy(StrMod+halfStrMod):"";
+	const PAS = stfy(PrimaryAtk);
+	const SAS = stfy(PrimaryAtk-5);
+	const FullAtk = [
+		"No true dragon is fine",
+		"No true dragon is diminutive",
+		`Bite ${PAS} (1d4${StrModString}), 2 Claws ${SAS} (1d3${halfStrModString})`,
+		`Bite ${PAS} (1d6${StrModString}), 2 Claws ${SAS} (1d4${halfStrModString})`,
+		`Bite ${PAS} (1d8${StrModString}), 2 Claws ${SAS} (1d6${halfStrModString}), 2 Wings ${SAS} (1d4${halfStrModString})`,
+		`Bite ${PAS} (2d6${StrModString}), 2 Claws ${SAS} (1d8${halfStrModString}), 2 Wings ${SAS} (1d6${halfStrModString}), Tail Slap ${SAS} (1d8${twohandedStrModString})`,
+		`Bite ${PAS} (2d8${StrModString}), 2 Claws ${SAS} (2d6${halfStrModString}), 2 Wings ${SAS} (1d8${halfStrModString}), Tail Slap ${SAS} (2d6${twohandedStrModString})`,
+		`Bite ${PAS} (4d6${StrModString}), 2 Claws ${SAS} (2d8${halfStrModString}), 2 Wings ${SAS} (2d6${halfStrModString}), Tail Slap ${SAS} (2d8${twohandedStrModString})`,
+		`Bite ${PAS} (4d8${StrModString}), 2 Claws ${SAS} (4d6${halfStrModString}), 2 Wings ${SAS} (2d8${halfStrModString}), Tail Slap ${SAS} (4d6${twohandedStrModString})`
+	][SizeCat];
+
+	const SpRe = Info[3].concat(Info[4].length>0?" ?":"");
 	const SpQ = `Undead Traits; ${SQs}; DR 5/bludgeoning`;
 	const goodSave = Math.floor(HD/2)+2;
 	const badSave = Math.floor(HD/3);
 	const Saves = `Fort ${stfy(badSave)}, Ref ${stfy(badSave+DexMod)}, Will ${stfy(goodSave)}`;
 	const Abils = `Str ${Str}, Dex ${Dex}, Con —, Int —, Wis 10, Cha 1`;
-	Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,SpAt,SpQ,Saves,Abils,"—","Improved Initiative")
+	Filltable(T,S,HDs,Init,Speeds,ACs,BaGr,FullAtk,SpRe,"—",SpQ,Saves,Abils,"—","Improved Initiative")
 }
 //Filltable('','','','+0','','','','','','','','','',NaN,NaN)
 </script>
@@ -191,273 +213,284 @@ input
 <tr><td></td><td>Wyrmling</td><td>Very young</td><td>Young</td><td>Juvenile</td><td>Young adult</td><td>Adult</td><td>Mature adult</td><td>Old</td><td>Very old</td><td>Ancient</td><td>Wyrm</td><td>Great wyrm</td></tr>
 <tr>
  <td>Black</td>
- <td><input type=button value="CR3" onclick="dragonCalc(0,1,2,'','',0, 11,10,13,8,11,8)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(0,1,2,'','',0, 11,10,13,8,11,8)">
 </td>
- <td><input type=button value="CR4" onclick="dragonCalc(0,2,3,'','',0, 13,10,13,8,11,8)">
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(0,2,3,'','',0, 13,10,13,8,11,8)">
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(0,3,4,'','',0, 15,10,15,10,11,10)">
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(0,3,4,'','',0, 15,10,15,10,11,10)">
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(0,4,4,'Darkness(Sp, radius 40 ft.) 3/day','',0, 17,10,15,10,11,10)">
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(0,4,4,'Darkness(Sp, radius 40 ft.) 3/day','',0, 17,10,15,10,11,10)">
 </td>
- <td><input type=button value="CR9" onclick="dragonCalc(0,5,5,'Darkness(Sp, radius 50 ft.) 3/day','',17, 19,10,17,12,13,12)">
+ <td><input type=button value="Regular,CR9" onclick="dragonCalc(0,5,5,'Darkness(Sp, radius 50 ft.) 3/day','',17, 19,10,17,12,13,12)">
 </td>
- <td><input type=button value="CR11" onclick="dragonCalc(0,6,5,'Darkness(Sp, radius 60 ft.) 3/day, Corrupt Water(Sp) 1/day','',18, 23,10,19,12,13,12)">
+ <td><input type=button value="Regular,CR11" onclick="dragonCalc(0,6,5,'Darkness(Sp, radius 60 ft.) 3/day, Corrupt Water(Sp) 1/day','',18, 23,10,19,12,13,12)">
 </td>
- <td><input type=button value="CR14" onclick="dragonCalc(0,7,6,'Darkness(Sp, radius 70 ft.) 3/day, Corrupt Water(Sp) 1/day','',21, 27,10,21,14,15,14)">
+ <td><input type=button value="Regular,CR14" onclick="dragonCalc(0,7,6,'Darkness(Sp, radius 70 ft.) 3/day, Corrupt Water(Sp) 1/day','',21, 27,10,21,14,15,14)">
 </td>
- <td><input type=button value="CR16" onclick="dragonCalc(0,8,6,'Darkness(Sp, radius 80 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day','',22, 29,10,21,14,15,14)">
+ <td><input type=button value="Regular,CR16" onclick="dragonCalc(0,8,6,'Darkness(Sp, radius 80 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day','',22, 29,10,21,14,15,14)">
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(0,9,6,'Darkness(Sp, radius 90 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day','',23, 31,10,23,16,17,16)">
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(0,9,6,'Darkness(Sp, radius 90 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day','',23, 31,10,23,16,17,16)">
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(0,10,6,'Darkness(Sp, radius 100 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day','',25, 33,10,23,16,17,16)">
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(0,10,6,'Darkness(Sp, radius 100 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day','',25, 33,10,23,16,17,16)">
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(0,11,7,'Darkness(Sp, radius 110 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day','',26, 35,10,25,18,19,18)">
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(0,11,7,'Darkness(Sp, radius 110 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day','',26, 35,10,25,18,19,18)">
 </td>
- <td><input type=button value="CR22" onclick="dragonCalc(0,12,7,'Darkness(Sp, radius 120 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day, Charm reptiles(Sp) 3/day','',28, 37,10,27,20,21,20)">
+ <td><input type=button value="Regular,CR22" onclick="dragonCalc(0,12,7,'Darkness(Sp, radius 120 ft.) 3/day, Corrupt Water(Sp) 1/day, Plant growth(Sp) 1/day, Insect plague(Sp) 3/day, Charm reptiles(Sp) 3/day','',28, 37,10,27,20,21,20)">
 </td>
 </tr>
 <tr>
  <td>Blue</td>
- <td><input type=button value="CR3" onclick="dragonCalc(1,1,3,'Create/Destroy Water(Sp) 3/day(DC13)','',0, 13,10,13,10,11,10)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(1,1,3,'Create/Destroy Water(Sp) 3/day(DC13)','',0, 13,10,13,10,11,10)">
 </td>
- <td><input type=button value="CR4" onclick="dragonCalc(1,2,4,'Create/Destroy Water(Sp) 3/day(DC14)','',0, 15,10,15,10,11,10)">
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(1,2,4,'Create/Destroy Water(Sp) 3/day(DC14)','',0, 15,10,15,10,11,10)">
 </td>
- <td><input type=button value="CR6" onclick="dragonCalc(1,3,4,'Create/Destroy Water(Sp) 3/day(DC17)','',0, 17,10,15,12,13,12)">
+ <td><input type=button value="Regular,CR6" onclick="dragonCalc(1,3,4,'Create/Destroy Water(Sp) 3/day(DC17)','',0, 17,10,15,12,13,12)">
 </td>
- <td><input type=button value="CR8" onclick="dragonCalc(1,4,5,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day(DC19)','',0, 19,10,17,14,15,14)">
+ <td><input type=button value="Regular,CR8" onclick="dragonCalc(1,4,5,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day(DC19)','',0, 19,10,17,14,15,14)">
 </td>
- <td><input type=button value="CR11" onclick="dragonCalc(1,5,5,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day','',19, 23,10,19,14,15,14)">
+ <td><input type=button value="Regular,CR11" onclick="dragonCalc(1,5,5,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day','',19, 23,10,19,14,15,14)">
 </td>
- <td><input type=button value="CR14" onclick="dragonCalc(1,6,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day','',21, 27,10,21,16,17,16)">
+ <td><input type=button value="Regular,CR14" onclick="dragonCalc(1,6,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day','',21, 27,10,21,16,17,16)">
 </td>
- <td><input type=button value="CR16" onclick="dragonCalc(1,7,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day','',22, 29,10,21,16,17,16)">
+ <td><input type=button value="Regular,CR16" onclick="dragonCalc(1,7,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day','',22, 29,10,21,16,17,16)">
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(1,8,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day','',24, 31,10,23,18,19,18)">
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(1,8,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day','',24, 31,10,23,18,19,18)">
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(1,9,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day','',25, 33,10,23,18,19,18)">
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(1,9,6,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day','',25, 33,10,23,18,19,18)">
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(1,10,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day','',27, 35,10,25,20,21,20)">
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(1,10,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day','',27, 35,10,25,20,21,20)">
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(1,11,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day','',29, 37,10,27,20,21,20)">
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(1,11,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day','',29, 37,10,27,20,21,20)">
 </td>
- <td><input type=button value="CR25" onclick="dragonCalc(1,12,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day, Mirage arcana(Sp) 1/day','',31, 39,10,27,22,23,22)">
+ <td><input type=button value="Regular,CR25" onclick="dragonCalc(1,12,7,'Sound Imitation(Ex); Create/Destroy Water(Sp) 3/day, Ventriloquism(Sp) 3/day, Hallucinatory terrain(Sp) 1/day, Veil(Sp) 1/day, Mirage arcana(Sp) 1/day','',31, 39,10,27,22,23,22)">
 </td>
 </tr>
 <tr>
  <td>Green</td>
- <td><input type=button value="CR3" onclick="dragonCalc(2,1,3,'','',0, 13,10,13,10,11,10)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(2,1,3,'','',0, 13,10,13,10,11,10)">
 </td>
- <td><input type=button value="CR4" onclick="dragonCalc(2,2,4,'','',0, 15,10,15,10,11,10)"><br>
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(2,2,4,'','',0, 15,10,15,10,11,10)"><br>
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(2,3,4,'','',0, 17,10,15,12,13,12)"><br>
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(2,3,4,'','',0, 17,10,15,12,13,12)"><br>
 </td>
- <td><input type=button value="CR8" onclick="dragonCalc(2,4,5,'','',0, 19,10,17,14,15,14)"><br>
+ <td><input type=button value="Regular,CR8" onclick="dragonCalc(2,4,5,'','',0, 19,10,17,14,15,14)"><br>
 </td>
- <td><input type=button value="CR11" onclick="dragonCalc(2,5,5,'','',19, 23,10,19,14,15,14)"><br>
+ <td><input type=button value="Regular,CR11" onclick="dragonCalc(2,5,5,'','',19, 23,10,19,14,15,14)"><br>
 </td>
- <td><input type=button value="CR13" onclick="dragonCalc(2,6,6,'Suggestion(Sp) 3/day','',21, 27,10,21,16,17,16)"><br>
+ <td><input type=button value="Regular,CR13" onclick="dragonCalc(2,6,6,'Suggestion(Sp) 3/day','',21, 27,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="CR16" onclick="dragonCalc(2,7,6,'Suggestion(Sp) 3/day','',22, 29,10,21,16,17,16)"><br>
+ <td><input type=button value="Regular,CR16" onclick="dragonCalc(2,7,6,'Suggestion(Sp) 3/day','',22, 29,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(2,8,6,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day','',24, 31,10,23,18,19,18)"><br>
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(2,8,6,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day','',24, 31,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(2,9,6,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day','',25, 33,10,23,18,19,18)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(2,9,6,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day','',25, 33,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(2,10,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day','',27, 35,10,25,20,21,20)"><br>
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(2,10,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day','',27, 35,10,25,20,21,20)"><br>
 </td>
- <td><input type=button value="CR22" onclick="dragonCalc(2,11,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day','',28, 37,10,27,20,21,20)"><br>
+ <td><input type=button value="Regular,CR22" onclick="dragonCalc(2,11,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day','',28, 37,10,27,20,21,20)"><br>
 </td>
- <td><input type=button value="CR24" onclick="dragonCalc(2,12,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day, Command plants(Sp) 1/day','',30, 39,10,27,22,23,22)"><br>
+ <td><input type=button value="Regular,CR24" onclick="dragonCalc(2,12,7,'Suggestion(Sp) 3/day, Plant growth(Sp) 1/day, Dominate person(Sp) 3/day, Command plants(Sp) 1/day','',30, 39,10,27,22,23,22)"><br>
 </td>
 </tr>
 <tr>
  <td>Red</td>
- <td><input type=button value="CR4" onclick="dragonCalc(3,1,4,'','',0, 17,10,15,10,11,10)">
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(3,1,4,'','',0, 17,10,15,10,11,10)"><br>
+<input type=button value="Skeleton,CR3" onclick="skeleCalc(3,'Wyrmling',7,4,'immunity to cold and fire',17,12);"><br>
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(3,2,5,'','',0, 21,10,17,12,13,12)">
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(3,2,5,'','',0, 21,10,17,12,13,12)"><br>
+<input type=button value="Skeleton,CR5" onclick="skeleCalc(3,'Very young',10,5,'immunity to cold and fire',21,12);"><br>
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(3,3,5,'','',0, 25,10,17,12,13,12)">
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(3,3,5,'','',0, 25,10,17,12,13,12)"><br>
+<input type=button value="Skeleton,CR6" onclick="skeleCalc(3,'Young',13,5,'immunity to cold and fire',25,12);"><br>
 </td>
- <td><input type=button value="CR10" onclick="dragonCalc(3,4,5,'Locate Object(Sp) 4/day','',0, 29,10,19,14,15,14)">
+ <td><input type=button value="Regular,CR10" onclick="dragonCalc(3,4,5,'Locate Object(Sp) 4/day','',0, 29,10,19,14,15,14)"><br>
+<input type=button value="Skeleton,CR7" onclick="skeleCalc(3,'Juvenile',16,5,'immunity to cold and fire',29,12);"><br>
 </td>
- <td><input type=button value="CR13" onclick="dragonCalc(3,5,6,'Locate Object(Sp) 5/day','',19, 31,10,21,14,15,14)"><br>
-<input type=button value="Skeleton, CR8" onclick="skeleCalc('Young adult red dragon',19,6,' (Fire)','40 ft.',3,'Bite +17 (2d8+10), 2 Claws +12 (2d6+5), 2 Wings +12 (1d8+5), Tail Slap +12 (2d6+15)','15 ft./10 ft. ?','—','immunity to cold and fire',31,12);"><br>
+ <td><input type=button value="Regular,CR13" onclick="dragonCalc(3,5,6,'Locate Object(Sp) 5/day','',19, 31,10,21,14,15,14)"><br>
+<input type=button value="Skeleton,CR8" onclick="skeleCalc(3,'Young adult',19,6,'immunity to cold and fire',31,12);"><br>
 </td>
- <td><input type=button value="CR15" onclick="dragonCalc(3,6,6,'Locate Object(Sp) 6/day','',21, 33,10,21,16,19,16)">
+ <td><input type=button value="Regular,CR15" onclick="dragonCalc(3,6,6,'Locate Object(Sp) 6/day','',21, 33,10,21,16,19,16)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Adult',22,6,'immunity to cold and fire',33,12);"><br>
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(3,7,6,'Locate Object(Sp) 7/day','',23, 33,10,23,18,19,18)">
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(3,7,6,'Locate Object(Sp) 7/day','',23, 33,10,23,18,19,18)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Mature adult',25,6,'immunity to cold and fire',33,12);"><br>
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(3,8,7,'Locate Object(Sp) 8/day, Suggestion(Sp) 3/day','',24, 35,10,25,20,21,20)">
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(3,8,7,'Locate Object(Sp) 8/day, Suggestion(Sp) 3/day','',24, 35,10,25,20,21,20)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Old',28,7,'immunity to cold and fire',35,12);"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(3,9,7,'Locate Object(Sp) 9/day, Suggestion(Sp) 3/day','',26, 37,10,27,22,23,22)">
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(3,9,7,'Locate Object(Sp) 9/day, Suggestion(Sp) 3/day','',26, 37,10,27,22,23,22)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Very old',31,7,'immunity to cold and fire',37,12);"><br>
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(3,10,7,'Locate Object(Sp) 10/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day','',28, 39,10,29,24,25,24)">
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(3,10,7,'Locate Object(Sp) 10/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day','',28, 39,10,29,24,25,24)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Ancient',34,7,'immunity to cold and fire',39,12);"><br>
 </td>
- <td><input type=button value="CR24" onclick="dragonCalc(3,11,7,'Locate Object(Sp) 11/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day','',30, 41,10,31,24,25,24)">
+ <td><input type=button value="Regular,CR24" onclick="dragonCalc(3,11,7,'Locate Object(Sp) 11/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day','',30, 41,10,31,24,25,24)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Wyrm',37,7,'immunity to cold and fire',41,12);"><br>
 </td>
- <td><input type=button value="CR26" onclick="dragonCalc(3,12,8,'Locate Object(Sp) 12/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day, Discern location(Sp) 1/day','',32, 45,10,31,26,27,26)">
+ <td><input type=button value="Regular,CR26" onclick="dragonCalc(3,12,8,'Locate Object(Sp) 12/day, Suggestion(Sp) 3/day, Find the path(Sp) 1/day, Discern location(Sp) 1/day','',32, 45,10,31,26,27,26)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(3,'Great wyrm',40,8,'immunity to cold and fire',45,12);"><br>
 </td>
 </tr>
 <tr>
  <td>White</td>
- <td><input type=button value="CR2" onclick="dragonCalc(4,1,2,'','',0, 11,10,13,6,11,6)">
+ <td><input type=button value="Regular,CR2" onclick="dragonCalc(4,1,2,'','',0, 11,10,13,6,11,6)">
 </td>
- <td><input type=button value="CR3" onclick="dragonCalc(4,2,3,'','',0, 13,10,13,6,11,6)"><br>
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(4,2,3,'','',0, 13,10,13,6,11,6)"><br>
 </td>
- <td><input type=button value="CR4" onclick="dragonCalc(4,3,4,'','',0, 15,10,15,6,11,6)"><br>
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(4,3,4,'','',0, 15,10,15,6,11,6)"><br>
 </td>
- <td><input type=button value="CR6" onclick="dragonCalc(4,4,4,'Fog cloud(Sp) 3/day','',0, 17,10,15,8,11,8)"><br>
+ <td><input type=button value="Regular,CR6" onclick="dragonCalc(4,4,4,'Fog cloud(Sp) 3/day','',0, 17,10,15,8,11,8)"><br>
 </td>
- <td><input type=button value="CR8" onclick="dragonCalc(4,5,5,'Fog cloud(Sp) 3/day','',16, 19,10,17,8,11,10)"><br>
+ <td><input type=button value="Regular,CR8" onclick="dragonCalc(4,5,5,'Fog cloud(Sp) 3/day','',16, 19,10,17,8,11,10)"><br>
 </td>
- <td><input type=button value="CR10" onclick="dragonCalc(4,6,5,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day','',18, 23,10,19,10,11,12)"><br>
+ <td><input type=button value="Regular,CR10" onclick="dragonCalc(4,6,5,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day','',18, 23,10,19,10,11,12)"><br>
 </td>
- <td><input type=button value="CR12" onclick="dragonCalc(4,7,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day','',20, 27,10,21,12,13,12)"><br>
+ <td><input type=button value="Regular,CR12" onclick="dragonCalc(4,7,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day','',20, 27,10,21,12,13,12)"><br>
 </td>
- <td><input type=button value="CR15" onclick="dragonCalc(4,8,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day','',21, 29,10,21,12,13,12)"><br>
+ <td><input type=button value="Regular,CR15" onclick="dragonCalc(4,8,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day','',21, 29,10,21,12,13,12)"><br>
 </td>
- <td><input type=button value="CR17" onclick="dragonCalc(4,9,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day','',23, 31,10,23,14,15,14)"><br>
+ <td><input type=button value="Regular,CR17" onclick="dragonCalc(4,9,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day','',23, 31,10,23,14,15,14)"><br>
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(4,10,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day','',24, 33,10,23,14,15,14)"><br>
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(4,10,6,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day','',24, 33,10,23,14,15,14)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(4,11,7,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day','',25, 35,10,25,14,15,16)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(4,11,7,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day','',25, 35,10,25,14,15,16)"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(4,12,7,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day, Control weather(Sp) 1/day','',27, 37,10,27,18,19,18)"><br>
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(4,12,7,'Fog cloud(Sp) 3/day, Gust of wind(Sp) 3/day, Freezing fog(Sp) 3/day, Wall of ice(Sp) 3/day, Control weather(Sp) 1/day','',27, 37,10,27,18,19,18)"><br>
 </td>
 </tr>
 <tr>
  <td>Brass</td>
- <td><input type=button value="CR3" onclick="dragonCalc(5,1,2,'Speak with animals(Sp) at will','',0, 11,10,13,10,11,10)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(5,1,2,'Speak with animals(Sp) at will','',0, 11,10,13,10,11,10)">
 </td>
- <td><input type=button value="CR4" onclick="dragonCalc(5,2,3,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(5,2,3,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
 </td>
- <td><input type=button value="CR6" onclick="dragonCalc(5,3,4,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
+ <td><input type=button value="Regular,CR6" onclick="dragonCalc(5,3,4,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
 </td>
- <td><input type=button value="CR8" onclick="dragonCalc(5,4,4,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',0, 17,10,15,12,13,12)"><br>
+ <td><input type=button value="Regular,CR8" onclick="dragonCalc(5,4,4,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',0, 17,10,15,12,13,12)"><br>
 </td>
- <td><input type=button value="CR10" onclick="dragonCalc(5,5,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',18, 19,10,17,14,15,14)"><br>
+ <td><input type=button value="Regular,CR10" onclick="dragonCalc(5,5,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',18, 19,10,17,14,15,14)"><br>
 </td>
- <td><input type=button value="CR12" onclick="dragonCalc(5,6,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',20, 23,10,19,14,15,14)"><br>
+ <td><input type=button value="Regular,CR12" onclick="dragonCalc(5,6,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',20, 23,10,19,14,15,14)"><br>
 </td>
- <td><input type=button value="CR15" onclick="dragonCalc(5,7,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',22, 27,10,21,16,17,16)"><br>
+ <td><input type=button value="Regular,CR15" onclick="dragonCalc(5,7,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',22, 27,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="CR17" onclick="dragonCalc(5,8,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',24, 29,10,21,16,17,16)"><br>
+ <td><input type=button value="Regular,CR17" onclick="dragonCalc(5,8,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',24, 29,10,21,16,17,16)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(5,9,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',25, 31,10,23,18,19,18)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(5,9,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',25, 31,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(5,10,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',27, 33,10,23,18,19,18)"><br>
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(5,10,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',27, 33,10,23,18,19,18)"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(5,11,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',28, 35,10,25,20,21,20)"><br>
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(5,11,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',28, 35,10,25,20,21,20)"><br>
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(5,12,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day, Summon djinni(Sp) ?/day','',30, 37,10,27,20,21,20)"><br>
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(5,12,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day, Summon djinni(Sp) ?/day','',30, 37,10,27,20,21,20)"><br>
 </td>
 </tr>
 <tr>
  <td>Bronze</td>
- <td><input type=button value="CR3" onclick="dragonCalc(6,1,3,'Speak with animals(Sp) at will','',0, 13,10,13,14,15,14)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(6,1,3,'Speak with animals(Sp) at will','',0, 13,10,13,14,15,14)">
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(6,2,4,'Speak with animals(Sp) at will','',0, 15,10,15,14,15,14)"><br>
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(6,2,4,'Speak with animals(Sp) at will','',0, 15,10,15,14,15,14)"><br>
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(6,3,4,'Speak with animals(Sp) at will','Alternate form(Su)',0, 17,10,15,16,17,16)"><br>
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(6,3,4,'Speak with animals(Sp) at will','Alternate form(Su)',0, 17,10,15,16,17,16)"><br>
 </td>
- <td><input type=button value="CR9" onclick="dragonCalc(6,4,5,'Speak with animals(Sp) at will','Alternate form(Su)',0, 19,10,17,18,19,18)"><br>
+ <td><input type=button value="Regular,CR9" onclick="dragonCalc(6,4,5,'Speak with animals(Sp) at will','Alternate form(Su)',0, 19,10,17,18,19,18)"><br>
 </td>
- <td><input type=button value="CR12" onclick="dragonCalc(6,5,5,'Speak with animals(Sp) at will','Alternate form(Su)',20, 23,10,19,18,19,18)"><br>
+ <td><input type=button value="Regular,CR12" onclick="dragonCalc(6,5,5,'Speak with animals(Sp) at will','Alternate form(Su)',20, 23,10,19,18,19,18)"><br>
 </td>
- <td><input type=button value="CR15" onclick="dragonCalc(6,6,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day','Alternate form(Su)',22, 27,10,21,20,21,20)"><br>
+ <td><input type=button value="Regular,CR15" onclick="dragonCalc(6,6,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day','Alternate form(Su)',22, 27,10,21,20,21,20)"><br>
 </td>
- <td><input type=button value="CR17" onclick="dragonCalc(6,7,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day','Alternate form(Su)',23, 29,10,21,20,21,20)"><br>
+ <td><input type=button value="Regular,CR17" onclick="dragonCalc(6,7,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day','Alternate form(Su)',23, 29,10,21,20,21,20)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(6,8,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day','Alternate form(Su)',25, 31,10,23,22,23,22)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(6,8,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day','Alternate form(Su)',25, 31,10,23,22,23,22)"><br>
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(6,9,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day','Alternate form(Su)',26, 33,10,23,22,23,22)"><br>
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(6,9,6,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day','Alternate form(Su)',26, 33,10,23,22,23,22)"><br>
 </td>
- <td><input type=button value="CR22" onclick="dragonCalc(6,10,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day','Alternate form(Su)',28, 35,10,25,24,25,24)"><br>
+ <td><input type=button value="Regular,CR22" onclick="dragonCalc(6,10,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day','Alternate form(Su)',28, 35,10,25,24,25,24)"><br>
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(6,11,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day','Alternate form(Su)',29, 37,10,27,26,27,26)"><br>
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(6,11,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day','Alternate form(Su)',29, 37,10,27,26,27,26)"><br>
 </td>
- <td><input type=button value="CR25" onclick="dragonCalc(6,12,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day, Control weather(Sp) 1/day','Alternate form(Su)',31, 39,10,27,26,27,26)"><br>
+ <td><input type=button value="Regular,CR25" onclick="dragonCalc(6,12,7,'Speak with animals(Sp) at will, Create food and water(Sp) 3/day, Fog cloud(Sp) 3/day, Detect thoughts(Sp) 3/day, Control water(Sp) 3/day, Control weather(Sp) 1/day','Alternate form(Su)',31, 39,10,27,26,27,26)"><br>
 </td>
 </tr>
 <tr>
  <td>Copper</td>
- <td><input type=button value="CR3" onclick="dragonCalc(7,1,2,'','',0, 11,10,13,12,13,12)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(7,1,2,'','',0, 11,10,13,12,13,12)">
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(7,2,3,'','',0, 13,10,13,12,13,12)"><br>
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(7,2,3,'','',0, 13,10,13,12,13,12)"><br>
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(7,3,4,'','',0, 15,10,15,14,15,14)"><br>
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(7,3,4,'','',0, 15,10,15,14,15,14)"><br>
 </td>
- <td><input type=button value="CR9" onclick="dragonCalc(7,4,4,'','',0, 17,10,15,14,15,14)"><br>
+ <td><input type=button value="Regular,CR9" onclick="dragonCalc(7,4,4,'','',0, 17,10,15,14,15,14)"><br>
 </td>
- <td><input type=button value="CR11" onclick="dragonCalc(7,5,5,'','',19, 19,10,17,16,17,16)"><br>
+ <td><input type=button value="Regular,CR11" onclick="dragonCalc(7,5,5,'','',19, 19,10,17,16,17,16)"><br>
 </td>
- <td><input type=button value="CR14" onclick="dragonCalc(7,6,5,'Stone shape(Sp) 2/day','',21, 23,10,19,16,17,16)"><br>
+ <td><input type=button value="Regular,CR14" onclick="dragonCalc(7,6,5,'Stone shape(Sp) 2/day','',21, 23,10,19,16,17,16)"><br>
 </td>
- <td><input type=button value="CR16" onclick="dragonCalc(7,7,6,'Stone shape(Sp) 2/day','',23, 27,10,21,18,19,18)"><br>
+ <td><input type=button value="Regular,CR16" onclick="dragonCalc(7,7,6,'Stone shape(Sp) 2/day','',23, 27,10,21,18,19,18)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(7,8,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day','',25, 29,10,21,18,19,18)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(7,8,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day','',25, 29,10,21,18,19,18)"><br>
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(7,9,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day','',26, 31,10,23,20,21,20)"><br>
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(7,9,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day','',26, 31,10,23,20,21,20)"><br>
 </td>
- <td><input type=button value="CR22" onclick="dragonCalc(7,10,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day','',28, 33,10,23,20,21,20)"><br>
+ <td><input type=button value="Regular,CR22" onclick="dragonCalc(7,10,6,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day','',28, 33,10,23,20,21,20)"><br>
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(7,11,7,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day','',29, 35,10,25,22,23,22)"><br>
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(7,11,7,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day','',29, 35,10,25,22,23,22)"><br>
 </td>
- <td><input type=button value="CR25" onclick="dragonCalc(7,12,7,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day, Move earth(Sp) 1/day','',31, 37,10,27,22,23,22)"><br>
+ <td><input type=button value="Regular,CR25" onclick="dragonCalc(7,12,7,'Stone shape(Sp) 2/day, Transmute rock to mud/mud to rock(Sp) 1/day, Wall of stone(Sp) 1/day, Move earth(Sp) 1/day','',31, 37,10,27,22,23,22)"><br>
 </td>
 </tr>
 <tr>
  <td>Gold</td>
- <td><input type=button value="CR5" onclick="dragonCalc(8,1,4,'','',0, 17,10,15,14,15,14)">
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(8,1,4,'','',0, 17,10,15,14,15,14)">
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(8,2,5,'','',0, 21,10,17,16,17,16)"><br>
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(8,2,5,'','',0, 21,10,17,16,17,16)"><br>
 </td>
- <td><input type=button value="CR9" onclick="dragonCalc(8,3,5,'','',0, 25,10,17,16,17,16)"><br>
+ <td><input type=button value="Regular,CR9" onclick="dragonCalc(8,3,5,'','',0, 25,10,17,16,17,16)"><br>
 </td>
- <td><input type=button value="CR11" onclick="dragonCalc(8,4,5,'Bless(Sp) 3/day','',0, 29,10,19,18,19,18)"><br>
+ <td><input type=button value="Regular,CR11" onclick="dragonCalc(8,4,5,'Bless(Sp) 3/day','',0, 29,10,19,18,19,18)"><br>
 </td>
- <td><input type=button value="CR14" onclick="dragonCalc(8,5,6,'Bless(Sp) 3/day','',21, 31,10,21,18,19,18)"><br>
+ <td><input type=button value="Regular,CR14" onclick="dragonCalc(8,5,6,'Bless(Sp) 3/day','',21, 31,10,21,18,19,18)"><br>
 </td>
- <td><input type=button value="CR16" onclick="dragonCalc(8,6,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',23, 33,10,21,20,21,20)"><br>
+ <td><input type=button value="Regular,CR16" onclick="dragonCalc(8,6,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',23, 33,10,21,20,21,20)"><br>
 </td>
- <td><input type=button value="CR19" onclick="dragonCalc(8,7,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',25, 35,10,23,20,21,20)"><br>
+ <td><input type=button value="Regular,CR19" onclick="dragonCalc(8,7,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',25, 35,10,23,20,21,20)"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(8,8,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',27, 39,10,25,24,25,24)"><br>
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(8,8,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',27, 39,10,25,24,25,24)"><br>
 </td>
- <td><input type=button value="CR22" onclick="dragonCalc(8,9,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',28, 41,10,27,26,27,26)"><br>
+ <td><input type=button value="Regular,CR22" onclick="dragonCalc(8,9,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',28, 41,10,27,26,27,26)"><br>
 </td>
- <td><input type=button value="CR24" onclick="dragonCalc(8,10,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',30, 43,10,29,28,29,28)"><br>
+ <td><input type=button value="Regular,CR24" onclick="dragonCalc(8,10,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',30, 43,10,29,28,29,28)"><br>
 </td>
- <td><input type=button value="CR25" onclick="dragonCalc(8,11,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',31, 45,10,31,30,31,30)"><br>
+ <td><input type=button value="Regular,CR25" onclick="dragonCalc(8,11,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',31, 45,10,31,30,31,30)"><br>
 </td>
- <td><input type=button value="CR27" onclick="dragonCalc(8,12,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day, Foresight(Sp) 1/day','',33, 47,10,33,32,33,32)"><br>
+ <td><input type=button value="Regular,CR27" onclick="dragonCalc(8,12,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day, Foresight(Sp) 1/day','',33, 47,10,33,32,33,32)"><br>
 </td>
 </tr>
 <tr>
  <td>Silver</td>
- <td><input type=button value="CR4" onclick="dragonCalc(9,1,3,'','',0, 13,10,13,14,15,14)">
+ <td><input type=button value="Regular,CR4" onclick="dragonCalc(9,1,3,'','',0, 13,10,13,14,15,14)">
 </td>
- <td><input type=button value="CR5" onclick="dragonCalc(9,2,4,'','',0, 15,10,15,14,15,14)"><br>
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(9,2,4,'','',0, 15,10,15,14,15,14)"><br>
 </td>
- <td><input type=button value="CR7" onclick="dragonCalc(9,3,4,'','',0, 17,10,15,16,17,16)"><br>
+ <td><input type=button value="Regular,CR7" onclick="dragonCalc(9,3,4,'','',0, 17,10,15,16,17,16)"><br>
 </td>
- <td><input type=button value="CR10" onclick="dragonCalc(9,4,5,'Feather fall(Sp) 2/day','',0, 19,10,17,18,19,18)"><br>
+ <td><input type=button value="Regular,CR10" onclick="dragonCalc(9,4,5,'Feather fall(Sp) 2/day','',0, 19,10,17,18,19,18)"><br>
 </td>
- <td><input type=button value="CR13" onclick="dragonCalc(9,5,5,'Feather fall(Sp) 2/day','',20, 23,10,19,18,19,18)"><br>
+ <td><input type=button value="Regular,CR13" onclick="dragonCalc(9,5,5,'Feather fall(Sp) 2/day','',20, 23,10,19,18,19,18)"><br>
 </td>
- <td><input type=button value="CR15" onclick="dragonCalc(9,6,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day','',22, 27,10,21,20,21,20)"><br>
+ <td><input type=button value="Regular,CR15" onclick="dragonCalc(9,6,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day','',22, 27,10,21,20,21,20)"><br>
 </td>
- <td><input type=button value="CR18" onclick="dragonCalc(9,7,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day','',24, 29,10,21,20,21,20)"><br>
+ <td><input type=button value="Regular,CR18" onclick="dragonCalc(9,7,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day','',24, 29,10,21,20,21,20)"><br>
 </td>
- <td><input type=button value="CR20" onclick="dragonCalc(9,8,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day','',26, 31,10,23,22,23,22)"><br>
+ <td><input type=button value="Regular,CR20" onclick="dragonCalc(9,8,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day','',26, 31,10,23,22,23,22)"><br>
 </td>
- <td><input type=button value="CR21" onclick="dragonCalc(9,9,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day','',27, 33,10,23,24,25,24)"><br>
+ <td><input type=button value="Regular,CR21" onclick="dragonCalc(9,9,6,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day','',27, 33,10,23,24,25,24)"><br>
 </td>
- <td><input type=button value="CR23" onclick="dragonCalc(9,10,7,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day','',29, 35,10,25,26,27,26)"><br>
+ <td><input type=button value="Regular,CR23" onclick="dragonCalc(9,10,7,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day','',29, 35,10,25,26,27,26)"><br>
 </td>
- <td><input type=button value="CR24" onclick="dragonCalc(9,11,7,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day','',30, 39,10,29,28,29,28)"><br>
+ <td><input type=button value="Regular,CR24" onclick="dragonCalc(9,11,7,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day','',30, 39,10,29,28,29,28)"><br>
 </td>
- <td><input type=button value="CR26" onclick="dragonCalc(9,12,8,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day, Reverse gravity(Sp) 1/day','',32, 43,10,31,30,31,30)"><br>
+ <td><input type=button value="Regular,CR26" onclick="dragonCalc(9,12,8,'Feather fall(Sp) 2/day, Fog cloud(Sp) 3/day, Control winds(Sp) 3/day, Control weather(Sp) 1/day, Reverse gravity(Sp) 1/day','',32, 43,10,31,30,31,30)"><br>
 </td>
 </tr>
 </tbody>

@@ -26,10 +26,10 @@ const TyCo = [//Type Constants; name,subtype,baseHD,nonFlySpeeds,flySpeedBonus,b
 	["green","Air",2,"40 ft., swim 40 ft.",0,1,2,6,"acid",true,"Immunity to acid; Water breathing(Ex)",4,"Bluff, Hide, Move Silently",null],
 	["red","Fire",4,"40 ft.",0,3,2,10,"fire",true,"Immunity to fire; Vulnerability to cold",3,"Appraise, Bluff, Jump",null,"immunity to cold and fire"],
 	["white","Cold",0,"60 ft., burrow 30 ft., swim 60 ft.",50,-1,1,6,"cold",true,"Immunity to cold; Vulnerability to fire; Icewalking(Ex)",6,"Hide, Move Silently, Swim",null],
-	["brass","Fire",1,"60 ft., burrow 30 ft.",50,0,1,6,"fire",false,"Immunity to fire; Vulnerability to cold",3,"Bluff, Gather Information, Survival",["sleep","1d6+","rounds"]],
+	["brass","Fire",1,"60 ft., burrow 30 ft.",50,0,1,6,"fire",false,"Immunity to fire; Vulnerability to cold",3,"Bluff, Gather Information, Survival",["sleep","1d6+","rounds"],"immunity to cold and fire"],
 	["bronze","Water",3,"40 ft., swim 60 ft.",0,2,2,6,"lightning",false,"Immunity to electricity; Water breathing(Ex)",3,"Disguise, Swim, Survival",["repulsion","1d6+","rounds"]],
 	["copper","Earth",2,"40 ft.",0,1,2,4,"acid",false,"Immunity to acid; Spider climb(Ex)",3,"Bluff, Hide, Jump",["slow","1d6+","rounds"]],
-	["gold","Fire",5,"60 ft., swim 60 ft.",50,4,2,10,"fire",true,"Immunity to fire; Vulnerability to cold; Water Breathing(Ex); Alternate Form(Su)",3,"Disguise, Heal, Swim",["weaken","","STRdamage"]],
+	["gold","Fire",5,"60 ft., swim 60 ft.",50,4,2,10,"fire",true,"Immunity to fire; Vulnerability to cold; Water Breathing(Ex); Alternate Form(Su)",3,"Disguise, Heal, Swim",["weaken","","STRdamage"],"immunity to cold and fire"],
 	["silver","Cold",4,"40 ft.",0,3,2,8,"cold",true,"Immunity to acid and cold; Vulnerability to fire; Cloudwalking(Su); Alternate Form(Su)",3,"Bluff, Disguise, Jump",["paralysis","1d6+","rounds"]]
 ];Object.freeze(TyCo);
 
@@ -360,29 +360,41 @@ input
 </tr>
 <tr>
  <td>Brass</td>
- <td><input type=button value="Regular,CR3" onclick="dragonCalc(5,1,2,'Speak with animals(Sp) at will','',0, 11,10,13,10,11,10)">
+ <td><input type=button value="Regular,CR3" onclick="dragonCalc(5,1,2,'Speak with animals(Sp) at will','',0, 11,10,13,10,11,10)"><br>
+<input type=button value="Skeleton,CR2" onclick="skeleCalc(5,'Wyrmling',4,2,'immunity to cold and fire',11,12);"><br>
 </td>
  <td><input type=button value="Regular,CR4" onclick="dragonCalc(5,2,3,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
+<input type=button value="Skeleton,CR3" onclick="skeleCalc(5,'Very young',7,3,'immunity to cold and fire',13,12);"><br>
 </td>
  <td><input type=button value="Regular,CR6" onclick="dragonCalc(5,3,4,'Speak with animals(Sp) at will','',0, 13,10,13,10,11,10)"><br>
+<input type=button value="Skeleton,CR5" onclick="skeleCalc(5,'Young',10,4,'immunity to cold and fire',13,12);"><br>
 </td>
  <td><input type=button value="Regular,CR8" onclick="dragonCalc(5,4,4,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',0, 17,10,15,12,13,12)"><br>
+<input type=button value="Skeleton,CR6" onclick="skeleCalc(5,'Juvenile',13,4,'immunity to cold and fire',17,12);"><br>
 </td>
  <td><input type=button value="Regular,CR10" onclick="dragonCalc(5,5,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day','',18, 19,10,17,14,15,14)"><br>
+<input type=button value="Skeleton,CR7" onclick="skeleCalc(5,'Young adult',16,5,'immunity to cold and fire',19,12);"><br>
 </td>
  <td><input type=button value="Regular,CR12" onclick="dragonCalc(5,6,5,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',20, 23,10,19,14,15,14)"><br>
+<input type=button value="Skeleton,CR8" onclick="skeleCalc(5,'Adult',19,5,'immunity to cold and fire',23,12);"><br>
 </td>
  <td><input type=button value="Regular,CR15" onclick="dragonCalc(5,7,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day','',22, 27,10,21,16,17,16)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Mature adult',22,6,'immunity to cold and fire',27,12);"><br>
 </td>
  <td><input type=button value="Regular,CR17" onclick="dragonCalc(5,8,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',24, 29,10,21,16,17,16)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Old',25,6,'immunity to cold and fire',29,12);"><br>
 </td>
  <td><input type=button value="Regular,CR19" onclick="dragonCalc(5,9,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day','',25, 31,10,23,18,19,18)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Very old',28,6,'immunity to cold and fire',31,12);"><br>
 </td>
  <td><input type=button value="Regular,CR20" onclick="dragonCalc(5,10,6,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',27, 33,10,23,18,19,18)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Ancient',31,6,'immunity to cold and fire',33,12);"><br>
 </td>
  <td><input type=button value="Regular,CR21" onclick="dragonCalc(5,11,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day','',28, 35,10,25,20,21,20)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Wyrm',34,7,'immunity to cold and fire',35,12);"><br>
 </td>
  <td><input type=button value="Regular,CR23" onclick="dragonCalc(5,12,7,'Speak with animals(Sp) at will, Endure elements(Sp) 3/day, Suggestion(Sp) 1/day, Control winds(Sp) 1/day, Control weather(Sp) 1/day, Summon djinni(Sp) ?/day','',30, 37,10,27,20,21,20)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(5,'Great wyrm',37,7,'immunity to cold and fire',37,12);"><br>
 </td>
 </tr>
 <tr>
@@ -441,29 +453,41 @@ input
 </tr>
 <tr>
  <td>Gold</td>
- <td><input type=button value="Regular,CR5" onclick="dragonCalc(8,1,4,'','',0, 17,10,15,14,15,14)">
+ <td><input type=button value="Regular,CR5" onclick="dragonCalc(8,1,4,'','',0, 17,10,15,14,15,14)"><br>
+<input type=button value="Skeleton,CR4" onclick="skeleCalc(8,'Wyrmling',8,4,'immunity to cold and fire',17,12);"><br>
 </td>
  <td><input type=button value="Regular,CR7" onclick="dragonCalc(8,2,5,'','',0, 21,10,17,16,17,16)"><br>
+<input type=button value="Skeleton,CR5" onclick="skeleCalc(8,'Very young',11,5,'immunity to cold and fire',21,12);"><br>
 </td>
  <td><input type=button value="Regular,CR9" onclick="dragonCalc(8,3,5,'','',0, 25,10,17,16,17,16)"><br>
+<input type=button value="Skeleton,CR6" onclick="skeleCalc(8,'Young',14,5,'immunity to cold and fire',25,12);"><br>
 </td>
  <td><input type=button value="Regular,CR11" onclick="dragonCalc(8,4,5,'Bless(Sp) 3/day','',0, 29,10,19,18,19,18)"><br>
+<input type=button value="Skeleton,CR7" onclick="skeleCalc(8,'Juvenile',17,5,'immunity to cold and fire',29,12);"><br>
 </td>
  <td><input type=button value="Regular,CR14" onclick="dragonCalc(8,5,6,'Bless(Sp) 3/day','',21, 31,10,21,18,19,18)"><br>
+<input type=button value="Skeleton,CR8" onclick="skeleCalc(8,'Young adult',20,6,'immunity to cold and fire',31,12);"><br>
 </td>
  <td><input type=button value="Regular,CR16" onclick="dragonCalc(8,6,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',23, 33,10,21,20,21,20)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Adult',23,6,'immunity to cold and fire',33,12);"><br>
 </td>
  <td><input type=button value="Regular,CR19" onclick="dragonCalc(8,7,6,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day','',25, 35,10,23,20,21,20)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Mature adult',26,6,'immunity to cold and fire',35,12);"><br>
 </td>
  <td><input type=button value="Regular,CR21" onclick="dragonCalc(8,8,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',27, 39,10,25,24,25,24)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Old',29,7,'immunity to cold and fire',39,12);"><br>
 </td>
  <td><input type=button value="Regular,CR22" onclick="dragonCalc(8,9,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day','',28, 41,10,27,26,27,26)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Very old',32,7,'immunity to cold and fire',41,12);"><br>
 </td>
  <td><input type=button value="Regular,CR24" onclick="dragonCalc(8,10,7,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',30, 43,10,29,28,29,28)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Ancient',35,7,'immunity to cold and fire',43,12);"><br>
 </td>
  <td><input type=button value="Regular,CR25" onclick="dragonCalc(8,11,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day','',31, 45,10,31,30,31,30)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Wyrm',38,8,'immunity to cold and fire',45,12);"><br>
 </td>
  <td><input type=button value="Regular,CR27" onclick="dragonCalc(8,12,8,'Bless(Sp) 3/day, Luck bonus(Sp) 1/day, Geas/quest(Sp) 1/day, detect gems(Sp) 3/day, Sunburst(Sp) 1/day, Foresight(Sp) 1/day','',33, 47,10,33,32,33,32)"><br>
+<input type=button value="Skeleton" onclick="skeleCalc(8,'Great wyrm',41,8,'immunity to cold and fire',47,12);"><br>
 </td>
 </tr>
 <tr>

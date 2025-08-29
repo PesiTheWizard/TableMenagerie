@@ -1,26 +1,19 @@
 <html>
 <head>
-<title>Fermat factorizing with JS
-</title>
+<title>Fermat factorizing with JS</title>
 <script>
-function initialGuess(x)
+function initialGuess(x)//currently unused
 {
 	if(typeof(x)!=="bigint" || x<=(0n)){return null;}
-	let temp = x;
-	let c = 0;
-	while(temp!=(0n))
-	{
-		temp = temp>>(1n);
-		c++;
-	}
+	const c = x.toString(2).length;//this turned out to be faster than looping through the bits
 	return (x>>BigInt(c>>1));
 }
 function NewtonRoot(x)
 {
-	if(typeof(x)!=="bigint" || x<(0n)){return null;}
+	if(typeof(x)!=="bigint" || x<=(0n)){return null;}
 	let loopcheck = null;
 	let lastguess = null;
-	let guess = initialGuess(x);
+	let guess = (x>>BigInt((x.toString(2).length)>>1));//doing the initial guess directly
 	while(true)
 	{
 		if(guess===lastguess){return guess;}

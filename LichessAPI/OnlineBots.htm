@@ -126,8 +126,8 @@ function makeTableEntry(JO,tableElem)
 	lister(JO["patron"]??"",tablRw,'td');
 	tableElem.appendChild(tablRw);
 }
-function a(ctsb, lth)
-{//ctsb - column to sort by, lth - low to high
+function a(ctsb, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
@@ -144,6 +144,12 @@ so the set of childnodes at and below the cup is unchanged.
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
+		if(asnum)
+		{//empty strings result in NaN
+			s1 = parseInt(s1);
+			s2 = parseInt(s2);
+			if(isNaN(s1)||isNaN(s2)){continue;}
+		}
 		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
 		{//we have reason to enter the inner loop
 			//fn is the one who will eventually be moved
@@ -153,6 +159,11 @@ so the set of childnodes at and below the cup is unchanged.
 			while(scout >= 0)
 			{
 				sign = gt[scout].childNodes[ctsb].textContent;
+				if(asnum)
+				{
+					sign = parseInt(sign);
+					if(isNaN(sign)){break;}
+				}
 				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
 				{
 					break;
@@ -180,7 +191,7 @@ span
 }
 select,input
 {
-	margin-top:1px;
+	margin-top: 1px;
 	margin-bottom: 1px;
 }
 </style>
@@ -213,18 +224,18 @@ Site = <select id="selSite">
 <th>title</th>
 <th>patron</th>
 </tr><tr>
-<th><span onClick=a(0,true)>&#9650;</span> <span onClick=a(0,false)>&#9660;</span></th>
-<th><span onClick=a(1,true)>&#9650;</span> <span onClick=a(1,false)>&#9660;</span></th>
-<th><span onClick=a(2,true)>&#9650;</span> <span onClick=a(2,false)>&#9660;</span></th>
-<th><span onClick=a(3,true)>&#9650;</span> <span onClick=a(3,false)>&#9660;</span></th>
-<th><span onClick=a(4,true)>&#9650;</span> <span onClick=a(4,false)>&#9660;</span></th>
-<th><span onClick=a(5,true)>&#9650;</span> <span onClick=a(5,false)>&#9660;</span></th>
-<th><span onClick=a(6,true)>&#9650;</span> <span onClick=a(6,false)>&#9660;</span></th>
-<th><span onClick=a(7,true)>&#9650;</span> <span onClick=a(7,false)>&#9660;</span></th>
-<th><span onClick=a(8,true)>&#9650;</span> <span onClick=a(8,false)>&#9660;</span></th>
-<th><span onClick=a(9,true)>&#9650;</span> <span onClick=a(9,false)>&#9660;</span></th>
+<th><span onClick=a(0,true,false)>&#9650;</span> <span onClick=a(0,false,false)>&#9660;</span></th>
+<th><span onClick=a(1,true,false)>&#9650;</span> <span onClick=a(1,false,false)>&#9660;</span></th>
+<th><span onClick=a(2,true,true)>&#9650;</span> <span onClick=a(2,false,true)>&#9660;</span></th>
+<th><span onClick=a(3,true,false)>&#9650;</span> <span onClick=a(3,false,false)>&#9660;</span></th>
+<th><span onClick=a(4,true,false)>&#9650;</span> <span onClick=a(4,false,false)>&#9660;</span></th>
+<th><span onClick=a(5,true,false)>&#9650;</span> <span onClick=a(5,false,false)>&#9660;</span></th>
+<th><span onClick=a(6,true,false)>&#9650;</span> <span onClick=a(6,false,false)>&#9660;</span></th>
+<th><span onClick=a(7,true,true)>&#9650;</span> <span onClick=a(7,false,true)>&#9660;</span></th>
+<th><span onClick=a(8,true,true)>&#9650;</span> <span onClick=a(8,false,true)>&#9660;</span></th>
+<th><span onClick=a(9,true,true)>&#9650;</span> <span onClick=a(9,false,true)>&#9660;</span></th>
 <th></th>
-<th><span onClick=a(11,true)>&#9650;</span> <span onClick=a(11,false)>&#9660;</span></th>
+<th><span onClick=a(11,true,false)>&#9650;</span> <span onClick=a(11,false,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

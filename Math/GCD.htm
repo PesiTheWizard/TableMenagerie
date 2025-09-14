@@ -1,11 +1,11 @@
 <html>
 <head>
-<title></title>
+<title>Greatest Common Divisor</title>
 <script>
 function GCD(A,B)
 {
-	console.assert(typeof(A)=="bigint" && typeof(B)=="bigint","Parameters must be BigInts");
-	console.assert(A >= 0n && B >= 0n,"Parameters must not be negative");
+	if(typeof(A)!="bigint" || typeof(B)!="bigint"){return "Parameters must be BigInts";}
+	if(A < 0n || B < 0n){return "Parameters must not be negative";}
 	if(B>A)
 	{
 		const temp = A;

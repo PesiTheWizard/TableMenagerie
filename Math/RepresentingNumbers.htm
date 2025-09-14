@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>Representing numbers</title>
+<script>
+function display()
+{
+	"use strict";
+	for(let i=0;i<f.length;i++)
+	{
+		f[i].textContent = A[i].toString();
+	}
+}
+function PrsI(x,y)
+{
+	const V = parseInt(Dinp.value);
+	if(isNaN(V))
+	{
+		Derr.innerText = `Integer parse fail (${x},${y})`;
+		return;
+	}
+	Derr.innerText = `Input: ${V}`;
+	if(x>=9){A[x][y] = BigInt(V);}
+	else{A[x][y] = V;}
+	display();
+}
+function PrsF(x,y)
+{
+	const V = parseFloat(Dinp.value);
+	if(isNaN(V))
+	{
+		Derr.innerText = `Float parse fail (${x},${y})`;
+		return;
+	}
+	Derr.innerText = `Input: ${V}`;
+	A[x][y] = V;
+	display();
+}
+</script>
+<style>
+input
+{
+	margin:1px;
+}
+</style>
+</head>
+<body>
+<input type=text id="txtInp"><br>
+<pre id="LogA"> </pre>
+<table border=1><tbody>
+<tr><th>Int8Array<input type=button value=0 onclick="PrsI(0,0)"><input type=button value=1 onclick="PrsI(0,1)"><input type=button value=2 onclick="PrsI(0,2)"><input type=button value=3 onclick="PrsI(0,3)"><input type=button value=4 onclick="PrsI(0,4)"><input type=button value=5 onclick="PrsI(0,5)"><input type=button value=6 onclick="PrsI(0,6)"><input type=button value=7 onclick="PrsI(0,7)"></th><td id="f0"></td></tr>
+<tr><th>Uint8Array<input type=button value=0 onclick="PrsI(1,0)"><input type=button value=1 onclick="PrsI(1,1)"><input type=button value=2 onclick="PrsI(1,2)"><input type=button value=3 onclick="PrsI(1,3)"><input type=button value=4 onclick="PrsI(1,4)"><input type=button value=5 onclick="PrsI(1,5)"><input type=button value=6 onclick="PrsI(1,6)"><input type=button value=7 onclick="PrsI(1,7)"></th><td id="f1"></td></tr>
+<tr><th>Int16Array<input type=button value=0 onclick="PrsI(2,0)"><input type=button value=1 onclick="PrsI(2,1)"><input type=button value=2 onclick="PrsI(2,2)"><input type=button value=3 onclick="PrsI(2,3)"></th><td id="f2"></td></tr>
+<tr><th>Uint16Array<input type=button value=0 onclick="PrsI(3,0)"><input type=button value=1 onclick="PrsI(3,1)"><input type=button value=2 onclick="PrsI(3,2)"><input type=button value=3 onclick="PrsI(3,3)"></th><td id="f3"></td></tr>
+<tr><th>Int32Array<input type=button value=0 onclick="PrsI(4,0)"><input type=button value=1 onclick="PrsI(4,1)"></th><td id="f4"></td></tr>
+<tr><th>Uint32Array<input type=button value=0 onclick="PrsI(5,0)"><input type=button value=1 onclick="PrsI(5,1)"></th><td id="f5"></td></tr>
+<tr><th>Float16Array<input type=button value=0 onclick="PrsF(6,0)"><input type=button value=1 onclick="PrsF(6,1)"><input type=button value=2 onclick="PrsF(6,2)"><input type=button value=3 onclick="PrsF(6,3)"></th><td id="f6"></td></tr>
+<tr><th>Float32Array<input type=button value=0 onclick="PrsF(7,0)"><input type=button value=1 onclick="PrsF(7,1)"></th><td id="f7"></td></tr>
+<tr><th>Float64Array<input type=button value=0 onclick="PrsF(8,0)"></th><td id="f8"></td></tr>
+<tr><th>BigInt64Array<input type=button value=0 onclick="PrsI(9,0)"></th><td id="f9"></td></tr>
+<tr><th>BigUint64Array<input type=button value=0 onclick="PrsI(10,0)"></th><td id="f10"></td></tr>
+</tbody></table>
+<script>
+const Dinp = document.getElementById("txtInp");
+const Derr = document.getElementById("LogA");
+const daBuf = new ArrayBuffer(8);
+const I8 = new Int8Array(daBuf);
+const UI8 = new Uint8Array(daBuf);
+const I16 = new Int16Array(daBuf);
+const UI16 = new Uint16Array(daBuf);
+const I32 = new Int32Array(daBuf);
+const UI32 = new Uint32Array(daBuf);
+const F16 = new Float16Array(daBuf);
+const F32 = new Float32Array(daBuf);
+const F64 = new Float64Array(daBuf);
+const L64 = new BigInt64Array(daBuf);
+const UL64 = new BigUint64Array(daBuf);
+const A = [I8,UI8,I16,UI16,I32,UI32,F16,F32,F64,L64,UL64];
+const f = [
+	document.getElementById("f0"),
+	document.getElementById("f1"),
+	document.getElementById("f2"),
+	document.getElementById("f3"),
+	document.getElementById("f4"),
+	document.getElementById("f5"),
+	document.getElementById("f6"),
+	document.getElementById("f7"),
+	document.getElementById("f8"),
+	document.getElementById("f9"),
+	document.getElementById("f10")
+];
+display();
+</script>
+</body>
+</html>

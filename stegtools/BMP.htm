@@ -265,10 +265,19 @@ function p1(ClBt)
 				"Reserved: "
 			];
 			const tlim = (fDIBheaderSize>>>2)-10;
+			const RVs = [];
 			for(let i=0;i<tlim;i++)
 			{
 				const antem = BigInt(UFD[pt++]) | (BigInt(UFD[pt++])<<(8n)) | (BigInt(UFD[pt++])<<(16n)) | (BigInt(UFD[pt++])<<(24n));
+				RVs.push(antem);
 				pointTheNth(reprt,AHs[i].concat(antem," (",antem.toString(2).padStart(fBPP,"0"),")"));
+				if(i<=3)
+				{
+					if(antem.toString(2).indexOf("01")>=0)
+					{
+						pointTheNth(reprt,`(Bitmask disjointed)${strFail}`);
+					}
+				}
 			}
 		}
 		if(bStopEarly)

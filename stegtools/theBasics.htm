@@ -28,7 +28,14 @@ function something()
 	f[1].textContent = inp.split("").reverse().join("");
 	f[2].textContent = escape(inp);
 	f[3].textContent = unescape(inp);
-	f[4].textContent = encodeURI(inp);
+	try
+	{
+		f[4].textContent = encodeURI(inp);
+	}
+	catch(e)
+	{
+		f[4].textContent = e.toString();
+	}
 	try
 	{
 		f[5].textContent = decodeURI(inp);
@@ -37,7 +44,14 @@ function something()
 	{
 		f[5].textContent = e.toString();
 	}
-	f[6].textContent = encodeURIComponent(inp);
+	try
+	{
+		f[6].textContent = encodeURIComponent(inp);
+	}
+	catch(e)
+	{
+		f[6].textContent = e.toString();
+	}
 	try
 	{
 		f[7].textContent = decodeURIComponent(inp);

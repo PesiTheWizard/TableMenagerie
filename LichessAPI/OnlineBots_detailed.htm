@@ -16,11 +16,7 @@ function initialGet(clbt)
 		return;
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
-	const colCount = [33,30][SiteIndx];
-	const siteURLs = [
-		`https://lichess.org/api/bot/online?nb=${tv}`,
-		`https://lishogi.org/api/bot/online?nb=${tv}`
-	][SiteIndx];
+	const siteURLs = `https://${["lichess","lishogi"][SiteIndx]}.org/api/bot/online?nb=${tv}`;
 	const siteVariants = [
 		["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
 		["ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
@@ -38,7 +34,7 @@ function initialGet(clbt)
 	lister("flair?",NR,'th');
 	lister("patron",NR,'th');
 	lister("verified",NR,'th');
-	sortbuttonCellFactory();
+	sortbuttonPL();
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -60,21 +56,43 @@ function initialGet(clbt)
 			lister(D[i],NR,'th');
 		}
 	}
-	function sortbuttonCellFactory()
+	function sortbuttonPL()
 	{
-		for(let i=0;i<colCount;i++)
+		const L = siteVariants.length+4;
+		const colCount = L+20;
+		let gfc=0;
+		cellFactory("false");
+		cellFactory("false");
+		for(let i=0;i<11;i++)
+		{
+			cellFactory("true");
+		}
+		for(let i=0;i<L;i++)
+		{
+			cellFactory("false");
+		}
+		for(let i=0;i<3;i++)
+		{
+			cellFactory("true");
+		}
+		while(gfc<colCount)
+		{
+			cellFactory("false");
+		}
+		function cellFactory(ts)
 		{
 			const hCell = document.createElement('th');
 			const S1 = document.createElement('span');
 			const S2 = document.createElement('span');
 			S1.innerHTML = "&#9650;";
 			S2.innerHTML = "&#9660;";
-			S1.setAttribute("onclick",`a(${i},true)`);
-			S2.setAttribute("onclick",`a(${i},false)`);
+			S1.setAttribute("onclick",`a(${gfc},true,${ts})`);
+			S2.setAttribute("onclick",`a(${gfc},false,${ts})`);
 			hCell.appendChild(S1);
 			hCell.appendChild(document.createTextNode(" "));
 			hCell.appendChild(S2);
 			SBR.appendChild(hCell);
+			gfc++;
 		}
 	}
 }
@@ -194,8 +212,8 @@ function textToJSONhandler(stuff,t,als,VL)
 		t.appendChild(tablRw);//t is textToJSONhandler's 2nd parameter
 	}
 }
-function a(ctsb, lth)
-{//ctsb - column to sort by, lth - low to high
+function a(ctsb, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
@@ -212,6 +230,12 @@ so the set of childnodes at and below the cup is unchanged.
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
+		if(asnum)
+		{//empty strings result in NaN
+			s1 = parseInt(s1);
+			s2 = parseInt(s2);
+			if(isNaN(s1)||isNaN(s2)){continue;}
+		}
 		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
 		{//we have reason to enter the inner loop
 			//fn is the one who will eventually be moved
@@ -221,6 +245,11 @@ so the set of childnodes at and below the cup is unchanged.
 			while(scout >= 0)
 			{
 				sign = gt[scout].childNodes[ctsb].textContent;
+				if(asnum)
+				{
+					sign = parseInt(sign);
+					if(isNaN(sign)){break;}
+				}
 				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
 				{
 					break;

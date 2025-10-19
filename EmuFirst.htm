@@ -17,7 +17,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$02
+	IllegalOpcode,//$02,haltandcatchfire
 	IllegalOpcode,//$03
 	IllegalOpcode,//$04
 	() => {//$05 ORA Cycles=3 Bytes=2; Zero Page
@@ -78,8 +78,17 @@ const NESCPU = [
 		}
 	},
 	() => {//$11 ORA Cycles=5-6 Bytes=2; (Indirect),Y
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		indU16[0]+=Register[Y];
+		Register[A] |= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$12
+	IllegalOpcode,//$12,haltandcatchfire
 	IllegalOpcode,//$13
 	IllegalOpcode,//$14
 	() => {//$15 ORA Cycles=4 Bytes=2; Zero Page,X
@@ -91,17 +100,41 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$16 ASL Cycles=6 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Flag_Carry = ((ZeroPage[indU8[0]]>>>7)&1)==1;
+		ZeroPage[indU8[0]]<<=1;
+		indU8[0] = ZeroPage[indU8[0]];//to check the flags
+		Flag_Zero = !indU8[0];
+		Flag_Negative = (ind8[0] < 0);
 	},
 	IllegalOpcode,//$17
 	() => {//$18 CLC Cycles=2 Bytes=1; Implied
 		Flag_Carry = false;
 	},
 	() => {//$19 ORA Cycles=4-5 Bytes=3; Absolute,Y
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[Y];
+		Register[A] |= MemoryIn2Parts[indU8[1]][indu8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	IllegalOpcode,//$1A
 	IllegalOpcode,//$1B
 	IllegalOpcode,//$1C
 	() => {//$1D ORA Cycles=4-5 Bytes=3; Absolute,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[X];
+		Register[A] |= MemoryIn2Parts[indU8[1]][indu8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$1E ASL Cycles=7 Bytes=3; Absolute,X
 	},
@@ -118,10 +151,25 @@ const NESCPU = [
 		PC16[0] = indU16[0];
 	},
 	() => {//#21 AND Cycles=6 Bytes=2; (Indirect,X)
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0]+=Register[X];
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		Register[A] &= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$22
+	IllegalOpcode,//$22,haltandcatchfire
 	IllegalOpcode,//$23
 	() => {//$24 BIT Cycles=3 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		const temp = ZeroPage[indU8[0]];
+		Flag_Zero = !(Register[A] & temp);
+		Flag_Overflow = !!((temp>>>6)&1);
+		Flag_Negative = !!((temp>>>7)&1);
 	},
 	() => {//$25 AND Cycles=3 Bytes=2; Zero Page
 	},
@@ -160,11 +208,26 @@ const NESCPU = [
 		}
 	},
 	() => {//$31 AND Cycles=5-6 Bytes=2; (Indirect),Y
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		indU16[0]+=Register[Y];
+		Register[A] &= MemoryIn2Parts[indU8[1]][indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$32
+	IllegalOpcode,//$32,haltandcatchfire
 	IllegalOpcode,//$33
 	IllegalOpcode,//$34
 	() => {//$35 AND Cycles=4 Bytes=2; Zero Page,X
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0]+=Register[X];//automatically loops
+		Register[A] &= ZeroPage[indU8[0]];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$36 ROL Cycles=6 Bytes=2; Zero Page,X
 	},
@@ -202,7 +265,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$42
+	IllegalOpcode,//$42,haltandcatchfire
 	IllegalOpcode,//$43
 	IllegalOpcode,//$44
 	() => {//$45 EOR Cycles=3 Bytes=2; Zero Page
@@ -279,7 +342,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$52
+	IllegalOpcode,//$52,haltandcatchfire
 	IllegalOpcode,//$53
 	IllegalOpcode,//$54
 	() => {//$55 EOR Cycles=4 Bytes=2; Zero Page,X
@@ -315,7 +378,7 @@ const NESCPU = [
 	},
 	() => {//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
 	},
-	IllegalOpcode,//$62
+	IllegalOpcode,//$62,haltandcatchfire
 	IllegalOpcode,//$63
 	IllegalOpcode,//$64
 	() => {//$65 ADC Cycles=3 Bytes=2; Zero Page
@@ -365,7 +428,7 @@ const NESCPU = [
 	},
 	() => {//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
 	},
-	IllegalOpcode,//$72
+	IllegalOpcode,//$72,haltandcatchfire
 	IllegalOpcode,//$73
 	IllegalOpcode,//$74
 	() => {//$75 ADC Cycles=4 Bytes=2; Zero Page,X
@@ -756,6 +819,12 @@ const NESCPU = [
 	() => {//$E5 SBC Cycles=3 Bytes=2; Zero Page
 	},
 	() => {//$E6 INC Cycles=5 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		ZeroPage[indU8[0]]++;
+		indU8[0] = ZeroPage[indU8[0]];//to check the flags
+		Flag_Zero = !indU8[0];
+		Flag_Negative = (ind8[0] < 0);
 	},
 	IllegalOpcode,//$E7
 	() => {//$E8 INX Cycles=2 Bytes=1; Implied
@@ -770,8 +839,8 @@ const NESCPU = [
 		Register[A] = ind16[0];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
-		Flag_Overflow = (ind8[0]==ind16[0]);
-		//TODO:handle carry. "Clear if overflow in bit 7". What exactly does that mean?
+		Flag_Overflow = (ind8[0]!=ind16[0]);
+		Flag_Carry = (ind16[0] < 0);
 		//TODO:check the rest of this for validity!
 	},
 	() => {//$EA NOP Cycles=2 Bytes=1; Implied
@@ -818,20 +887,24 @@ const NESCPU = [
 	() => {//$FE INC Cycles=7 Bytes=3; Absolute,X
 	},
 	IllegalOpcode //$FF
-];
-Object.freeze(NESCPU);
+];Object.freeze(NESCPU);
+
+const Palette_2C02G = [//w can be set to 1.0 in the fragment shader
+	//0                      1                        2                        3                        4                        5                        6                        7                        8                        9                        A                        B                        C                        D                        E      F
+	98/255,98/255,98/255,    0/255,28/255,149/255,    25/255,4/255,172/255,    66/255,0/255,157/255,    97/255,0/255,107/255,    110/255,0/255,37/255,    101/255,5/255,0/255,     73/255,30/255,0/255,     34/255,55/255,0/255,     0/255,73/255,0/255,      0/255,79/255,0/255,      0/255,72/255,22/255,     0/255,53/255,94/255,     0,0,0,                   0,0,0, 0,0,0,
+	171/255,171/255,171/255, 12/255,78/255,219/255,   61/255,46/255,255/255,   113/255,21/255,243/255,  155/255,11/255,185/255,  176/255,18/255,98/255,   169/255,39/255,4/255,    137/255,70/255,0/255,    87/255,102/255,0/255,    35/255,127/255,0/255,    0/255,137/255,0/255,     0/255,131/255,50/255,    0/255,109/255,144/255,   0,0,0,                   0,0,0, 0,0,0,
+	1,1,1,                   87/255,165/255,255/255,  130/255,135/255,255/255, 180/255,109/255,255/255, 223/255,96/255,255/255,  248/255,99/255,198/255,  248/255,116/255,109/255, 222/255,144/255,32/255,  179/255,174/255,0/255,   129/255,200/255,0/255,   86/255,213/255,34/255,   61/255,211/255,111/255,  62/255,193/255,200/255,  78/255,78/255,78/255,    0,0,0, 0,0,0,
+	1,1,1,                   190/255,224/255,255/255, 205/255,212/255,255/255, 224/255,202/255,255/255, 241/255,196/255,255/255, 252/255,196/255,239/255, 253/255,202/255,206/255, 245/255,212/255,175/255, 230/255,223/255,156/255, 211/255,233/255,154/255, 194/255,239/255,168/255, 183/255,239/255,196/255, 182/255,234/255,229/255, 184/255,184/255,184/255, 0,0,0, 0,0,0
+];Object.freeze(Palette_2C02G);
 /*
 Opcodes to do:
-$00, $0E, $11, $16, $19, $1D, $1E, $21, $24, $25, $26, $29, $2C, $2D, $2E,
-$31, $35, $36, $39, $3D, $3E, $4E, $56, $58, $59, $5D, $5E,
+$00, $0E, $1E, $25, $26, $29, $2C, $2D, $2E,
+$36, $39, $3D, $3E, $4E, $56, $58, $59, $5D, $5E,
 $61, $65, $66, $69, $6D, $6E, $71, $75, $76, $79, $7D, $7E,
 $81, $8C, $8D, $8E, $91, $99, $9D,
 $C0, $C1, $C4, $C5, $C9, $CC, $CD, $CE, $D1, $D5, $D6, $D9, $DD, $DE,
-$E0, $E1, $E4, $E5, $E6,~$E9, $EC, $ED, $EE, $F1, $F5, $F6, $F9, $FD, $FE
+$E0, $E1, $E4, $E5, $EC, $ED, $EE, $F1, $F5, $F6, $F9, $FD, $FE
 */
-const HC_NMI_PC = 0xFFFA;
-const HC_startup_PC = 0xFFFC;
-const HC_IRQ_PC = 0xFFFE;
 const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
 const RawRAM = new ArrayBuffer(0x800);
 const RAMpart1 = new Uint8Array(RawRAM,0,0x100);//The Zero Page
@@ -909,17 +982,28 @@ MemoryIn2Parts[60] = PPUregs;
 MemoryIn2Parts[61] = PPUregs;
 MemoryIn2Parts[62] = PPUregs;
 MemoryIn2Parts[63] = PPUregs;
-//64-95 = APU,I/O Registers and "Don't worry about this"
-//96-127 = SRAM/WRAM (8K)
-//128-255 = ROM (32K)
+/*
+Next up is 64 (0x40), Audio Processing Unit for 0x20 bytes(less than a single part),
+but those seem to only go up to 0x4017 inclusive...
+
+64-95 (0x40-0x5F) = APU,I/O Registers and "Don't worry about this". Open Bus.
+96-127 (0x60-0x7F) = SRAM/WRAM (8K)
+128-255 = ROM (32K)
+
+Other sources:
+0x4000 to 0x4017 - Registers, mostly APU (why not say entirely APU?)
+0x4018 to 0x5FFF - Cartridge Expansion ROM
+0x6000 to 0x7FFF - Cartridge SRAM
+0x8000 and up - Cartridge PRG-ROM
+*/
 const ZeroPage = MemoryIn2Parts[0];
 const TheStack = MemoryIn2Parts[1];
 
-const RawMemory = new ArrayBuffer(0x10000);//Not doing things this way anymore...
-const AllMemoryBytes = new Uint8Array(RawMemory);
-const Stack = AllMemoryBytes.subarray(0x100,0x200);//$01__ <- the stack
-const WritableMemoryBytes = AllMemoryBytes.subarray(0,0x8000);//ignore writes to ROM
-const HCVectors = new Uint16Array(RawMemory,0xFFFA,3);//All of the above will probably be removed
+const HCPC = 0xFF;
+const NMI = 0xFA;
+const startup = 0xFC;
+const IRQ = 0xFE;
+
 const indbuffer = new ArrayBuffer(2);//Exists to simulate the indirect mode page overflow bug; as temp values elsewhere.
 const indU8 = new Uint8Array(indbuffer);//Do NOT rely on this keeping its value between operations.
 const ind8 = new Int8Array(indbuffer);//For reading negative numbers
@@ -959,6 +1043,17 @@ function nextCommand()
 }
 const PPU_Memory = new ArrayBuffer(0x4000);
 /*
+0000h-0FFFh   Pattern Table 0 (4K) (256 Tiles)
+1000h-1FFFh   Pattern Table 1 (4K) (256 Tiles)
+2000h-23FFh   Name Table 0 and Attribute Table 0 (1K) (32x30 BG Map)
+2400h-27FFh   Name Table 1 and Attribute Table 1 (1K) (32x30 BG Map)
+2800h-2BFFh   Name Table 2 and Attribute Table 2 (1K) (32x30 BG Map)
+2C00h-2FFFh   Name Table 3 and Attribute Table 3 (1K) (32x30 BG Map)
+3000h-3EFFh   Mirror of 2000h-2EFFh
+3F00h-3F1Fh   Background and Sprite Palettes (25 entries used)
+3F20h-3FFFh   Mirrors of 3F00h-3F1Fh
+
+Sound stuff:
 2 pulse wave channels
 1 triangle wave channel
 1 noise channel
@@ -992,15 +1087,27 @@ for(let aY=pRows-1;aY>=0;aY--)
 		pixelArray.push(vec2(cAdd+aX*cStep-1,rAdd+aY*rStep-1));
 	}
 }
-const FPA = flatten(pixelArray);
-const ActualGLcolors = new Float32Array(pRows*pCols*3);//pre-flattened
+const FPA = flatten(pixelArray);//this goes into pixPos
+const ActualGLcolors = new Float32Array(pRows*pCols*3);//pre-flattened, this goes into pixCol
 for(let i=0;i<ActualGLcolors.length;i++)
-{ActualGLcolors[i] = Math.random();}
+{
+	ActualGLcolors[i] = Math.random();
+}
+const colorIndexer = new Uint8Array(pRows*pCols);
+for(let i=0;i<colorIndexer.length;i++)//actually, try to use colors that could actually happen
+{
+	colorIndexer[i] = Math.floor(Math.random()*64);
+	
+	ActualGLcolors[i*3] = Palette_2C02G[colorIndexer[i]*3];
+	ActualGLcolors[i*3+1] = Palette_2C02G[colorIndexer[i]*3+1];
+	ActualGLcolors[i*3+2] = Palette_2C02G[colorIndexer[i]*3+2];
+	
+}
 const Dcanvas = document.getElementById("tvcanvas");
 const gl = WebGLUtils.setupWebGL(Dcanvas);
 if(!gl){alert("WebGL isn't available");}
 gl.viewport(0,0,Dcanvas.width,Dcanvas.height);
-gl.clearColor(0.95,0.95,0.95,1.0);
+gl.clearColor(0.95,0.95,0.95,1.0);//this may become the way to set the default background
 //gl.enable(gl.DEPTH_TEST);//probably not
 const vertShdr = gl.createShader(gl.VERTEX_SHADER);
 const fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
@@ -1059,6 +1166,14 @@ gl.bufferData(gl.ARRAY_BUFFER,ActualGLcolors,gl.STATIC_DRAW);
 const JSpixCol = gl.getAttribLocation(program,"pixCol");
 gl.vertexAttribPointer(JSpixCol,3,gl.FLOAT,false,0,0);
 gl.enableVertexAttribArray(JSpixCol);
+
+//const JSusedPalette = gl.getUniformLocation(program,"colorPile");
+//gl.uniform3fv(JSusedPalette,Palette_2C02G);
+/*
+The idea was to make Palette_2C02G a uniform array of vec3s,
+and have pixCol and handoff be single-byte uints indexing into it in the fragment shader.
+Turns out nvidia didn't facilitate that until later, so for sake of old computers, don't.
+*/
 
 function drawFrame()
 {

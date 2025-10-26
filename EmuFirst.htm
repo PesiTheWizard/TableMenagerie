@@ -2,9 +2,20 @@
 <head>
 <title>NES emulator test</title>
 <script>
-const IllegalOpcode = () => {};
+const IllegalOpcode = () => {console.log("An undocumented opcode was run");};
+const HaltAndCatchFire = () => {console.log("CPU halted and caught fire");};
 const NESCPU = [
 	() => {//$00 BRK Cycles=7 Bytes=1; Implied
+		PC16[0]++;//It just does that
+		TheStack[Register[SP]] = PC8[1];
+		Register[SP]--;
+		TheStack[Register[SP]] = PC8[0];
+		Register[SP]--;
+		Flag_B = true;
+		TheStack[Register[SP]] = statusToByte();
+		Register[SP]--;
+		PC8[0] = MemoryIn2Parts[HCPC][IRQ];
+		PC8[1] = MemoryIn2Parts[HCPC][IRQ+1];
 	},
 	() => {//$01 ORA Cycles=6 Bytes=2; (Indirect,X)
 		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -17,9 +28,11 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$02,haltandcatchfire
+	HaltAndCatchFire,//$02
 	IllegalOpcode,//$03
-	IllegalOpcode,//$04
+	() => {//$04 NOP Cycles=3 Bytes=2 (IllegalOpcode)
+		PC16[0]++;
+	},
 	() => {//$05 ORA Cycles=3 Bytes=2; Zero Page
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
 		PC16[0]++;//For the byte-read above
@@ -38,6 +51,7 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$07
 	() => {//$08 PHP Cycles=3 Bytes=1; Implied
+		Flag_B = true;
 		TheStack[Register[SP]] = statusToByte();
 		Register[SP]--;
 	},
@@ -65,6 +79,17 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$0E ASL Cycles=6 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		reader(indU8[0],indU8[1],anotherTempByte,0);
+		const newCarry = !!(anotherTempByte[0]>>>7);
+		anotherTempByte[0] = (anotherTempByte[0]<<1);
+		writer(indU8[0],indU8[1],anotherTempByte[0]);
+		Flag_Carry = newCarry;
+		Flag_Zero = !anotherTempByte[0];
+		Flag_Negative = !!(anotherTempByte[0]>>>7);
 	},
 	IllegalOpcode,//$0F
 	() => {//$10 BPL Cycles=2-4 Bytes=2; Relative
@@ -88,7 +113,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$12,haltandcatchfire
+	HaltAndCatchFire,//$12
 	IllegalOpcode,//$13
 	IllegalOpcode,//$14
 	() => {//$15 ORA Cycles=4 Bytes=2; Zero Page,X
@@ -137,6 +162,7 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$1E ASL Cycles=7 Bytes=3; Absolute,X
+		console.log("1E ASL was run");
 	},
 	IllegalOpcode,//$1F
 	() => {//#20 JSR Cycles=6 Bytes=3; Absolute
@@ -161,7 +187,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$22,haltandcatchfire
+	HaltAndCatchFire,//$22
 	IllegalOpcode,//$23
 	() => {//$24 BIT Cycles=3 Bytes=2; Zero Page
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -172,8 +198,18 @@ const NESCPU = [
 		Flag_Negative = !!((temp>>>7)&1);
 	},
 	() => {//$25 AND Cycles=3 Bytes=2; Zero Page
+		console.log("25 AND was run");
 	},
 	() => {//$26 ROL Cycles=5 Bytes=2; Zero Page
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		const newCarry = (ind8[0] < 0);
+		indU8[1] = (indU8[0]<<1)|Flag_Carry;
+		ZeroPage[anotherTempByte[0]] = indU8[1];
+		Flag_Carry = newCarry;
+		Flag_Zero = !indU8[1];
+		Flag_Negative = (ind8[1] < 0);
 	},
 	IllegalOpcode,//$27
 	() => {//$28 PLP Cycles=4 Bytes=1; Implied
@@ -181,6 +217,11 @@ const NESCPU = [
 		byteToStatus(TheStack[Register[SP]]);
 	},
 	() => {//$29 AND Cycles=2 Bytes=2; Immediate
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		Register[A] &= indU8[0];
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$2A ROL Cycles=2 Bytes=1; Accumulator
 		const newCarry = !!(Register[A]>>>7);
@@ -191,10 +232,23 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$2B
 	() => {//$2C BIT Cycles=4 Bytes=3; Absolute
+		console.log("2C BIT was run");
 	},
 	() => {//$2D AND Cycles=4 Bytes=3; Absolute
+		console.log("2D AND was run");
 	},
 	() => {//$2E ROL Cycles=6 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		reader(indU8[0],indU8[1],anotherTempByte,0);
+		const newCarry = !!(anotherTempByte[0]>>>7);
+		anotherTempByte[0] = (anotherTempByte[0]<<1)|Flag_Carry;
+		writer(indU8[0],indU8[1],anotherTempByte[0]);
+		Flag_Carry = newCarry;
+		Flag_Zero = !anotherTempByte[0];
+		Flag_Negative = !!(anotherTempByte[0]>>>7);
 	},
 	IllegalOpcode,//$2F
 	() => {//$30 BMI Cycles=2-5 Bytes=2; Relative
@@ -218,7 +272,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$32,haltandcatchfire
+	HaltAndCatchFire,//$32
 	IllegalOpcode,//$33
 	IllegalOpcode,//$34
 	() => {//$35 AND Cycles=4 Bytes=2; Zero Page,X
@@ -230,19 +284,23 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$36 ROL Cycles=6 Bytes=2; Zero Page,X
+		console.log("36 ROL was run");
 	},
 	IllegalOpcode,//$37
 	() => {//$38 SEC Cycles=2 Bytes=1; Implied
 		Flag_Carry = true;
 	},
 	() => {//$39 AND Cycles=4-5 Bytes=3; Absolute,Y
+		console.log("39 AND was run");
 	},
 	IllegalOpcode,//$3A
 	IllegalOpcode,//$3B
 	IllegalOpcode,//$3C
 	() => {//$3D AND Cycles=4-5 Bytes=3; Absolute,X
+		console.log("3D AND was run");
 	},
 	() => {//$3E ROL Cycles=7 Bytes=3; Absolute,X
+		console.log("3E ROL was run");
 	},
 	IllegalOpcode,//$3F
 	() => {//$40 RTI Cycles=6 Bytes=1; Implied
@@ -265,7 +323,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$42,haltandcatchfire
+	HaltAndCatchFire,//$42
 	IllegalOpcode,//$43
 	IllegalOpcode,//$44
 	() => {//$45 EOR Cycles=3 Bytes=2; Zero Page
@@ -318,6 +376,7 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$4E LSR Cycles=6 Bytes=3; Absolute
+		console.log("4E LSR was run");
 	},
 	IllegalOpcode,//$4F
 	() => {//$50 BVC Cycles=2-5 Bytes=2; Relative
@@ -342,7 +401,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$52,haltandcatchfire
+	HaltAndCatchFire,//$52
 	IllegalOpcode,//$53
 	IllegalOpcode,//$54
 	() => {//$55 EOR Cycles=4 Bytes=2; Zero Page,X
@@ -354,18 +413,23 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$56 LSR Cycles=6 Bytes=2; Zero Page,X
+		console.log("56 LSR was run");
 	},
 	IllegalOpcode,//$57
 	() => {//$58 CLI Cycles=2 Bytes=1; Implied
+		console.log("58 CLI was run");
 	},
 	() => {//$59 EOR Cycles=4-5 Bytes=3; Absolute,Y
+		console.log("59 EOR was run");
 	},
 	IllegalOpcode,//$5A
 	IllegalOpcode,//$5B
 	IllegalOpcode,//$5C
 	() => {//$5D EOR Cycles=4-5 Bytes=3; Absolute,X
+		console.log("5D EOR was run");
 	},
 	() => {//$5E LSR Cycles=7 Bytes=3; Absolute,X
+		console.log("5E LSR was run");
 	},
 	IllegalOpcode,//$5F
 	() => {//$60 RTS Cycles=6 Bytes=1; Implied
@@ -377,13 +441,24 @@ const NESCPU = [
 		PC16[0]++;
 	},
 	() => {//$61 ADC Cycles=6 Bytes=2; (Indirect,X)
+		console.log("61 ADC was run");
 	},
-	IllegalOpcode,//$62,haltandcatchfire
+	HaltAndCatchFire,//$62
 	IllegalOpcode,//$63
 	IllegalOpcode,//$64
 	() => {//$65 ADC Cycles=3 Bytes=2; Zero Page
+		console.log("65 ADC was run");
 	},
 	() => {//$66 ROR Cycles=5 Bytes=2; Zero Page
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = ZeroPage[indU8[0]];
+		const newCarry = !!(indU8[1]&1);
+		anotherTempByte[0] = (indU8[1]>>>1)|(Flag_Carry<<7);
+		ZeroPage[indU8[0]] = anotherTempByte[0];
+		Flag_Carry = newCarry;
+		Flag_Zero = !anotherTempByte[0];
+		Flag_Negative = !!(anotherTempByte[0]>>>7);
 	},
 	IllegalOpcode,//$67
 	() => {//$68 PLA Cycles=4 Bytes=1; Implied
@@ -393,6 +468,14 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$69 ADC Cycles=2 Bytes=2; Immediate
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0] = Register[A]+anotherTempByte[0]+Flag_Carry;
+		Flag_Overflow = ( ~(Register[A]^anotherTempByte[0]) & (Register[A]^indU16[0]) & 0x80 ) != 0;//I have no idea what's happening here, I just copied this best I could from "Instructions New NES.pdf"
+		Register[A] = indU8[0];
+		Flag_Carry = !!(indU8[1]);
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$6A ROR Cycles=2 Bytes=1; Accumulator
 		const newCarry = !!(Register[A]&1);
@@ -412,8 +495,10 @@ const NESCPU = [
 		PC8[1] = MemoryIn2Parts[indU8[1]][indU8[0]];
 	},
 	() => {//$6D ADC Cycles=4 Bytes=3; Absolute
+		console.log("6D ADC was run");
 	},
 	() => {//$6E ROR Cycles=6 Bytes=3; Absolute
+		console.log("6E ROR was run");
 	},
 	IllegalOpcode,//$6F
 	() => {//$70 BVS Cycles=2-5 Bytes=2; Relative
@@ -427,30 +512,45 @@ const NESCPU = [
 		}
 	},
 	() => {//$71 ADC Cycles=5-6 Bytes=2; (Indirect),Y
+		console.log("71 ADC was run");
 	},
-	IllegalOpcode,//$72,haltandcatchfire
+	HaltAndCatchFire,//$72
 	IllegalOpcode,//$73
 	IllegalOpcode,//$74
 	() => {//$75 ADC Cycles=4 Bytes=2; Zero Page,X
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0] += Register[X];
+		indU16[0] = Register[A]+anotherTempByte[0]+Flag_Carry;
+		Flag_Overflow = ( ~(Register[A]^anotherTempByte[0]) & (Register[A]^indU16[0]) & 0x80 ) != 0;//I have no idea what's happening here, I just copied this best I could from "Instructions New NES.pdf"
+		Register[A] = indU8[0];
+		Flag_Carry = !!(indU8[1]);
+		Flag_Zero = !Register[A];
+		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$76 ROR Cycles=6 Bytes=2; Zero Page,X
+		console.log("76 ROR was run");
 	},
 	IllegalOpcode,//$77
 	() => {//$78 SEI Cycles=2 Bytes=1; Implied
 		Flag_ID = true;
 	},
 	() => {//$79 ADC Cycles=4-5 Bytes=3; Absolute,Y
+		console.log("79 ADC was run");
 	},
 	IllegalOpcode,//$7A
 	IllegalOpcode,//$7B
 	IllegalOpcode,//$7C
 	() => {//$7D ADC Cycles=4-5 Bytes=3; Absolute,X
+		console.log("7D ADC was run");
 	},
 	() => {//$7E ROR Cycles=7 Bytes=3; Absolute,X
+		console.log("7E ROR was run");
 	},
 	IllegalOpcode,//$7F
 	IllegalOpcode,//$80
 	() => {//$81 STA Cycles=6 Bytes=2; (Indirect,X)
+		console.log("81 STA was run");
 	},
 	IllegalOpcode,//$82
 	IllegalOpcode,//$83
@@ -488,10 +588,25 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$8B (Undocumented:ANE)
 	() => {//$8C STY Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		writer(indU8[0],indU8[1],Register[Y]);
 	},
 	() => {//$8D STA Cycles=4 Bytes=2; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		writer(indU8[0],indU8[1],Register[A]);
 	},
 	() => {//$8E STX Cycles=4 Bytes=3; Absolute
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		writer(indU8[0],indU8[1],Register[X]);
 	},
 	IllegalOpcode,//$8F
 	() => {//$90 BCC Cycles=2-5 Bytes=2; Relative
@@ -505,8 +620,10 @@ const NESCPU = [
 		}
 	},
 	() => {//$91 STA Cycles=6 Bytes=2; (Indirect),Y
+//up next
+		console.log("91 STA was run");
 	},
-	IllegalOpcode,//$92
+	HaltAndCatchFire,//$92
 	IllegalOpcode,//$93 (Undocumented:SHA)
 	() => {//$94 STY Cycles=4 Bytes=2; Zero Page,X
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -533,6 +650,7 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
 	() => {//$99 STA Cycles=5 Bytes=3; Absolute,Y
+		console.log("99 STA was run");
 	},
 	() => {//$9A TXS Cycles=2 Bytes=1; Implied
 		Register[SP] = Register[X];
@@ -540,6 +658,7 @@ const NESCPU = [
 	IllegalOpcode,//$9B (Undocumented:SHS)
 	IllegalOpcode,//$9C (Undocumented:SHY)
 	() => {//$9D STA Cycles=5 Bytes=3; Absolute,X
+		console.log("9D STA was run");
 	},
 	IllegalOpcode,//$9E (Undocumented:SHX)
 	IllegalOpcode,//$9F (Undocumented:SHA)
@@ -655,7 +774,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
-	IllegalOpcode,//$B2
+	HaltAndCatchFire,//$B2
 	IllegalOpcode,//$B3
 	() => {//$B4 LDY Cycles=4 Bytes=2; Zero Page,X
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -737,14 +856,18 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$BF
 	() => {//$C0 CPY Cycles=2 Bytes=2; Immediate
+		console.log("C0 CPY was run");
 	},
 	() => {//$C1 CMP Cycles=6 Bytes=2; (Indirect,X)
+		console.log("C1 CMP was run");
 	},
 	IllegalOpcode,//$C2
 	IllegalOpcode,//$C3
 	() => {//$C4 CPY Cycles=3 Bytes=2; Zero Page
+		console.log("C4 CPY was run");
 	},
 	() => {//$C5 CMP Cycles=3 Bytes=2; Zero Page
+		console.log("C5 CMP was run");
 	},
 	() => {//$C6 DEC Cycles=5 Bytes=2; Zero Page
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -761,6 +884,12 @@ const NESCPU = [
 		Flag_Negative = (SignedRegister[Y] < 0);
 	},
 	() => {//$C9 CMP Cycles=2 Bytes=2; Immediate
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = Register[A]-indU8[0];
+		Flag_Zero = (Register[A] == indU8[0]);
+		Flag_Negative = (ind8[1] < 0);
+		Flag_Carry = (Register[A] >= indU8[0]);
 	},
 	() => {//$CA DEX Cycles=2 Bytes=1; Implied
 		Register[X]--;
@@ -769,10 +898,13 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$CB (Undocumented:SBX)
 	() => {//$CC CPY Cycles=4 Bytes=2; Absolute
+		console.log("CC CPY was run");
 	},
 	() => {//$CD CMP Cycles=4 Bytes=3; Absolute
+		console.log("CD CMP was run");
 	},
 	() => {//$CE DEC Cycles=6 Bytes=3; Absolute
+		console.log("CE DEC was run");
 	},
 	IllegalOpcode,//$CF
 	() => {//$D0 BNE Cycles=2-5 Bytes=2; Relative
@@ -786,37 +918,52 @@ const NESCPU = [
 		}
 	},
 	() => {//$D1 CMP Cycles=5-6 Bytes=2; (Indirect),Y
+		console.log("D1 CMP was run");
 	},
-	IllegalOpcode,//$D2
+	HaltAndCatchFire,//$D2
 	IllegalOpcode,//$D3
 	IllegalOpcode,//$D4
 	() => {//$D5 CMP Cycles=4 Bytes=2; Zero Page,X
+		console.log("D5 CMP was run");
 	},
 	() => {//$D6 DEC Cycles=6 Bytes=2; Zero Page,X
+		console.log("D6 DEC was run");
 	},
 	IllegalOpcode,//$D7
 	() => {//$D8 CLD Cycles=2 Bytes=1; Implied
 		Flag_Decimal = false;
 	},
 	() => {//$D9 CMP Cycles=4-5 Bytes=3; Absolute,Y
+		console.log("D9 CMP was run");
 	},
 	IllegalOpcode,//$DA
 	IllegalOpcode,//$DB
 	IllegalOpcode,//$DC
 	() => {//$DD CMP Cycles=4-5 Bytes=3; Absolute,X
+		console.log("DD CMP was run");
 	},
 	() => {//$DE DEC Cycles=7 Bytes=3; Absolute,X
+		console.log("DE DEC was run");
 	},
 	IllegalOpcode,//$DF
 	() => {//$E0 CPX Cycles=2 Bytes=2; Immediate
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = Register[X]-indU8[0];
+		Flag_Zero = (Register[X] == indU8[0]);
+		Flag_Negative = (ind8[1] < 0);
+		Flag_Carry = (Register[X] >= indU8[0]);
 	},
 	() => {//$E1 SBC Cycles=6 Bytes=2; (Indirect,X)
+		console.log("E1 SBC was run");
 	},
 	IllegalOpcode,//$E2
 	IllegalOpcode,//$E3
 	() => {//$E4 CPX Cycles=3 Bytes=2; Zero Page
+		console.log("E4 CPX was run");
 	},
 	() => {//$E5 SBC Cycles=3 Bytes=2; Zero Page
+		console.log("E5 SBC was run");
 	},
 	() => {//$E6 INC Cycles=5 Bytes=2; Zero Page
 		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
@@ -836,22 +983,27 @@ const NESCPU = [
 		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
 		PC16[0]++;//For the byte-read above
 		ind16[0] = Register[A]-anotherTempByte[0]-(!Flag_Carry);
+		Flag_Overflow = ((Register[A]^anotherTempByte[0]) & (Register[A]^ind16[0]) & 0x80) != 0;//This comes directly from 100th_Coin's patreon post
 		Register[A] = ind16[0];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
-		Flag_Overflow = (ind8[0]!=ind16[0]);
-		Flag_Carry = (ind16[0] < 0);
+		Flag_Carry = (ind16[0] > 0);
 		//TODO:check the rest of this for validity!
+		//sources say "If the carry is cleared by the operation, it indicates a borrow occurred"
+		//and "now the carry flag is set if the subtraction leaves the result greater than 0 without underflowing"
 	},
 	() => {//$EA NOP Cycles=2 Bytes=1; Implied
 		//You get nothing! Good day, sir!
 	},
 	IllegalOpcode,//$EB
 	() => {//$EC CPX Cycles=4 Bytes=3; Absolute
+		console.log("EC CPX was run");
 	},
 	() => {//$ED SBC Cycles=4 Bytes=3; Absolute
+		console.log("ED SBC was run");
 	},
 	() => {//$EE INC Cycles=6 Bytes=3; Absolute
+		console.log("EE INC was run");
 	},
 	IllegalOpcode,//$EF
 	() => {//$F0 BEQ Cycles=2-5 Bytes=2; Relative
@@ -865,26 +1017,32 @@ const NESCPU = [
 		}
 	},
 	() => {//$F1 SBC Cycles=5-6 Bytes=2; (Indirect),Y
+		console.log("F1 SBC was run");
 	},
-	IllegalOpcode,//$F2
+	HaltAndCatchFire,//$F2
 	IllegalOpcode,//$F3
 	IllegalOpcode,//$F4
 	() => {//$F5 SBC Cycles=4 Bytes=2; Zero Page,X
+		console.log("F5 SBC was run");
 	},
 	() => {//$F6 INC Cycles=6 Bytes=2; Zero Page,X
+		console.log("F6 INC was run");
 	},
 	IllegalOpcode,//$F7
 	() => {//$F8 SED Cycles=2 Bytes=1; Implied
 		Flag_Decimal = true;
 	},
 	() => {//$F9 SBC Cycles=4-5 Bytes=3; Absolute,Y
+		console.log("F9 SBC was run");
 	},
 	IllegalOpcode,//$FA
 	IllegalOpcode,//$FB
 	IllegalOpcode,//$FC
 	() => {//$FD SBC Cycles=4-5 Bytes=3; Absolute,X
+		console.log("FD SBC was run");
 	},
 	() => {//$FE INC Cycles=7 Bytes=3; Absolute,X
+		console.log("FE INC was run");
 	},
 	IllegalOpcode //$FF
 ];Object.freeze(NESCPU);
@@ -897,13 +1055,13 @@ const Palette_2C02G = [//w can be set to 1.0 in the fragment shader
 	1,1,1,                   190/255,224/255,255/255, 205/255,212/255,255/255, 224/255,202/255,255/255, 241/255,196/255,255/255, 252/255,196/255,239/255, 253/255,202/255,206/255, 245/255,212/255,175/255, 230/255,223/255,156/255, 211/255,233/255,154/255, 194/255,239/255,168/255, 183/255,239/255,196/255, 182/255,234/255,229/255, 184/255,184/255,184/255, 0,0,0, 0,0,0
 ];Object.freeze(Palette_2C02G);
 /*
-Opcodes to do:
-$00, $0E, $1E, $25, $26, $29, $2C, $2D, $2E,
-$36, $39, $3D, $3E, $4E, $56, $58, $59, $5D, $5E,
-$61, $65, $66, $69, $6D, $6E, $71, $75, $76, $79, $7D, $7E,
-$81, $8C, $8D, $8E, $91, $99, $9D,
-$C0, $C1, $C4, $C5, $C9, $CC, $CD, $CE, $D1, $D5, $D6, $D9, $DD, $DE,
-$E0, $E1, $E4, $E5, $EC, $ED, $EE, $F1, $F5, $F6, $F9, $FD, $FE
+Opcodes to do: (in parenths = done, but call reader or writer or both)
+($0E),  $1E,  $25,{$26},($29),  $2C, $2D,($2E),
+  $36,  $39,  $3D,  $3E,  $4E,  $56,  $58,  $59,  $5D, $5E,
+  $61,  $65,{$66},{$69},  $6D,  $6E,  $71,{$75},  $76, $79, $7D, $7E,
+  $81,($8C),($8D),($8E),  $91,  $99,  $9D,
+  $C0,  $C1,  $C4,  $C5,  $C9,  $CC,  $CD,  $CE,  $D1, $D5, $D6, $D9, $DD, $DE,
+{$E0},  $E1,  $E4,  $E5,  $EC,  $ED,  $EE,  $F1,  $F5, $F6, $F9, $FD, $FE
 */
 const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
 const RawRAM = new ArrayBuffer(0x800);
@@ -915,8 +1073,6 @@ const RAMpart5 = new Uint8Array(RawRAM,0x400,0x100);
 const RAMpart6 = new Uint8Array(RawRAM,0x500,0x100);
 const RAMpart7 = new Uint8Array(RawRAM,0x600,0x100);
 const RAMpart8 = new Uint8Array(RawRAM,0x700,0x100);
-const RawPPUregs = new ArrayBuffer(0x100);
-const PPUregs = new Uint8Array(RawPPUregs);
 MemoryIn2Parts[0] = RAMpart1;
 MemoryIn2Parts[1] = RAMpart2;
 MemoryIn2Parts[2] = RAMpart3;
@@ -932,8 +1088,8 @@ MemoryIn2Parts[11] = RAMpart4;
 MemoryIn2Parts[12] = RAMpart5;
 MemoryIn2Parts[13] = RAMpart6;
 MemoryIn2Parts[14] = RAMpart7;
-MemoryIn2Parts[15] = RAMpart8;
-MemoryIn2Parts[16] = RAMpart1;
+MemoryIn2Parts[15] = RAMpart8;//0xF
+MemoryIn2Parts[16] = RAMpart1;//0x10
 MemoryIn2Parts[17] = RAMpart2;
 MemoryIn2Parts[18] = RAMpart3;
 MemoryIn2Parts[19] = RAMpart4;
@@ -948,9 +1104,11 @@ MemoryIn2Parts[27] = RAMpart4;
 MemoryIn2Parts[28] = RAMpart5;
 MemoryIn2Parts[29] = RAMpart6;
 MemoryIn2Parts[30] = RAMpart7;
-MemoryIn2Parts[31] = RAMpart8;
+MemoryIn2Parts[31] = RAMpart8;//0x1F
 
-MemoryIn2Parts[32] = PPUregs;
+const RawPPUregs = new ArrayBuffer(8);//remember to bitwise and with 7 before interacting with this
+const PPUregs = new Uint8Array(RawPPUregs);
+MemoryIn2Parts[32] = PPUregs;//0x20
 MemoryIn2Parts[33] = PPUregs;
 MemoryIn2Parts[34] = PPUregs;
 MemoryIn2Parts[35] = PPUregs;
@@ -965,8 +1123,8 @@ MemoryIn2Parts[43] = PPUregs;
 MemoryIn2Parts[44] = PPUregs;
 MemoryIn2Parts[45] = PPUregs;
 MemoryIn2Parts[46] = PPUregs;
-MemoryIn2Parts[47] = PPUregs;
-MemoryIn2Parts[48] = PPUregs;
+MemoryIn2Parts[47] = PPUregs;//0x2F
+MemoryIn2Parts[48] = PPUregs;//0x30
 MemoryIn2Parts[49] = PPUregs;
 MemoryIn2Parts[50] = PPUregs;
 MemoryIn2Parts[51] = PPUregs;
@@ -981,19 +1139,34 @@ MemoryIn2Parts[59] = PPUregs;
 MemoryIn2Parts[60] = PPUregs;
 MemoryIn2Parts[61] = PPUregs;
 MemoryIn2Parts[62] = PPUregs;
-MemoryIn2Parts[63] = PPUregs;
+MemoryIn2Parts[63] = PPUregs;//0x3F
+const PPUCTRL=0, PPUMASK=1, PPUSTATUS=2, OAMADDR=3, OAMDATA=4, PPUSCROLL=5, PPUADDR=6, PPUDATA=7;
 /*
 Next up is 64 (0x40), Audio Processing Unit for 0x20 bytes(less than a single part),
 but those seem to only go up to 0x4017 inclusive...
+0x4016 - controller port 1
+0x4017 - controller port 2
+"To read the controller, you need to 'clock' the controller once per button,
+by reading from the port, returning the state of a single button per read.
+There is a shift register inside the controller, and each 'clock' will update
+the register, preparing another bit for the next time the port is read.
+There are 8 buttons on the controller..."
+ - 100th Coin in 'How Inaccurate are Nintendo's Official Emulators?' (oYjYmSniQyM)
+MemoryIn2Parts[64]  - APU and cartridge expansion rom?
+MemoryIn2Parts[95]  - cartridge expansion rom?
+MemoryIn2Parts[96]  - SRAM start?
+MemoryIn2Parts[127] - SRAM end?
+MemoryIn2Parts[128] - PRG start?
+MemoryIn2Parts[255] - PRG end?
 
 64-95 (0x40-0x5F) = APU,I/O Registers and "Don't worry about this". Open Bus.
 96-127 (0x60-0x7F) = SRAM/WRAM (8K)
 128-255 = ROM (32K)
 
 Other sources:
-0x4000 to 0x4017 - Registers, mostly APU (why not say entirely APU?)
-0x4018 to 0x5FFF - Cartridge Expansion ROM
-0x6000 to 0x7FFF - Cartridge SRAM
+0x4000 to 0x4017 - Registers, mostly APU
+0x4018 to 0x5FFF - Cartridge Expansion ROM / Open Bus?
+0x6000 to 0x7FFF - Cartridge SRAM / PRG RAM? / Open Bus?
 0x8000 and up - Cartridge PRG-ROM
 */
 const ZeroPage = MemoryIn2Parts[0];
@@ -1039,7 +1212,9 @@ const PC16 = new Uint16Array(PCbuffer);
 function nextCommand()
 {
 	indU16[0] = PC16[0]++;//Fetch opcode and increment it
-	NESCPU[ MemoryIn2Parts[indU8[1]][indU8[0]] ]();//run the fetched opcode
+	const OpCode = MemoryIn2Parts[indU8[1]][indU8[0]];
+	console.log(`From 0x${indU16[0].toString(16).toUpperCase()}, running 0x${OpCode.toString(16).toUpperCase()}...`);
+	NESCPU[OpCode]();//run the fetched opcode
 }
 const PPU_Memory = new ArrayBuffer(0x4000);
 /*
@@ -1059,19 +1234,116 @@ Sound stuff:
 1 noise channel
 1 sample playing channel
 */
+function reader(mem0,mem1,a,i)
+{
+	//returns 0-255, can be read into a typedarray if negativity matters. Should handle side-effects that come from reading.
+	//	alternatively, return nothing, add an array-parameter and put the read value there (did this)
+	//zero page: Generally bypasses this function
+	//1 to 31: May read directly
+	//32 to 63: bitwise and with 7...
+	//128 to 255: May read directly after slotting in the arrays from cartridge
+	if(mem1 >=32 && mem1 < 64){mem0 = mem0&7;}
+	a[i] = MemoryIn2Parts[mem1]?.[mem0]??0;//failing reads return 0 - expand on this later
+}
+function writer(mem0,mem1,val)
+{
+	//returns nothing, should handle PPU and APU shenanigans.
+	//128 to 255 may be ignored unless game's cartridge has special hardware, future issue.
+	if(mem1>=64){return;}
+	if(mem1>=32){mem0 = mem0&7;}
+	MemoryIn2Parts[mem1][mem0] = val;
+}
+
+const BasicSizeLimit = 32784;
+let CartBlob;//files will be loaded into this
+function resetTheNES()
+{
+	if(CartBlob?.byteLength != BasicSizeLimit)
+	{
+		console.log(`Can only read files with length exactly ${BasicSizeLimit}`);
+		return;
+	}
+	//load from the cartridge into 0x8000 to 0xFFFF
+	for(let i=0;i<128;i++)
+	{
+		MemoryIn2Parts[128+i] = new Uint8Array(CartBlob,i*0x100+16,0x100);
+	}
+	Flag_ID = true;
+	Register[SP] = 0xFD;
+	PC8[0] = MemoryIn2Parts[HCPC][startup];
+	PC8[1] = MemoryIn2Parts[HCPC][startup+1];
+}
 </script>
 <style>
 canvas
 {
-	background: #000000;/*Because it's turned off*/
+	background-color:#000000;/*Because it's turned off*/
+}
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+summary
+{
+	cursor:pointer;
+}
+fieldset
+{
+	display:inline-block;
 }
 </style>
 </head>
 <body>
 <canvas id="tvcanvas" width="682" height="522"></canvas>
+<hr>
+<table border=1><tbody><tr><td valign=top>
+.NES file reader (no mappers)<br>
+<input type=file id="cartFP"><br>
+<input type=button value="Load blob" onclick=readCartFile()><br>
+<div id="logFP">Log space</div>
+</td><td valign=top>
+<input type=button value="Reset" onclick=resetTheNES()><br>
+<input type=button value="Next command" onclick=nextCommand()>
+</td></tr></tbody></table>
+<details><summary>Memory viewers</summary>
+<table border=1>
+<thead><tr><th>RAM</th><th>Registers</th><th>Flags</th></tr></thead>
+<tr>
+<td valign=top>Later...</td>
+<td valign=top>
+<input type=button value="Examine registers" onclick=examineRegisters()><br>
+A : <span id="showA"></span><br>
+X : <span id="showX"></span><br>
+Y : <span id="showY"></span><br>
+SP : <span id="showSP"></span><br>
+PC : <span id="showPC"></span>
+</td><td>
+<input type=button value="Examine flags" onclick=examineFlags()><br>
+N : <span id="flagN">Flag_Negative</span><br>
+V : <span id="flagV">Flag_Overflow</span><br>
+B : <span id="flagB">Flag_B</span><br>
+D : <span id="flagD">Flag_Decimal</span><br>
+I : <span id="flagI">Flag_ID</span><br>
+Z : <span id="flagZ">Flag_Zero</span><br>
+C : <span id="flagC">Flag_Carry</span>
+</td>
+</tr>
+</table>
+</details>
 <script type="text/javascript" src="webgl-utils.txt"></script>
 <script type="text/javascript" src="MV.txt"></script>
 <script>
+//this part is for the canvas and all that it needs, like WebGL
+/* handle keyboard-as-controller here
+window.onkeydown = (k) => {
+	if(!k.repeat)console.log(k);
+};
+window.onkeyup = (k) => {
+	//
+};
+*/
+
 const pRows = 261;
 const pCols = 341;
 const buffer = 0.00;
@@ -1104,6 +1376,7 @@ for(let i=0;i<colorIndexer.length;i++)//actually, try to use colors that could a
 	
 }
 const Dcanvas = document.getElementById("tvcanvas");
+//Dcanvas.onclick = (k) => {};
 const gl = WebGLUtils.setupWebGL(Dcanvas);
 if(!gl){alert("WebGL isn't available");}
 gl.viewport(0,0,Dcanvas.width,Dcanvas.height);
@@ -1179,6 +1452,71 @@ function drawFrame()
 {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gl.drawArrays(gl.POINTS,0,pixelArray.length);
+}
+</script>
+<script>
+//this part is for things that require page elements to be there
+
+const DcartFP = document.getElementById("cartFP");
+const DlogFP = document.getElementById("logFP");
+const DshowA = document.getElementById("showA");
+const DshowX = document.getElementById("showX");
+const DshowY = document.getElementById("showY");
+const DshowSP = document.getElementById("showSP");
+const DshowPC = document.getElementById("showPC");
+const DflagN = document.getElementById("flagN");
+const DflagV = document.getElementById("flagV");
+const DflagB = document.getElementById("flagB");
+const DflagD = document.getElementById("flagD");
+const DflagI = document.getElementById("flagI");
+const DflagZ = document.getElementById("flagZ");
+const DflagC = document.getElementById("flagC");
+function readCartFile()
+{
+	if(DcartFP==null)
+	{
+		DlogFP.innerText = "File picker not found";
+		return;
+	}
+	if(DcartFP.files.length < 1)
+	{
+		DlogFP.innerText = "No file picked";
+		return;
+	}
+	DcartFP.files[0].arrayBuffer().then((daBuf) => {
+		CartBlob = daBuf;
+		return DcartFP.files[0].name;
+	}).then((cartName) => {
+		if(CartBlob.byteLength != BasicSizeLimit)
+		{
+			DlogFP.innerText = `File length is ${CartBlob.byteLength} (0x${CartBlob.byteLength.toString(16).toUpperCase()}),\nexpected ${BasicSizeLimit} (0x${BasicSizeLimit.toString(16).toUpperCase()})`;
+		}
+		else//proper length
+		{
+			DlogFP.innerText = `${cartName} blob has been loaded`;
+		}
+	}).catch((error) => {
+		DlogFP.innerText = error.toString();
+	});
+//to use: String.fromCharCode(csvs)
+}
+function examineRegisters()
+{
+	DshowA.innerText = `${Register[A]} (0x${Register[A].toString(16).toUpperCase()})`;
+	DshowX.innerText = `${Register[X]} (0x${Register[X].toString(16).toUpperCase()})`;
+	DshowY.innerText = `${Register[Y]} (0x${Register[Y].toString(16).toUpperCase()})`;
+	DshowSP.innerText = `${Register[SP]} (0x${Register[SP].toString(16).toUpperCase()})`;
+	DshowPC.innerText = `${PC16[0]} (0x${PC16[0].toString(16).toUpperCase()})`;
+}
+function examineFlags()
+{
+	DflagN.innerText = Flag_Negative;
+	DflagV.innerText = Flag_Overflow;
+	DflagB.innerText = Flag_B;
+	DflagD.innerText = Flag_Decimal;
+	DflagI.innerText = Flag_ID;
+	DflagZ.innerText = Flag_Zero;
+	DflagC.innerText = Flag_Carry;
 }
 </script>
 </body>

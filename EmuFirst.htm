@@ -30,7 +30,7 @@ const NESCPU = [
 	},
 	HaltAndCatchFire,//$02
 	IllegalOpcode,//$03
-	() => {//$04 NOP Cycles=3 Bytes=2 (IllegalOpcode)
+	() => {//IllegalOpcode, $04 NOP Cycles=3 Bytes=2
 		PC16[0]++;
 	},
 	() => {//$05 ORA Cycles=3 Bytes=2; Zero Page
@@ -491,7 +491,7 @@ const NESCPU = [
 		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
 		//indirect pointer now in indU16
 		PC8[0] = MemoryIn2Parts[indU8[1]][indU8[0]];
-		indU8[1]++;//bumping only this part simulates the page-bug correctly
+		indU8[0]++;//bumping only this part simulates the page-bug correctly
 		PC8[1] = MemoryIn2Parts[indU8[1]][indU8[0]];
 	},
 	() => {//$6D ADC Cycles=4 Bytes=3; Absolute
@@ -520,7 +520,8 @@ const NESCPU = [
 	() => {//$75 ADC Cycles=4 Bytes=2; Zero Page,X
 		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
 		PC16[0]++;//For the byte-read above
-		anotherTempByte[0] += Register[X];
+		anotherTempByte[0]+=Register[X];
+		anotherTempByte[0] = ZeroPage[anotherTempByte[0]];
 		indU16[0] = Register[A]+anotherTempByte[0]+Flag_Carry;
 		Flag_Overflow = ( ~(Register[A]^anotherTempByte[0]) & (Register[A]^indU16[0]) & 0x80 ) != 0;//I have no idea what's happening here, I just copied this best I could from "Instructions New NES.pdf"
 		Register[A] = indU8[0];
@@ -550,7 +551,13 @@ const NESCPU = [
 	IllegalOpcode,//$7F
 	IllegalOpcode,//$80
 	() => {//$81 STA Cycles=6 Bytes=2; (Indirect,X)
-		console.log("81 STA was run");
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		anotherTempByte[0]+=Register[X];
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		writer(indU8[0],indU8[1],Register[A]);
 	},
 	IllegalOpcode,//$82
 	IllegalOpcode,//$83
@@ -620,8 +627,13 @@ const NESCPU = [
 		}
 	},
 	() => {//$91 STA Cycles=6 Bytes=2; (Indirect),Y
-//up next
-		console.log("91 STA was run");
+		anotherTempByte[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[0] = ZeroPage[anotherTempByte[0]];
+		anotherTempByte[0]++;
+		indU8[1] = ZeroPage[anotherTempByte[0]];
+		indU16[0]+=Register[Y];
+		writer(indU8[0],indU8[1],Register[A]);
 	},
 	HaltAndCatchFire,//$92
 	IllegalOpcode,//$93 (Undocumented:SHA)
@@ -658,7 +670,12 @@ const NESCPU = [
 	IllegalOpcode,//$9B (Undocumented:SHS)
 	IllegalOpcode,//$9C (Undocumented:SHY)
 	() => {//$9D STA Cycles=5 Bytes=3; Absolute,X
-		console.log("9D STA was run");
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU16[0]+=Register[X];
+		writer(indU8[0],indU8[1],Register[A]);
 	},
 	IllegalOpcode,//$9E (Undocumented:SHX)
 	IllegalOpcode,//$9F (Undocumented:SHA)
@@ -856,7 +873,12 @@ const NESCPU = [
 	},
 	IllegalOpcode,//$BF
 	() => {//$C0 CPY Cycles=2 Bytes=2; Immediate
-		console.log("C0 CPY was run");
+		indU8[0] = MemoryIn2Parts[PC8[1]][PC8[0]];
+		PC16[0]++;//For the byte-read above
+		indU8[1] = Register[Y]-indU8[0];
+		Flag_Zero = (Register[Y] == indU8[0]);
+		Flag_Negative = (ind8[1] < 0);
+		Flag_Carry = (Register[Y] >= indU8[0]);
 	},
 	() => {//$C1 CMP Cycles=6 Bytes=2; (Indirect,X)
 		console.log("C1 CMP was run");
@@ -988,9 +1010,7 @@ const NESCPU = [
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		Flag_Carry = (ind16[0] > 0);
-		//TODO:check the rest of this for validity!
-		//sources say "If the carry is cleared by the operation, it indicates a borrow occurred"
-		//and "now the carry flag is set if the subtraction leaves the result greater than 0 without underflowing"
+		//TODO: Check if the carry flag should be set if the subtraction yields exactly 0
 	},
 	() => {//$EA NOP Cycles=2 Bytes=1; Implied
 		//You get nothing! Good day, sir!
@@ -1059,8 +1079,8 @@ Opcodes to do: (in parenths = done, but call reader or writer or both)
 ($0E),  $1E,  $25,{$26},($29),  $2C, $2D,($2E),
   $36,  $39,  $3D,  $3E,  $4E,  $56,  $58,  $59,  $5D, $5E,
   $61,  $65,{$66},{$69},  $6D,  $6E,  $71,{$75},  $76, $79, $7D, $7E,
-  $81,($8C),($8D),($8E),  $91,  $99,  $9D,
-  $C0,  $C1,  $C4,  $C5,  $C9,  $CC,  $CD,  $CE,  $D1, $D5, $D6, $D9, $DD, $DE,
+  $81,($8C),($8D),($8E),($91),  $99,($9D),
+{$C0},  $C1,  $C4,  $C5,  $C9,  $CC,  $CD,  $CE,  $D1, $D5, $D6, $D9, $DD, $DE,
 {$E0},  $E1,  $E4,  $E5,  $EC,  $ED,  $EE,  $F1,  $F5, $F6, $F9, $FD, $FE
 */
 const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
@@ -1213,10 +1233,14 @@ function nextCommand()
 {
 	indU16[0] = PC16[0]++;//Fetch opcode and increment it
 	const OpCode = MemoryIn2Parts[indU8[1]][indU8[0]];
-	console.log(`From 0x${indU16[0].toString(16).toUpperCase()}, running 0x${OpCode.toString(16).toUpperCase()}...`);
+	//possibly poll for interrupts here
+	//console.log(`From 0x${indU16[0].toString(16).toUpperCase()}, running 0x${OpCode.toString(16).toUpperCase()}. A=${Register[A]}, X=${Register[X]}, Y=${Register[Y]}`);
+	//console.log(`${ZeroPage[0]},${ZeroPage[1]},${ZeroPage[2]},${ZeroPage[3]},${ZeroPage[4]},${ZeroPage[5]},${ZeroPage[6]},${ZeroPage[7]}`);
 	NESCPU[OpCode]();//run the fetched opcode
 }
-const PPU_Memory = new ArrayBuffer(0x4000);
+const rawPPU_Memory = new ArrayBuffer(0x4000);
+const allPPU_Memory = new Uint8Array(rawPPU_Memory);
+//any setup of PPU resting state should be done here
 /*
 0000h-0FFFh   Pattern Table 0 (4K) (256 Tiles)
 1000h-1FFFh   Pattern Table 1 (4K) (256 Tiles)
@@ -1242,7 +1266,21 @@ function reader(mem0,mem1,a,i)
 	//1 to 31: May read directly
 	//32 to 63: bitwise and with 7...
 	//128 to 255: May read directly after slotting in the arrays from cartridge
-	if(mem1 >=32 && mem1 < 64){mem0 = mem0&7;}
+	if(mem1 >=32 && mem1 < 64)
+	{
+		mem0 = mem0&7;
+		/* check other roms for reads to 0x2002
+		switch(mem0)
+		{
+			case PPUSTATUS:
+				a[i] = 0x80;
+				return;
+			default:
+				break;
+		}
+		*/
+		if(mem0 == PPUSTATUS){console.log("PPU status read");}
+	}
 	a[i] = MemoryIn2Parts[mem1]?.[mem0]??0;//failing reads return 0 - expand on this later
 }
 function writer(mem0,mem1,val)
@@ -1254,24 +1292,50 @@ function writer(mem0,mem1,val)
 	MemoryIn2Parts[mem1][mem0] = val;
 }
 
-const BasicSizeLimit = 32784;
-let CartBlob;//files will be loaded into this
+const NROMNCHARsize = 32784;
+const NROMw2Kchr = 40976;
+let CartBlob = null;//files will be loaded into this
+let fH = null, OriginalPPUarray = null;
 function resetTheNES()
 {
-	if(CartBlob?.byteLength != BasicSizeLimit)
+	switch(CartBlob?.byteLength)
 	{
-		console.log(`Can only read files with length exactly ${BasicSizeLimit}`);
-		return;
-	}
-	//load from the cartridge into 0x8000 to 0xFFFF
-	for(let i=0;i<128;i++)
-	{
-		MemoryIn2Parts[128+i] = new Uint8Array(CartBlob,i*0x100+16,0x100);
+		case NROMw2Kchr:
+			//I put this into the start of PPU_Memory, though I'm not sure about this
+			OriginalPPUarray = new Uint8Array(CartBlob,0x8010,0x2000);//this is enough for both pattern tables
+			allPPU_Memory.set(OriginalPPUarray);//just efficient copying, no view transfer shenanigans. Larger part of original is unchanged, perfect.
+		case NROMNCHARsize:
+			for(let i=0;i<128;i++)//load from the cartridge into 0x8000 to 0xFFFF
+			{
+				MemoryIn2Parts[128+i] = new Uint8Array(CartBlob,i*0x100+16,0x100);
+			}
+			fH = new Uint8Array(CartBlob,0,16);//file header
+			break;
+		default:
+			console.log(`Can only read files with length exactly ${NROMNCHARsize} or ${NROMw2Kchr}`);
+			return;
 	}
 	Flag_ID = true;
 	Register[SP] = 0xFD;
 	PC8[0] = MemoryIn2Parts[HCPC][startup];
 	PC8[1] = MemoryIn2Parts[HCPC][startup+1];
+
+	for(let i=0;i<8192;i++){UCIoIT(i);}//try to find a more efficient way to do this
+}
+function rdHeader()
+{
+	if(fH)
+	{
+		console.log(fH.toString());
+		console.log(`PRG-ROM size: ${fH[4]*16}kb`);
+		console.log(`CHR-ROM size: ${fH[4]*8}kb`);
+		console.log( ((fH[6]&1)==0)?"Horizontal mirroring (vertical scrolling)":"Vertical mirroring (horizontal scrolling)" );
+		console.log("persistent memory?",((fH[6]&2)==0)?"No":"Yes");
+	}
+	else
+	{
+		console.log("file not loaded");
+	}
 }
 </script>
 <style>
@@ -1292,6 +1356,10 @@ fieldset
 {
 	display:inline-block;
 }
+pre
+{
+	background-color:#EEEEEE;
+}
 </style>
 </head>
 <body>
@@ -1309,7 +1377,7 @@ fieldset
 <details><summary>Memory viewers</summary>
 <table border=1>
 <thead><tr><th>RAM</th><th>Registers</th><th>Flags</th></tr></thead>
-<tr>
+<tbody><tr>
 <td valign=top>Later...</td>
 <td valign=top>
 <input type=button value="Examine registers" onclick=examineRegisters()><br>
@@ -1328,7 +1396,13 @@ I : <span id="flagI">Flag_ID</span><br>
 Z : <span id="flagZ">Flag_Zero</span><br>
 C : <span id="flagC">Flag_Carry</span>
 </td>
-</tr>
+</tr></tbody>
+</table>
+<table border=1>
+<tbody><tr><td>
+<input type=button value="View pattern table, maybe" onclick=VisPatTab()><br>
+<pre id="PTV"> </pre>
+</td></tr></tbody>
 </table>
 </details>
 <script type="text/javascript" src="webgl-utils.txt"></script>
@@ -1471,6 +1545,7 @@ const DflagD = document.getElementById("flagD");
 const DflagI = document.getElementById("flagI");
 const DflagZ = document.getElementById("flagZ");
 const DflagC = document.getElementById("flagC");
+const DPTV = document.getElementById("PTV");
 function readCartFile()
 {
 	if(DcartFP==null)
@@ -1487,9 +1562,9 @@ function readCartFile()
 		CartBlob = daBuf;
 		return DcartFP.files[0].name;
 	}).then((cartName) => {
-		if(CartBlob.byteLength != BasicSizeLimit)
+		if(CartBlob.byteLength != NROMNCHARsize && CartBlob.byteLength != NROMw2Kchr)
 		{
-			DlogFP.innerText = `File length is ${CartBlob.byteLength} (0x${CartBlob.byteLength.toString(16).toUpperCase()}),\nexpected ${BasicSizeLimit} (0x${BasicSizeLimit.toString(16).toUpperCase()})`;
+			DlogFP.innerText = `File length is ${CartBlob.byteLength} (0x${CartBlob.byteLength.toString(16).toUpperCase()}),\nexpected either \n${NROMNCHARsize} (0x${NROMNCHARsize.toString(16).toUpperCase()})\n or ${NROMw2Kchr} (0x${NROMw2Kchr.toString(16).toUpperCase()})`;
 		}
 		else//proper length
 		{
@@ -1517,6 +1592,64 @@ function examineFlags()
 	DflagI.innerText = Flag_ID;
 	DflagZ.innerText = Flag_Zero;
 	DflagC.innerText = Flag_Carry;
+}
+const CindA = new Array(16384).fill(0);//Color index array. 16384 = 0x4000.
+//if PPU resting state ever gets implemented, remove the fill and call some recalc function instead
+function UCIoIT(a)//Update Color Index of Intermediary Table
+{//to be called after changing the PPU's RAM
+	if(!(a >= 0 && a<=16384))
+	{
+		console.log("SCI called with parameter "+a);
+		return;
+	}
+	//8*8*16*16 = 0x4000 - screen is apparently 16 tiles across, each tile is 8*8
+	//each screen is 0x1000 bytes (4096), each byte is a line in a tile, but it takes 2 bytes to color a tile fully
+	//8 lines per tile, twice = 256 tiles (0x100). (So on average, each byte covers 4 tiles)
+
+	const PrB = allPPU_Memory[a];
+	const TileRowSkips = Math.floor(a/256);
+	const WiRp = a%256;//Within Row position
+	const SingleRowTileSkips = Math.floor(WiRp/16);
+	const WiTp = WiRp%16;//Within Tile position
+	const BQ = Math.floor(WiTp/8)+1;//which bit this byte affects
+	const PP = WiTp%8;//pixel within tile
+
+	const StartingPoint = TileRowSkips*1024+SingleRowTileSkips*8+(128*PP);
+
+	const BM = [//BitMask
+		((PrB>>7)&1),
+		((PrB>>6)&1),
+		((PrB>>5)&1),
+		((PrB>>4)&1),
+		((PrB>>3)&1),
+		((PrB>>2)&1),
+		((PrB>>1)&1),
+		(PrB&1)
+	];
+	for(let i=0;i<8;i++)
+	{
+		if(BM[i])//set
+		{
+			CindA[StartingPoint+i] |= BQ;
+		}
+		else//clear
+		{
+			CindA[StartingPoint+i] &= (~BQ);
+		}
+	}
+}
+function VisPatTab()//Stands for Visualize Pattern Table, relies on the CindA
+{
+	const LL = 128;//16 tiles per row on screen * 8 pixels per row within a tile = 128
+	//const fs = CindA.join("");
+	const fs = CindA.map((x) => ["█","▓","▒","░"][x]??"?").join("");
+	let ws = fs.substring(0,LL);
+	for(let i=128;i<fs.length;i+=LL)
+	{
+		const temp = fs.substring(i,i+LL);
+		ws = ws.concat("\n",temp);
+	}
+	DPTV.innerText = ws;
 }
 </script>
 </body>

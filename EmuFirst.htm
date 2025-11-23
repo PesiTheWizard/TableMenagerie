@@ -1083,7 +1083,7 @@ Opcodes to do: (in parenths = done, but call reader or writer or both)
 {$C0},  $C1,  $C4,  $C5,  $C9,  $CC,  $CD,  $CE,  $D1, $D5, $D6, $D9, $DD, $DE,
 {$E0},  $E1,  $E4,  $E5,  $EC,  $ED,  $EE,  $F1,  $F5, $F6, $F9, $FD, $FE
 */
-const MemoryIn2Parts = new Array(0x100);//Object.seal doesn't prevent popping
+const MemoryIn2Parts = new Array(0x100).fill(null);//Object.seal doesn't prevent popping
 const RawRAM = new ArrayBuffer(0x800);
 const RAMpart1 = new Uint8Array(RawRAM,0,0x100);//The Zero Page
 const RAMpart2 = new Uint8Array(RawRAM,0x100,0x100);//The stack?
@@ -1172,6 +1172,7 @@ There is a shift register inside the controller, and each 'clock' will update
 the register, preparing another bit for the next time the port is read.
 There are 8 buttons on the controller..."
  - 100th Coin in 'How Inaccurate are Nintendo's Official Emulators?' (oYjYmSniQyM)
+The normal controller is called NES004, apparently. (nAStgQzPrAQ)
 MemoryIn2Parts[64]  - APU and cartridge expansion rom?
 MemoryIn2Parts[95]  - cartridge expansion rom?
 MemoryIn2Parts[96]  - SRAM start?
@@ -1238,18 +1239,95 @@ function nextCommand()
 	//console.log(`${ZeroPage[0]},${ZeroPage[1]},${ZeroPage[2]},${ZeroPage[3]},${ZeroPage[4]},${ZeroPage[5]},${ZeroPage[6]},${ZeroPage[7]}`);
 	NESCPU[OpCode]();//run the fetched opcode
 }
-const rawPPU_Memory = new ArrayBuffer(0x4000);
-const allPPU_Memory = new Uint8Array(rawPPU_Memory);
-//any setup of PPU resting state should be done here
+//let PF_
+const PPUmemIn2parts = new Array(64).fill(null);//64 = 0x40. From 0 to 0x3F
+const rawPPU_PatternTables = new ArrayBuffer(0x2000);//half the total...
+const PPU_FullPatternTables = new Uint8Array(rawPPU_PatternTables);//for looping over the entire pattern table memory
+for(let i=0;i<32;i++)
+{
+	PPUmemIn2parts[i] = new Uint8Array(rawPPU_PatternTables,i*0x100,0x100);
+}
+const rawPPU_NameTableA = new ArrayBuffer(0x400);
+const PPU_NameTableA_Part1 = new Uint8Array(rawPPU_NameTableA,0,0x100);
+const PPU_NameTableA_Part2 = new Uint8Array(rawPPU_NameTableA,0x100,0x100);
+const PPU_NameTableA_Part3 = new Uint8Array(rawPPU_NameTableA,0x200,0x100);
+const PPU_NameTableA_Part4 = new Uint8Array(rawPPU_NameTableA,0x300,0x100);
+const rawPPU_NameTableB = new ArrayBuffer(0x400);
+const PPU_NameTableB_Part1 = new Uint8Array(rawPPU_NameTableB,0,0x100);
+const PPU_NameTableB_Part2 = new Uint8Array(rawPPU_NameTableB,0x100,0x100);
+const PPU_NameTableB_Part3 = new Uint8Array(rawPPU_NameTableB,0x200,0x100);
+const PPU_NameTableB_Part4 = new Uint8Array(rawPPU_NameTableB,0x300,0x100);
+const rawSpritePalette = new ArrayBuffer(0x20);
+const PPU_SpritePalette = new Uint8Array(rawSpritePalette);
+//any setup of PPU resting state should be done around here
+PPUmemIn2parts[32] = PPU_NameTableA_Part1;
+PPUmemIn2parts[33] = PPU_NameTableA_Part2;
+PPUmemIn2parts[34] = PPU_NameTableA_Part3;
+PPUmemIn2parts[35] = PPU_NameTableA_Part4;
+//the ones between here are set up by one of two functions
+PPUmemIn2parts[44] = PPU_NameTableB_Part1;
+PPUmemIn2parts[45] = PPU_NameTableB_Part2;
+PPUmemIn2parts[46] = PPU_NameTableB_Part3;
+PPUmemIn2parts[47] = PPU_NameTableB_Part4;
+//Mirrors...
+PPUmemIn2parts[48] = PPU_NameTableA_Part1;
+PPUmemIn2parts[49] = PPU_NameTableA_Part2;
+PPUmemIn2parts[50] = PPU_NameTableA_Part3;
+PPUmemIn2parts[51] = PPU_NameTableA_Part4;
+//same deal as above
+PPUmemIn2parts[60] = PPU_NameTableB_Part1;
+PPUmemIn2parts[61] = PPU_NameTableB_Part2;
+PPUmemIn2parts[62] = PPU_NameTableB_Part3;
+PPUmemIn2parts[63] = PPU_SpritePalette;//bitwise and with 0x1F before interacting with this
+function SetUpHorizontalMirroring()
+{
+	PPUmemIn2parts[36] = PPU_NameTableA_Part1;
+	PPUmemIn2parts[37] = PPU_NameTableA_Part2;
+	PPUmemIn2parts[38] = PPU_NameTableA_Part3;
+	PPUmemIn2parts[39] = PPU_NameTableA_Part4;
+	PPUmemIn2parts[40] = PPU_NameTableB_Part1;
+	PPUmemIn2parts[41] = PPU_NameTableB_Part2;
+	PPUmemIn2parts[42] = PPU_NameTableB_Part3;
+	PPUmemIn2parts[43] = PPU_NameTableB_Part4;
+
+	PPUmemIn2parts[52] = PPU_NameTableA_Part1;
+	PPUmemIn2parts[53] = PPU_NameTableA_Part2;
+	PPUmemIn2parts[54] = PPU_NameTableA_Part3;
+	PPUmemIn2parts[55] = PPU_NameTableA_Part4;
+	PPUmemIn2parts[56] = PPU_NameTableB_Part1;
+	PPUmemIn2parts[57] = PPU_NameTableB_Part2;
+	PPUmemIn2parts[58] = PPU_NameTableB_Part3;
+	PPUmemIn2parts[59] = PPU_NameTableB_Part4;
+}
+function SetUpVerticalMirroring()
+{
+	PPUmemIn2parts[36] = PPU_NameTableB_Part1;
+	PPUmemIn2parts[37] = PPU_NameTableB_Part2;
+	PPUmemIn2parts[38] = PPU_NameTableB_Part3;
+	PPUmemIn2parts[39] = PPU_NameTableB_Part4;
+	PPUmemIn2parts[40] = PPU_NameTableA_Part1;
+	PPUmemIn2parts[41] = PPU_NameTableA_Part2;
+	PPUmemIn2parts[42] = PPU_NameTableA_Part3;
+	PPUmemIn2parts[43] = PPU_NameTableA_Part4;
+
+	PPUmemIn2parts[52] = PPU_NameTableB_Part1;
+	PPUmemIn2parts[53] = PPU_NameTableB_Part2;
+	PPUmemIn2parts[54] = PPU_NameTableB_Part3;
+	PPUmemIn2parts[55] = PPU_NameTableB_Part4;
+	PPUmemIn2parts[56] = PPU_NameTableA_Part1;
+	PPUmemIn2parts[57] = PPU_NameTableA_Part2;
+	PPUmemIn2parts[58] = PPU_NameTableA_Part3;
+	PPUmemIn2parts[59] = PPU_NameTableA_Part4;
+}
 /*
 0000h-0FFFh   Pattern Table 0 (4K) (256 Tiles)
 1000h-1FFFh   Pattern Table 1 (4K) (256 Tiles)
-2000h-23FFh   Name Table 0 and Attribute Table 0 (1K) (32x30 BG Map)
+2000h-23FFh   Name Table 0 and Attribute Table 0 (1K) (32x30 BG Map) {NameTables A and B appear twice each in this part}
 2400h-27FFh   Name Table 1 and Attribute Table 1 (1K) (32x30 BG Map)
 2800h-2BFFh   Name Table 2 and Attribute Table 2 (1K) (32x30 BG Map)
 2C00h-2FFFh   Name Table 3 and Attribute Table 3 (1K) (32x30 BG Map)
 3000h-3EFFh   Mirror of 2000h-2EFFh
-3F00h-3F1Fh   Background and Sprite Palettes (25 entries used)
+3F00h-3F1Fh   Background and Sprite Palettes (25 entries used) {indexes into palette (do N*3 to N*3+2), PatternTable in turn indexes into this 4-long array;3F00 is the default background}
 3F20h-3FFFh   Mirrors of 3F00h-3F1Fh
 
 Sound stuff:
@@ -1288,22 +1366,41 @@ function writer(mem0,mem1,val)
 	//returns nothing, should handle PPU and APU shenanigans.
 	//128 to 255 may be ignored unless game's cartridge has special hardware, future issue.
 	if(mem1>=64){return;}
-	if(mem1>=32){mem0 = mem0&7;}
+	if(mem1>=32)
+	{
+		mem0 = mem0&7;
+		switch(mem0)
+		{
+			case PPUCTRL://0
+			case PPUMASK://1
+			case PPUSTATUS://2
+			case OAMADDR://3
+			case OAMDATA://4
+			case PPUSCROLL://5
+			case PPUADDR://6
+			case PPUDATA://7
+				console.log("Writing call to PPU register "+mem0);
+				break;
+			default:
+				console.log("I don't know how, but you broke math");
+				return;
+		}
+	}
 	MemoryIn2Parts[mem1][mem0] = val;
 }
 
 const NROMNCHARsize = 32784;
 const NROMw2Kchr = 40976;
 let CartBlob = null;//files will be loaded into this
-let fH = null, OriginalPPUarray = null;
+let fH = null, PPUarrayFromCart = null;
 function resetTheNES()
 {
 	switch(CartBlob?.byteLength)
 	{
 		case NROMw2Kchr:
 			//I put this into the start of PPU_Memory, though I'm not sure about this
-			OriginalPPUarray = new Uint8Array(CartBlob,0x8010,0x2000);//this is enough for both pattern tables
-			allPPU_Memory.set(OriginalPPUarray);//just efficient copying, no view transfer shenanigans. Larger part of original is unchanged, perfect.
+			PPUarrayFromCart = new Uint8Array(CartBlob,0x8010,0x2000);//this is enough for both pattern tables
+			PPU_FullPatternTables.set(PPUarrayFromCart);//just efficient copying, no view transfer shenanigans. Larger part of original is unchanged, perfect.
 		case NROMNCHARsize:
 			for(let i=0;i<128;i++)//load from the cartridge into 0x8000 to 0xFFFF
 			{
@@ -1320,7 +1417,9 @@ function resetTheNES()
 	PC8[0] = MemoryIn2Parts[HCPC][startup];
 	PC8[1] = MemoryIn2Parts[HCPC][startup+1];
 
-	for(let i=0;i<8192;i++){UCIoIT(i);}//try to find a more efficient way to do this
+	for(let i=0;i<8192;i++){UCIoIPT(i);}//try to find a more efficient way to do this
+
+	[SetUpHorizontalMirroring,SetUpVerticalMirroring][(fH[6]&1)]();
 }
 function rdHeader()
 {
@@ -1329,7 +1428,7 @@ function rdHeader()
 		console.log(fH.toString());
 		console.log(`PRG-ROM size: ${fH[4]*16}kb`);
 		console.log(`CHR-ROM size: ${fH[4]*8}kb`);
-		console.log( ((fH[6]&1)==0)?"Horizontal mirroring (vertical scrolling)":"Vertical mirroring (horizontal scrolling)" );
+		console.log( ((fH[6]&1)==1)?"Vertical mirroring (horizontal scrolling)":"Horizontal mirroring (vertical scrolling)" );
 		console.log("persistent memory?",((fH[6]&2)==0)?"No":"Yes");
 	}
 	else
@@ -1358,7 +1457,7 @@ fieldset
 }
 pre
 {
-	background-color:#EEEEEE;
+	background-color:#F7F7F7;
 }
 </style>
 </head>
@@ -1400,7 +1499,7 @@ C : <span id="flagC">Flag_Carry</span>
 </table>
 <table border=1>
 <tbody><tr><td>
-<input type=button value="View pattern table, maybe" onclick=VisPatTab()><br>
+<input type=button value="View pattern tables" onclick=VisPatTab()><br>
 <pre id="PTV"> </pre>
 </td></tr></tbody>
 </table>
@@ -1595,9 +1694,9 @@ function examineFlags()
 }
 const CindA = new Array(16384).fill(0);//Color index array. 16384 = 0x4000.
 //if PPU resting state ever gets implemented, remove the fill and call some recalc function instead
-function UCIoIT(a)//Update Color Index of Intermediary Table
+function UCIoIPT(a)//Update Color Index of Intermediary Pattern Table
 {//to be called after changing the PPU's RAM
-	if(!(a >= 0 && a<=16384))
+	if(!(a >= 0 && a<=8192))
 	{
 		console.log("SCI called with parameter "+a);
 		return;
@@ -1606,7 +1705,7 @@ function UCIoIT(a)//Update Color Index of Intermediary Table
 	//each screen is 0x1000 bytes (4096), each byte is a line in a tile, but it takes 2 bytes to color a tile fully
 	//8 lines per tile, twice = 256 tiles (0x100). (So on average, each byte covers 4 tiles)
 
-	const PrB = allPPU_Memory[a];
+	const PrB = PPU_FullPatternTables[a];
 	const TileRowSkips = Math.floor(a/256);
 	const WiRp = a%256;//Within Row position
 	const SingleRowTileSkips = Math.floor(WiRp/16);

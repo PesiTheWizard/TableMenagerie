@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Firefox bug showcase</title>
+<style>
+td.sw
+{
+	writing-mode:sideways-lr;
+}
+</style>
+</head>
+<body>
+writing-mode:sideways-lr behaves differently if the cell has rowspan:<br><br>
+<table border=1>
+<tbody>
+<tr><td>text</td><td rowspan=2 class="sw">bla-bleebedi-blah</td><td>something else</td></tr>
+<tr><td>more text</td></tr>
+</tbody>
+</table>
+<br><br>
+<table border=1>
+<tbody>
+<tr><td>text</td><td class="sw">bla-bleebedi-blah</td><td>something else</td></tr>
+<tr><td>more text</td></tr>
+</tbody>
+</table>
+<hr>
+Doesn't show BMPs with a DIB-size of 52:<br><br>
+<img src="stegtools/Test4a.bmp">
+</body>
+</html>

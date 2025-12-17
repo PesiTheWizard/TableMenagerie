@@ -16,7 +16,6 @@ function initialGet(clbt)
 		return;
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
-	const colCount = [108,85][SiteIndx];
 	const siteURL = [
 		`https://lichess.org/api/bot/online?nb=${tv}`,
 		`https://lishogi.org/api/bot/online?nb=${tv}`
@@ -25,11 +24,13 @@ function initialGet(clbt)
 		{//Lichess
 			"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
 			"perfoptn":[false,   false,  false,  false,      false,           true,      true,        true,       true,    true,   true,           true,         true,        true],
+			"playTime":["total","tv","human"],
 			"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
 		},
 		{//Lishogi
 			"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
 			"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+			"playTime":["total","tv"],
 			"profile":["location","bio","firstName","lastName","country","links"]
 		}
 	][SiteIndx];
@@ -41,13 +42,13 @@ function initialGet(clbt)
 	const timestampCols = ["(Timestamp)","(Date)","(Time)","(UTC)"];
 	headerMaker("createdAt",timestampCols);
 	headerMaker("seenAt",timestampCols);
-	headerMaker("playTime",["total","tv"]);
+	headerMaker("playTime",siteProps["playTime"]);
 	headerMaker("profile",["#"].concat(siteProps["profile"]));
 	lister("title", NR, 'th');
 	lister("flair?", NR, 'th');
 	lister("patron", NR, 'th');
 	lister("verified", NR, 'th');
-	sortbuttonCellFactory();
+	sortbuttonCellFactory([109,85][SiteIndx]);//number of columns of each site
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -79,7 +80,7 @@ function initialGet(clbt)
 			lister(D[i],NR,'th');
 		}
 	}
-	function sortbuttonCellFactory()
+	function sortbuttonCellFactory(colCount)
 	{
 		for(let i=0;i<colCount;i++)
 		{
@@ -141,6 +142,9 @@ function lister(listedText, PN, ElType)
 function textToJSONhandler(stuff,t,als,arrObj)
 {
 	const NA = "N/A";
+	const perflist = arrObj["perflist"];
+	const perfoptn = arrObj["perfoptn"];
+	const playtime = arrObj["playTime"];
 	const conveyorBelt = stuff.split("\n");
 	let jp;
 	let fs = false;//failstep
@@ -184,16 +188,16 @@ function textToJSONhandler(stuff,t,als,arrObj)
 		lister(JO["id"]??"",tablRw,'td');
 		lister(JO["username"]??"",tablRw,'td');
 		lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
-		const perflist = arrObj["perflist"];
-		const perfoptn = arrObj["perfoptn"];
 		for(let i=0;i<perflist.length;i++)
 		{
 			perfshelper(perflist[i],perfoptn[i]);
 		}
 		datehelper("createdAt");
 		datehelper("seenAt");
-		lister(JO["playTime"]?(JO["playTime"]["total"]??""):NA,tablRw,'td');
-		lister(JO["playTime"]?(JO["playTime"]["tv"]??""):NA,tablRw,'td');
+		for(let i=0;i<playtime.length;i++)
+		{
+			lister(JO["playTime"]?(JO["playTime"][playtime[i]]??""):NA,tablRw,'td');
+		}
 		blisthelper("profile",arrObj["profile"]);
 		lister(JO["title"]??"",tablRw,'td');
 		lister(JO["flair"]?"yes":"no",tablRw,'td');

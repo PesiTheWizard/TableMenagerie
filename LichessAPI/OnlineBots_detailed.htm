@@ -267,18 +267,22 @@ so the set of childnodes at and below the cup is unchanged.
 }
 </script>
 <style>
-td,th
-{
-	white-space: nowrap;
-}
-span
-{
-	cursor: pointer;
-}
 select,input
 {
 	margin-top:1px;
-	margin-bottom: 1px;
+	margin-bottom:1px;
+}
+td,th
+{
+	white-space:nowrap;
+}
+th.nc
+{
+	visibility:hidden;
+}
+span
+{
+	cursor:pointer;
 }
 </style>
 </head>
@@ -295,7 +299,7 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr id="catRow"><th colspan=3></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th></tr>
+<tr id="catRow"><th colspan=3 class="nc"></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th></tr>
 <tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th>
 <th>games</th><th>rating</th>
 <th>games</th><th>rating</th>

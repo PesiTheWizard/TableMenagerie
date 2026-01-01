@@ -17,6 +17,25 @@ function initialGet(clbt)
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
 	const siteURLs = `https://${["lichess","lishogi"][SiteIndx]}.org/api/bot/online?nb=${tv}`;
+	/*
+	Things changed at the end of 2025
+	lishogi no longer seperates normal shogi into time brackets
+	lichess has [Bullet,Blitz,Rapid,Classical,Correspondence]
+	lishogi has [realTime,correspondence]
+
+	this means another array is needed, something like...
+	const siteVariants = [
+		[//lichess
+			["Bullet","Blitz","Rapid","Classical","Correspondence"],
+			["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"]
+		],
+		[//lishogi
+			["realTime","correspondence"],
+			["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
+		]
+	][SiteIndx];
+	...and then using 0 and 1 as indexes into the proper parts
+	*/
 	const siteVariants = [
 		["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
 		["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
@@ -58,11 +77,11 @@ function initialGet(clbt)
 	}
 	function sortbuttonPL()
 	{
-		const L = siteVariants.length+4;
+		const L = siteVariants.length+4;//covers the variant-cells and the timestamps
 		const colCount = L+20;
 		let gfc=0;
-		cellFactory("false");
-		cellFactory("false");
+		cellFactory("false");//id
+		cellFactory("false");//username
 		for(let i=0;i<11;i++)
 		{
 			cellFactory("true");
@@ -71,7 +90,7 @@ function initialGet(clbt)
 		{
 			cellFactory("false");
 		}
-		for(let i=0;i<3;i++)
+		for(let i=0;i<3;i++)//playtime and #profile
 		{
 			cellFactory("true");
 		}

@@ -54,7 +54,6 @@ function GetArenaTournaments(ClBt)
 				lister(CT["finishesAt"]?(new Date(CT["finishesAt"]).toLocaleTimeString()):"",tabRw,'td');
 				lister(CT["status"]??"",tabRw,'td');
 				lister(CT["perf"]?(CT["perf"]["name"]??""):NA,tabRw,'td');
-				lister(CT["perf"]?(CT["perf"]["key"]??""):NA,tabRw,'td');
 				lister(CT["perf"]?(CT["perf"]["icon"]??""):NA,tabRw,'td');
 				lister(CT["position"]?"yes":"no",tabRw,'td');
 				lister(CT["secondsToStart"]??"",tabRw,'td');
@@ -169,7 +168,7 @@ span
 <th colspan=3>startsAt</th>
 <th colspan=3>finishesAt</th>
 <th colspan=1 class="nc"></th>
-<th colspan=3>perf</th>
+<th colspan=2>perf</th>
 <th colspan=2 class="nc"></th>
 <th colspan=2>schedule</th>
 </tr><tr>
@@ -195,7 +194,6 @@ span
 <th>(Time)</th>
 <th>status</th>
 <th>name</th>
-<th>key</th>
 <th>icon</th>
 <th>pos.?</th>
 <th>secondsToStart</th>
@@ -227,11 +225,10 @@ span
 <th><span onClick=a(21,true,false)>&#9650;</span> <span onClick=a(21,false,false)>&#9660;</span></th>
 <th><span onClick=a(22,true,false)>&#9650;</span> <span onClick=a(22,false,false)>&#9660;</span></th>
 <th><span onClick=a(23,true,false)>&#9650;</span> <span onClick=a(23,false,false)>&#9660;</span></th>
-<th><span onClick=a(24,true,false)>&#9650;</span> <span onClick=a(24,false,false)>&#9660;</span></th>
-<th><span onClick=a(25,true,true)>&#9650;</span> <span onClick=a(25,false,true)>&#9660;</span></th>
+<th><span onClick=a(24,true,true)>&#9650;</span> <span onClick=a(24,false,true)>&#9660;</span></th>
+<th><span onClick=a(25,true,false)>&#9650;</span> <span onClick=a(25,false,false)>&#9660;</span></th>
 <th><span onClick=a(26,true,false)>&#9650;</span> <span onClick=a(26,false,false)>&#9660;</span></th>
 <th><span onClick=a(27,true,false)>&#9650;</span> <span onClick=a(27,false,false)>&#9660;</span></th>
-<th><span onClick=a(28,true,false)>&#9650;</span> <span onClick=a(28,false,false)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

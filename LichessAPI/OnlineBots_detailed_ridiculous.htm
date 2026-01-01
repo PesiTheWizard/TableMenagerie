@@ -28,8 +28,8 @@ function initialGet(clbt)
 			"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
 		},
 		{//Lishogi
-			"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
-			"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+			"perflist":["realTime","correspondence","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
+			"perfoptn":[false,     false,           true,      true,       true,        true,        true],
 			"playTime":["total","tv"],
 			"profile":["location","bio","firstName","lastName","country","links"]
 		}
@@ -48,7 +48,7 @@ function initialGet(clbt)
 	lister("flair?", NR, 'th');
 	lister("patron", NR, 'th');
 	lister("verified", NR, 'th');
-	sortbuttonCellFactory([109,85][SiteIndx]);//number of columns of each site
+	sortbuttonCellFactory([109,64][SiteIndx]);//number of columns of each site
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");

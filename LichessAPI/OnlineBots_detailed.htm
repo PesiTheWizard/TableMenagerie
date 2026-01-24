@@ -17,9 +17,28 @@ function initialGet(clbt)
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
 	const siteURLs = `https://${["lichess","lishogi"][SiteIndx]}.org/api/bot/online?nb=${tv}`;
+	/*
+	Things changed at the end of 2025
+	lishogi no longer seperates normal shogi into time brackets
+	lichess has [Bullet,Blitz,Rapid,Classical,Correspondence]
+	lishogi has [realTime,correspondence]
+
+	this means another array is needed, something like...
+	const siteVariants = [
+		[//lichess
+			["Bullet","Blitz","Rapid","Classical","Correspondence"],
+			["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"]
+		],
+		[//lishogi
+			["realTime","correspondence"],
+			["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
+		]
+	][SiteIndx];
+	...and then using 0 and 1 as indexes into the proper parts
+	*/
 	const siteVariants = [
 		["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
-		["ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
+		["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
 	][SiteIndx];
 	const CR = document.getElementById("catRow");
 	const NR = document.getElementById("nameRow");
@@ -58,12 +77,12 @@ function initialGet(clbt)
 	}
 	function sortbuttonPL()
 	{
-		const L = siteVariants.length+4;
+		const L = siteVariants.length+4;//covers the variant-cells and the timestamps
 		const colCount = L+20;
 		let gfc=0;
-		cellFactory("false");
-		cellFactory("false");
-		for(let i=0;i<11;i++)
+		cellFactory("false");//id
+		cellFactory("false");//username
+		for(let i=0;i<11;i++)//perfcount + 5 perfs with 2 columns each
 		{
 			cellFactory("true");
 		}
@@ -71,7 +90,7 @@ function initialGet(clbt)
 		{
 			cellFactory("false");
 		}
-		for(let i=0;i<3;i++)
+		for(let i=0;i<3;i++)//playtime and #profile
 		{
 			cellFactory("true");
 		}
@@ -267,18 +286,22 @@ so the set of childnodes at and below the cup is unchanged.
 }
 </script>
 <style>
-td,th
-{
-	white-space: nowrap;
-}
-span
-{
-	cursor: pointer;
-}
 select,input
 {
 	margin-top:1px;
-	margin-bottom: 1px;
+	margin-bottom:1px;
+}
+td,th
+{
+	white-space:nowrap;
+}
+th.nc
+{
+	visibility:hidden;
+}
+span
+{
+	cursor:pointer;
 }
 </style>
 </head>
@@ -295,7 +318,7 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr id="catRow"><th colspan=3></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th></tr>
+<tr id="catRow"><th colspan=3 class="nc"></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th></tr>
 <tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th>
 <th>games</th><th>rating</th>
 <th>games</th><th>rating</th>

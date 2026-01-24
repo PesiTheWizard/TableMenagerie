@@ -75,7 +75,7 @@ class CustomNanoChess
 		let t;
 		let o;
 		let L;
-		let E;
+		let E;//square in front of piece, used for pawn's forward move
 		let d;
 		let O = e;
 		let N = -this.M*this.M;
@@ -96,7 +96,7 @@ class CustomNanoChess
 		d=w||s&&s>=h&&this.X(0,0,0,21,0,0)>this.M;
 		do
 		{
-			if(o=this.I[p=O])
+			if(o=this.I[p=O])//o and p initialized
 			{
 				q=(o&this.z)^this.y;//parenths added for readability
 				if(q<7)
@@ -114,7 +114,7 @@ class CustomNanoChess
 								if(m=!(r-2&7))
 									return this.y^=8,this.I[this.G--]=O,K;
 								J=n=o&this.z;
-								E=this.I[p-a]&this.z;
+								E=this.I[p-a]&this.z;//E initialized, not used outside this if-block, could be a const here
 								t=q|E-7?n:(n+=2,6^this.y);
 								while(n<=t)
 								{
@@ -195,7 +195,7 @@ class CustomNanoChess
 				//q.innerHTML=["","&#9823;","&#9818;","&#9822;","&#9821;","&#9820;","&#9819;",,,"&#9817;","&#9812;","&#9816;","&#9815;","&#9814;","&#9813;"][this.I[p]&this.z];
 				//q.innerHTML="<img width=40 src="+(this.I[p]&this.z)+".gif>";
 				//q.style.backgroundImage = "url('"+(this.I[p]&this.z)+".gif')";
-				q.style.backgroundImage = b64svgs[this.I[p]&this.z];
+				q.style.backgroundImage = usedGraphics[this.I[p]&this.z];
 				q.style.borderColor=p==this.B?"#ff0":"#000";//no need to specify bordercolor in stylesheet since this is called right away
 				//original colors are #ff0 and #aae
 			}
@@ -270,8 +270,29 @@ const b64svgs = [
 	"url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPg0KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjQ1IiBoZWlnaHQ9IjQ1Ij4NCiAgPGcgc3R5bGU9Im9wYWNpdHk6MTsgZmlsbDojZmZmZmZmOyBmaWxsLW9wYWNpdHk6MTsgZmlsbC1ydWxlOmV2ZW5vZGQ7IHN0cm9rZTojMDAwMDAwOyBzdHJva2Utd2lkdGg6MS41OyBzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDsgc3Ryb2tlLWRhc2hhcnJheTpub25lOyBzdHJva2Utb3BhY2l0eToxOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCwwLjMpIj4NCiAgICA8cGF0aCBkPSJNIDksMzkgTCAzNiwzOSBMIDM2LDM2IEwgOSwzNiBMIDksMzkgeiAiIHN0eWxlPSJzdHJva2UtbGluZWNhcDpidXR0OyIvPg0KICAgIDxwYXRoIGQ9Ik0gMTIsMzYgTCAxMiwzMiBMIDMzLDMyIEwgMzMsMzYgTCAxMiwzNiB6ICIgc3R5bGU9InN0cm9rZS1saW5lY2FwOmJ1dHQ7Ii8+DQogICAgPHBhdGggZD0iTSAxMSwxNCBMIDExLDkgTCAxNSw5IEwgMTUsMTEgTCAyMCwxMSBMIDIwLDkgTCAyNSw5IEwgMjUsMTEgTCAzMCwxMSBMIDMwLDkgTCAzNCw5IEwgMzQsMTQiIHN0eWxlPSJzdHJva2UtbGluZWNhcDpidXR0OyIvPg0KICAgIDxwYXRoIGQ9Ik0gMzQsMTQgTCAzMSwxNyBMIDE0LDE3IEwgMTEsMTQiLz4NCiAgICA8cGF0aCBkPSJNIDMxLDE3IEwgMzEsMjkuNSBMIDE0LDI5LjUgTCAxNCwxNyIgc3R5bGU9InN0cm9rZS1saW5lY2FwOmJ1dHQ7IHN0cm9rZS1saW5lam9pbjptaXRlcjsiLz4NCiAgICA8cGF0aCBkPSJNIDMxLDI5LjUgTCAzMi41LDMyIEwgMTIuNSwzMiBMIDE0LDI5LjUiLz4NCiAgICA8cGF0aCBkPSJNIDExLDE0IEwgMzQsMTQiIHN0eWxlPSJmaWxsOm5vbmU7IHN0cm9rZTojMDAwMDAwOyBzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+DQogIDwvZz4NCjwvc3ZnPg==')",
 	"url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPg0KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjQ1IiBoZWlnaHQ9IjQ1Ij4NCiAgPGcgc3R5bGU9ImZpbGw6I2ZmZmZmZjtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lam9pbjpyb3VuZCI+DQogICAgPHBhdGggZD0iTSA5LDI2IEMgMTcuNSwyNC41IDMwLDI0LjUgMzYsMjYgTCAzOC41LDEzLjUgTCAzMSwyNSBMIDMwLjcsMTAuOSBMIDI1LjUsMjQuNSBMIDIyLjUsMTAgTCAxOS41LDI0LjUgTCAxNC4zLDEwLjkgTCAxNCwyNSBMIDYuNSwxMy41IEwgOSwyNiB6Ii8+DQogICAgPHBhdGggZD0iTSA5LDI2IEMgOSwyOCAxMC41LDI4IDExLjUsMzAgQyAxMi41LDMxLjUgMTIuNSwzMSAxMiwzMy41IEMgMTAuNSwzNC41IDExLDM2IDExLDM2IEMgOS41LDM3LjUgMTEsMzguNSAxMSwzOC41IEMgMTcuNSwzOS41IDI3LjUsMzkuNSAzNCwzOC41IEMgMzQsMzguNSAzNS41LDM3LjUgMzQsMzYgQyAzNCwzNiAzNC41LDM0LjUgMzMsMzMuNSBDIDMyLjUsMzEgMzIuNSwzMS41IDMzLjUsMzAgQyAzNC41LDI4IDM2LDI4IDM2LDI2IEMgMjcuNSwyNC41IDE3LjUsMjQuNSA5LDI2IHoiLz4NCiAgICA8cGF0aCBkPSJNIDExLjUsMzAgQyAxNSwyOSAzMCwyOSAzMy41LDMwIiBzdHlsZT0iZmlsbDpub25lIi8+DQogICAgPHBhdGggZD0iTSAxMiwzMy41IEMgMTgsMzIuNSAyNywzMi41IDMzLDMzLjUiIHN0eWxlPSJmaWxsOm5vbmUiLz4NCiAgICA8Y2lyY2xlIGN4PSI2IiBjeT0iMTIiIHI9IjIiLz4NCiAgICA8Y2lyY2xlIGN4PSIxNCIgY3k9IjkiIHI9IjIiLz4NCiAgICA8Y2lyY2xlIGN4PSIyMi41IiBjeT0iOCIgcj0iMiIvPg0KICAgIDxjaXJjbGUgY3g9IjMxIiBjeT0iOSIgcj0iMiIvPg0KICAgIDxjaXJjbGUgY3g9IjM5IiBjeT0iMTIiIHI9IjIiLz4NCiAgPC9nPg0KPC9zdmc+')",
 	"none"//15
-];
-Object.freeze(b64svgs);
+];Object.freeze(b64svgs);
+
+const blkDisc = "url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8yIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB3aWR0aD0iNDVweCIgaGVpZ2h0PSI0NXB4IiB2aWV3Qm94PSIwIDAgNDUgNDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDQ1IDQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGNpcmNsZSBzdHJva2U9IiMwMDAwMDAiIGZpbGw9IiMwMDAwMDAiIGN4PSIyMi41IiBjeT0iMjIuNSIgcj0iMTgiLz4KPC9zdmc+')";
+const whtDisc = "url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8yIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB3aWR0aD0iNDVweCIgaGVpZ2h0PSI0NXB4IiB2aWV3Qm94PSIwIDAgNDUgNDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDQ1IDQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGNpcmNsZSBzdHJva2U9IiNmZmZmZmYiIGZpbGw9IiNmZmZmZmYiIGN4PSIyMi41IiBjeT0iMjIuNSIgcj0iMTgiLz4KPC9zdmc+')";
+const reversiDiscs = [
+	"none",//0
+	blkDisc,
+	blkDisc,
+	blkDisc,
+	blkDisc,
+	blkDisc,
+	blkDisc,
+	"none",//7
+	"none",//8
+	whtDisc,
+	whtDisc,
+	whtDisc,
+	whtDisc,
+	whtDisc,
+	whtDisc,
+	"none"//15
+];Object.freeze(reversiDiscs);
+let usedGraphics = b64svgs;
 //-->
 </script>
 <style>
@@ -322,7 +343,7 @@ AI plays with <select id="selAIside"><option>white</option><option selected>blac
 </tr>
 </tfoot>
 </table>
-<input type="button" value="flip board" onclick=flipBoard()>
+<input type="button" value="flip board" onclick=flipBoard()> PieceGraphics:<select oninput=graphicsChange(this)><option selected>Normal</option><option>Disguised</option></select>
 <script>
 let myTNC;
 function collectPageNodes()
@@ -392,6 +413,12 @@ function flipBoard()
 		if(i===0){continue;}
 		G[0].before(G[i]);
 	}
+}
+function graphicsChange(DSelGr)
+{
+	usedGraphics = [b64svgs,reversiDiscs][DSelGr.selectedIndex%2];
+	if(myTNC)
+	{myTNC.W();}
 }
 resetDefaults();
 </script>

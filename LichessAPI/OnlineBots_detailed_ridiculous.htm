@@ -28,8 +28,8 @@ function initialGet(clbt)
 			"profile":["location","bio","rcfRating","flag","dsbRating","fideRating","ecfRating","uscfRating","realName","cfcRating","links"]
 		},
 		{//Lishogi
-			"perflist":["bullet","blitz","rapid","classical","correspondence","ultraBullet","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
-			"perfoptn":[false,   false,  false,  false,      false,           true,         true,      true,       true,        true,        true],
+			"perflist":["realTime","correspondence","chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"],
+			"perfoptn":[false,     false,           true,      true,       true,        true,        true],
 			"playTime":["total","tv"],
 			"profile":["location","bio","firstName","lastName","country","links"]
 		}
@@ -48,7 +48,7 @@ function initialGet(clbt)
 	lister("flair?", NR, 'th');
 	lister("patron", NR, 'th');
 	lister("verified", NR, 'th');
-	sortbuttonCellFactory([109,85][SiteIndx]);//number of columns of each site
+	sortbuttonCellFactory([109,64][SiteIndx]);//number of columns of each site
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -279,18 +279,22 @@ so the set of childnodes at and below the cup is unchanged.
 }
 </script>
 <style>
+select,input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
 td,th
 {
-	white-space: nowrap;
+	white-space:nowrap;
+}
+th.nc
+{
+	visibility:hidden;
 }
 span
 {
-	cursor: pointer;
-}
-select,input
-{
-	margin-top: 1px;
-	margin-bottom: 1px;
+	cursor:pointer;
 }
 </style>
 </head>
@@ -307,7 +311,7 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr id="catRow"><th colspan=3></th></tr>
+<tr id="catRow"><th colspan=3 class="nc"></th></tr>
 <tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th></tr>
 <tr id="sortButtonRow"></tr>
 </thead>

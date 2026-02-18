@@ -17,16 +17,15 @@ function initialGet(clbt)
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
 	const siteURLs = `https://${["lichess","lishogi"][SiteIndx]}.org/api/bot/online?nb=${tv}`;
-	/*
-	Things changed at the end of 2025
-	lishogi no longer seperates normal shogi into time brackets
-	lichess has [Bullet,Blitz,Rapid,Classical,Correspondence]
-	lishogi has [realTime,correspondence]
 
-	this means another array is needed, something like...
+	//Things changed at the end of 2025
+	//lishogi no longer seperates normal shogi into time brackets
+	//lichess has [bullet,blitz,rapid,classical,correspondence]
+	//lishogi has [realTime,correspondence]
+	//this means another array is needed
 	const siteVariants = [
 		[//lichess
-			["Bullet","Blitz","Rapid","Classical","Correspondence"],
+			["bullet","blitz","rapid","classical","correspondence"],
 			["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"]
 		],
 		[//lishogi
@@ -34,16 +33,15 @@ function initialGet(clbt)
 			["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
 		]
 	][SiteIndx];
-	...and then using 0 and 1 as indexes into the proper parts
-	*/
-	const siteVariants = [
-		["chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
-		["chushogi","minishogi","kyotoshogi","annanshogi","checkshogi"]
-	][SiteIndx];
+	const ClNms = ["games","rating"];//idea is to pass this into makeTableEntry
 	const CR = document.getElementById("catRow");
 	const NR = document.getElementById("nameRow");
 	const SBR = document.getElementById("sortButtonRow");
-	headerMaker("Variants?",siteVariants);
+	for(let i=0;i<siteVariants[0].length;i++)
+	{
+		headerMaker(siteVariants[0][i],ClNms);
+	}
+	headerMaker("Variants?",siteVariants[1]);
 	const timestampCols = ["(Timestamp)","(Date)"];
 	headerMaker("createdAt",timestampCols);
 	headerMaker("seenAt",timestampCols);
@@ -77,16 +75,17 @@ function initialGet(clbt)
 	}
 	function sortbuttonPL()
 	{
-		const L = siteVariants.length+4;//covers the variant-cells and the timestamps
-		const colCount = L+20;
+		const K = ClNms.length * siteVariants[0].length + 1;//11 for lichess, 5 for lishogi; this should sort by numbers
+		const L = siteVariants[1].length+4;//covers the variant-cells and the timestamps; this should sort by text
+		const colCount = K+L+9;
 		let gfc=0;
 		cellFactory("false");//id
 		cellFactory("false");//username
-		for(let i=0;i<11;i++)//perfcount + 5 perfs with 2 columns each
+		for(let i=0;i<K;i++)//covers #perfs and default modes
 		{
 			cellFactory("true");
 		}
-		for(let i=0;i<L;i++)
+		for(let i=0;i<L;i++)//covers variants and timestamps
 		{
 			cellFactory("false");
 		}
@@ -202,19 +201,14 @@ function textToJSONhandler(stuff,t,als,VL)
 		lister(JO["id"]??"",tablRw,'td');
 		lister(JO["username"]??"",tablRw,'td');
 		lister(JO["perfs"]?(Object.keys(JO["perfs"]).length):NA,tablRw,'td');
-		lister(JO["perfs"]?.["bullet"]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["bullet"]?.["rating"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["blitz"]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["blitz"]?.["rating"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["rapid"]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["rapid"]?.["rating"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["classical"]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["classical"]?.["rating"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["correspondence"]?.["games"]??"",tablRw,'td');
-		lister(JO["perfs"]?.["correspondence"]?.["rating"]??"",tablRw,'td');
-		for(let i=0;i<VL.length;i++)
+		for(let i=0;i<VL[0].length;i++)
 		{
-			lister(JO["perfs"]?(JO["perfs"][VL[i]]?"yes":"no"):NA,tablRw,'td');
+			lister(JO["perfs"]?.[VL[0][i]]?.["games"]??"",tablRw,'td');
+			lister(JO["perfs"]?.[VL[0][i]]?.["rating"]??"",tablRw,'td');
+		}
+		for(let i=0;i<VL[1].length;i++)
+		{
+			lister(JO["perfs"]?(JO["perfs"][VL[1][i]]?"yes":"no"):NA,tablRw,'td');
 		}
 		lister(JO["createdAt"]??"",tablRw,'td');
 		lister(JO["createdAt"]?(new Date(JO["createdAt"]).toLocaleString()):"",tablRw,'td');
@@ -318,13 +312,8 @@ Site = <select id="selSite">
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr id="catRow"><th colspan=3 class="nc"></th><th colspan=2>Bullet</th><th colspan=2>Blitz</th><th colspan=2>Rapid</th><th colspan=2>Classical</th><th colspan=2>Correspondence</th></tr>
-<tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th>
-<th>games</th><th>rating</th>
-<th>games</th><th>rating</th>
-<th>games</th><th>rating</th>
-<th>games</th><th>rating</th>
-<th>games</th><th>rating</th></tr>
+<tr id="catRow"><th colspan=3 class="nc"></th></tr>
+<tr id="nameRow"><th>id</th><th>username</th><th>#perfs</th></tr>
 <tr id="sortButtonRow"></tr></thead>
 <tbody id="st"></tbody>
 </table>

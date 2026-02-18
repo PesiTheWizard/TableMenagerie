@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Kneading</title>
+<script>
+function SplitHex()
+{
+	const Hinp = document.getElementById("txtHexSplit")?.value.trim();
+	const DHexSvar = document.getElementById("HexSvar");
+	if(typeof(Hinp)!="string" || Hinp.length==0 || Hinp.length%2)
+	{
+		console.log("String must have an even length");
+		return;
+	}
+	let c = 2;
+	const spa = [];
+	while(c<=Hinp.length)
+	{
+		spa.push(Hinp.substring(c-2,c));
+		c+=2;
+	}
+	const S = [["0x",",0x"],["%","%"]][document.getElementById("SelSplitSep")?.selectedIndex??0];
+	const Hsvar = S[0].concat(spa.join(S[1]));
+	DHexSvar.innerText = Hsvar;
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+div
+{
+	padding:1px;
+	border:1px solid black;
+}
+</style>
+</head>
+<body>
+<h2>String splitting</h2>
+<input type=text id="txtHexSplit"><br>
+<select id="SelSplitSep"><option selected>, 0x</option><option>%</option></select>
+<input type=button value="Split!" onclick=SplitHex()><br>
+<div id="HexSvar"></div>
+<hr>
+</body>
+</html>

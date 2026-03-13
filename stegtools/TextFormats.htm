@@ -24,6 +24,7 @@ function rv()
 	"use strict";
 	const vrdr = document.getElementById("tinp");
 	const DlogA = document.getElementById("logA");
+	const cvs = document.getElementById("selcvs")?.value??",";
 	if(vrdr == null){return;}
 	const vinp = vrdr.value.trim();
 	if(vinp.length===0)
@@ -31,7 +32,7 @@ function rv()
 		if(DlogA){DlogA.innerText = "Input field empty";}
 		return;
 	}
-	const varr = vinp.split(",");
+	const varr = vinp.split(cvs);
 	const carr = new Uint8Array(varr.length);
 	for(let i=0;i<varr.length;i++)
 	{
@@ -63,20 +64,21 @@ pre
 	padding:1px;
 	border:1px solid black;
 }
-input
+input,select
 {
-	margin-top: 1px;
-	margin-bottom: 1px;
+	margin-top:1px;
+	margin-bottom:1px;
 }
 </style>
 </head>
 <body>
 <table><tbody><tr>
-<td>
+<td valign=top>
 <input type="file" id="finp"><br>
 <input type="button" value="read file" onclick=rf()>
-</td><td>
+</td><td valign=top>
 <input type="text" id="tinp"><br>
+Seperator:<select id="selcvs"><option value="," selected>Comma</option><option value=" ">Space</option></select><br>
 <input type="button" value="read values" onclick=rv()>
 </td>
 </tr></tbody></table>
@@ -114,13 +116,13 @@ Decoders:<br>
 <input type=button value="x-mac-cyrillic" onclick=d(this)>
 <input type=button value="gb_2312-80" onclick=d(this)>
 <input type=button value="gb18030" onclick=d(this)>
-<input type=button value="hz-gb-2312" onclick=d(this)>
+<input type=button value="hz-gb-2312" disabled onclick=d(this)>
 <input type=button value="big5-hkscs" onclick=d(this)>
 <input type=button value="euc-jp" onclick=d(this)>
 <input type=button value="iso-2022-jp" onclick=d(this)>
 <input type=button value="shift-jis" onclick=d(this)>
 <input type=button value="iso-ir-149" onclick=d(this)>
-<input type=button value="iso-2022-kr" onclick=d(this)>
+<input type=button value="iso-2022-kr" disabled onclick=d(this)>
 <input type=button value="utf-16be" onclick=d(this)>
 <input type=button value="utf-16le" onclick=d(this)>
 <pre id="svar"></pre>

@@ -16,10 +16,7 @@ function initialGet(clbt)
 		return;
 	}
 	const SiteIndx = document.getElementById("selSite")?.selectedIndex??0;
-	const siteURL = [
-		`https://lichess.org/api/bot/online?nb=${tv}`,
-		`https://lishogi.org/api/bot/online?nb=${tv}`
-	][SiteIndx];
+	const siteURL = `https://${["lichess","lishogi"][SiteIndx]}.org/api/bot/online?nb=${tv}`;
 	const siteProps = [
 		{//Lichess
 			"perflist":["bullet","blitz","rapid","classical","correspondence","chess960","crazyhouse","antichess","atomic","horde","kingOfTheHill","racingKings","threeCheck","puzzle"],
@@ -48,7 +45,7 @@ function initialGet(clbt)
 	lister("flair?", NR, 'th');
 	lister("patron", NR, 'th');
 	lister("verified", NR, 'th');
-	sortbuttonCellFactory([109,64][SiteIndx]);//number of columns of each site
+	sortbuttonCellFactory();//[109,64] = number of columns of each site, this is now derived
 	const OGresp = document.getElementById("stts");
 	const HL = document.getElementById("hdrs");
 	const svr = document.getElementById("svar");
@@ -80,21 +77,38 @@ function initialGet(clbt)
 			lister(D[i],NR,'th');
 		}
 	}
-	function sortbuttonCellFactory(colCount)
+	function sortbuttonCellFactory()
 	{
-		for(let i=0;i<colCount;i++)
+		let FC = 0;
+		sector(2,false);
+		sector(1,true);
+		const ps = siteProps["perfoptn"];
+		for(let q=0,w=VC1.length-1;q<ps.length;q++)
 		{
-			const hCell = document.createElement('th');
-			const S1 = document.createElement('span');
-			const S2 = document.createElement('span');
-			S1.innerHTML = "&#9650;";
-			S2.innerHTML = "&#9660;";
-			S1.setAttribute("onclick",`a(${i},true)`);
-			S2.setAttribute("onclick",`a(${i},false)`);
-			hCell.appendChild(S1);
-			hCell.appendChild(document.createTextNode(" "));
-			hCell.appendChild(S2);
-			SBR.appendChild(hCell);
+			if(ps[q]){sector(1,false);}
+			sector(w,true);
+			sector(1,false);
+		}
+		sector(8,false);
+		sector(siteProps["playTime"].length+1,true);
+		sector(siteProps["profile"].length+4,false);
+		function sector(j,b)
+		{
+			for(let i=0;i<j;i++)
+			{
+				const hCell = document.createElement('th');
+				const S1 = document.createElement('span');
+				const S2 = document.createElement('span');
+				S1.innerHTML = "&#9650;";
+				S2.innerHTML = "&#9660;";
+				S1.setAttribute("onclick",`a(${FC},true,${b})`);
+				S2.setAttribute("onclick",`a(${FC},false,${b})`);
+				hCell.appendChild(S1);
+				hCell.appendChild(document.createTextNode(" "));
+				hCell.appendChild(S2);
+				SBR.appendChild(hCell);
+				FC++;
+			}
 		}
 	}
 }
@@ -235,8 +249,8 @@ function textToJSONhandler(stuff,t,als,arrObj)
 		}
 	}
 }
-function a(ctsb, lth)
-{//ctsb - column to sort by, lth - low to high
+function a(ctsb, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
 	const gt = document.getElementById("st").childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
@@ -253,6 +267,12 @@ so the set of childnodes at and below the cup is unchanged.
 		sn = gt[cup-1];
 		s1 = fn.childNodes[ctsb].textContent;
 		s2 = sn.childNodes[ctsb].textContent;
+		if(asnum)
+		{//empty strings result in NaN
+			s1 = parseInt(s1);
+			s2 = parseInt(s2);
+			if(isNaN(s1)||isNaN(s2)){continue;}
+		}
 		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
 		{//we have reason to enter the inner loop
 			//fn is the one who will eventually be moved
@@ -262,6 +282,11 @@ so the set of childnodes at and below the cup is unchanged.
 			while(scout >= 0)
 			{
 				sign = gt[scout].childNodes[ctsb].textContent;
+				if(asnum)
+				{
+					sign = parseInt(sign);
+					if(isNaN(sign)){break;}
+				}
 				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
 				{
 					break;

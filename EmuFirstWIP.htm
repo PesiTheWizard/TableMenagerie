@@ -25,7 +25,8 @@ const NESCPU = [
 		tempU8[0] = ZeroPage[tempU8[3]];
 		tempU8[3]++;
 		tempU8[1] = ZeroPage[tempU8[3]];
-		Register[A] |= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] |= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 6;
@@ -86,7 +87,8 @@ const NESCPU = [
 		PC16[0]++;//For the byte-read above
 		reader(PC8[0],PC8[1],tempU8,1);
 		PC16[0]++;//For the byte-read above
-		Register[A] |= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] |= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 4;
@@ -165,7 +167,8 @@ const NESCPU = [
 		reader(PC8[0],PC8[1],tempU8,1);
 		PC16[0]++;//For the byte-read above
 		tempU16[0]+=Register[Y];
-		Register[A] |= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] |= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
@@ -180,7 +183,8 @@ const NESCPU = [
 		reader(PC8[0],PC8[1],tempU8,1);
 		PC16[0]++;//For the byte-read above
 		tempU16[0]+=Register[X];
-		Register[A] |= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] |= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
@@ -208,7 +212,8 @@ const NESCPU = [
 		tempU8[0] = ZeroPage[tempU8[3]];
 		tempU8[3]++;
 		tempU8[1] = ZeroPage[tempU8[3]];
-		Register[A] &= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] &= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 6;
@@ -308,7 +313,8 @@ const NESCPU = [
 		tempU8[3]++;
 		tempU8[1] = ZeroPage[tempU8[3]];
 		tempU16[0]+=Register[Y];
-		Register[A] &= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] &= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
@@ -369,7 +375,8 @@ const NESCPU = [
 		tempU8[0] = ZeroPage[tempU8[3]];
 		tempU8[3]++;
 		tempU8[1] = ZeroPage[tempU8[3]];
-		Register[A] ^= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] ^= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 6;
@@ -405,8 +412,9 @@ const NESCPU = [
 		return 3;
 	},
 	() => {//$49 EOR Cycles=2 Bytes=2; Immediate
-		Register[A] ^= MemoryIn2Parts[PC8[1]][PC8[0]];
+		reader(PC8[0],PC8[1],tempU8,0);
 		PC16[0]++;//For the byte-read above
+		Register[A] ^= tempU8[0];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 2;
@@ -431,7 +439,8 @@ const NESCPU = [
 		PC16[0]++;//For the byte-read above
 		reader(PC8[0],PC8[1],tempU8,1);
 		PC16[0]++;//For the byte-read above
-		Register[A] ^= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] ^= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 		return 4;
@@ -459,7 +468,8 @@ const NESCPU = [
 		tempU8[1] = ZeroPage[tempU8[3]];
 		//done using tempU8[3] here, may reuse
 		tempU16[0]+=Register[Y];
-		Register[A] ^= MemoryIn2Parts[tempU8[1]][tempU8[0]];
+		reader(tempU8[0],tempU8[1],tempU8,2);
+		Register[A] ^= tempU8[2];
 		Flag_Zero = !Register[A];
 		Flag_Negative = (SignedRegister[A] < 0);
 	},
@@ -1264,10 +1274,9 @@ const Palette_2C02G = [//w can be set to 1.0 in the fragment shader
 ];Object.freeze(Palette_2C02G);
 /*
 Opcodes to do: (in parenths = done, but call reader or writer or both) <-Ignore this, everything calls them now
-($0E),  $1E,  $25,{$26},($29),  $2C, $2D,($2E),
+  $1E,  $25,{$26},  $2C,  $2D,($2E),
   $36,  $39,  $3D,  $3E,  $4E,  $56,  $58,  $59,  $5D, $5E,
   $61,  $65,{$66},{$69},  $6D,  $6E,  $71,{$75},  $76, $79, $7D, $7E,
-  $81,($8C),($8D),($8E),($91),($99),($9D),
 {$C0},  $C1,  $C4,  $C5,  $C9,  $CC,  $CD,  $CE,  $D1, $D5, $D6, $D9, $DD, $DE,
 {$E0},  $E1,  $E4,  $E5,  $EC,  $ED,  $EE,  $F1,  $F5, $F6, $F9, $FD, $FE
 */
@@ -1485,7 +1494,7 @@ function reader(mem0,mem1,a,i)
 		/* check other roms for reads to 0x2002
 		switch(mem0)
 		{
-			case PPUSTATUS:
+			case PPUSTATUS://2
 				a[i] = 0x80;
 				return;
 			default:
@@ -1888,3 +1897,4 @@ function VisPatTab()//Stands for Visualize Pattern Table, relies on the CindA
 </script>
 </body>
 </html>
+<!-- 8XmxKPJDGU0 -->

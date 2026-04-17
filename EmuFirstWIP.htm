@@ -1383,7 +1383,6 @@ function nextCommand()
 	//console.log(`${ZeroPage[0]},${ZeroPage[1]},${ZeroPage[2]},${ZeroPage[3]},${ZeroPage[4]},${ZeroPage[5]},${ZeroPage[6]},${ZeroPage[7]}`);
 	NESCPU[OpCode]();//run the fetched opcode
 }
-//let PF_
 const PPUmemIn2parts = new Array(64).fill(null);//64 = 0x40. From 0 to 0x3F
 const rawPPU_PatternTables = new ArrayBuffer(0x2000);//half the total...
 const PPU_FullPatternTables = new Uint8Array(rawPPU_PatternTables);//for looping over the entire pattern table memory
@@ -1480,6 +1479,11 @@ Sound stuff:
 1 noise channel
 1 sample playing channel
 */
+const PPU_PCbuffer = new ArrayBuffer(4);//Because apparently the PPU is its own entire *thing*
+const PPU_PC8 = new Uint8Array(PPU_PCbuffer);
+const PPU_PC16 = new Uint16Array(PPU_PCbuffer);
+let PPU_WriteLatch = false;
+let PPU_IncrAmount = 1;
 function reader(mem0,mem1,a,i)
 {
 	//returns 0-255, can be read into a typedarray if negativity matters. Should handle side-effects that come from reading.
@@ -1497,6 +1501,8 @@ function reader(mem0,mem1,a,i)
 			case PPUSTATUS://2
 				a[i] = 0x80;
 				return;
+			case PPUDATA://7
+				//this is up next
 			default:
 				break;
 		}
@@ -1509,10 +1515,12 @@ function writer(mem0,mem1,val)
 {
 	//returns nothing, should handle PPU and APU shenanigans.
 	//128 to 255 may be ignored unless game's cartridge has special hardware, future issue.
-	if(mem1>=64){return;}
+	if(mem1>64){return;}
+	if(mem1==64){return;}//handle audio here
 	if(mem1>=32)
 	{
 		mem0 = mem0&7;
+		console.log("Writing call to PPU register "+mem0);
 		switch(mem0)
 		{
 			case PPUCTRL://0
@@ -1522,8 +1530,15 @@ function writer(mem0,mem1,val)
 			case OAMDATA://4
 			case PPUSCROLL://5
 			case PPUADDR://6
+				//if the latch is false, do the high byte.
+				//if the latch is true, do the low byte.
+				//0 should be the low byte
+				PPU_PC8[1-PPU_WriteLatch] = val;
+				if(PPU_WriteLatch){PPU_PC16[1] = PPU_PC16[0]&0x3FFF;}
+				PPU_WriteLatch = !PPU_WriteLatch;
+				break;
 			case PPUDATA://7
-				console.log("Writing call to PPU register "+mem0);
+				PPUwriter(val);
 				break;
 			default:
 				console.log("I don't know how, but you broke math");
@@ -1531,6 +1546,35 @@ function writer(mem0,mem1,val)
 		}
 	}
 	MemoryIn2Parts[mem1][mem0] = val;
+}
+function PPUwriter(V)
+{
+	if(PPU_PC8[3]==63)
+	{
+		//Special case for PPU_SpritePalette.
+		//Bitwise-and low-byte of pointer with 0x1F beforehand
+		//Possibly do something else,too
+		if((PPU_PC8[2]&3)==0)
+		{
+			//set the GL background?
+			//gl.clearColor(0.95,0.95,0.95,1.0);
+		}
+		//knowing we're in Palette-town, we can do it directly
+		PPU_SpritePalette[PPU_PC8[2]&0x1F] = V;
+		PPU_PC16[1]+=PPU_IncrAmount;
+		return;
+	}
+	if(PPU_PC8[3] < 32 && fH[5] != 0)
+	{
+		//they want to write to the pattern table on a cart where that's read-only
+		return;
+	}
+	PPUmemIn2parts[PPU_PC8[3]][PPU_PC8[2]] = V;
+	if(PPU_PC8[3]<32)//if they actually wrote to the pattern table...
+	{//...update the pattern table viewer
+		UCIoIPT(PPU_PC16[1]);
+	}
+	PPU_PC16[1]+=PPU_IncrAmount;
 }
 
 const NROMNCHARsize = 32784;
@@ -1572,6 +1616,7 @@ function rdHeader()
 		console.log(fH.toString());
 		console.log(`PRG-ROM size: ${fH[4]*16}kb`);
 		console.log(`CHR-ROM size: ${fH[4]*8}kb`);
+		console.log("Pattern table writable?",fH[5]==0?"Yes":"No");
 		console.log( ((fH[6]&1)==1)?"Vertical mirroring (horizontal scrolling)":"Horizontal mirroring (vertical scrolling)" );
 		console.log("persistent memory?",((fH[6]&2)==0)?"No":"Yes");
 	}

@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>Generic Data - Eve API</title>
+<script>
+function GetGenericData(ClBt)
+{
+	ClBt.disabled = true;
+	const DlogA = document.getElementById("LogA");
+	const site = document.getElementById("site");
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	if( (DlogA===null)||(site===null)||(OGresp===null)||(HL===null)||(svr===null) )
+	{
+		console.log("getElementById fail");
+		return;
+	}
+	const bApp = document.getElementById("chkA")?.checked??false;
+	const Dtxapp = document.getElementById("txtA");
+	const sfol = bApp?`/${parseInt(Dtxapp.value)}`:"";
+	const endPoint = `https://esi.evetech.net/${site.value}${sfol}`;
+	const TS1 = Date.now();
+	DlogA.innerText = "Fetching ".concat(endPoint);
+	OGresp.innerText = "Fetching raw data...";
+	svr.innerText = "Waiting for response...";
+	fetch(endPoint).then((response) => {
+		OGresp.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.text();
+	}).then((response) => {
+		const TS = Date.now();
+		svr.innerText = response;
+		return TS;
+	}).then((TS2) => {
+		DlogA.innerText = "Fetched ".concat(endPoint," in ",(TS2-TS1)/1000," seconds");
+	}).catch((error) => {
+		DlogA.appendChild(document.createElement('br'));
+		DlogA.appendChild(document.createTextNode(`\n${error.toString()}`));
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+<select id="site">
+<optgroup label="alliances">
+<option value="alliances">[root]*</option>
+</optgroup><optgroup label="characters">
+<option value="characters">[root]+</option>
+</optgroup><optgroup label="contracts">
+<option value="contracts/public">public+</option>
+<option value="contracts/public/bids">public/bids+</option>
+<option value="contracts/public/items">public/items+</option>
+</optgroup><optgroup label="corporations">
+<option value="corporations">[root]+</option>
+<option value="corporations/npccorps">npccorps</option>
+</optgroup><optgroup label="dogma">
+<option value="dogma/attributes">attributes*</option>
+<option value="dogma/effects">effects*</option>
+</optgroup><optgroup label="freelance jobs">
+<option value="freelance-jobs" disabled>[root]*</option>
+</optgroup><optgroup label="fw">
+<option value="fw/stats">stats</option>
+<option value="fw/systems">systems</option>
+<option value="fw/wars">wars</option>
+</optgroup><optgroup label="incursions">
+<option value="incursions">[root]</option>
+</optgroup><optgroup label="industry">
+<option value="industry/facilities">facilities</option>
+<option value="industry/systems">systems</option>
+</optgroup><optgroup label="markets">
+<option value="markets/groups">groups*</option>
+<option value="markets/prices">prices</option>
+</optgroup><optgroup label="meta">
+<option value="meta/changelog">changelog</option>
+<option value="meta/compatibility-dates">compatibility dates</option>
+</optgroup><optgroup label="status">
+<option value="status">[root]</option>
+</optgroup><optgroup label="universe">
+<option value="universe/ancestries">ancestries</option>
+<option value="universe/asteroid_belts">asteroid belts+</option>
+<option value="universe/bloodlines">bloodlines</option>
+<option value="universe/categories">categories*</option>
+<option value="universe/constellations">constellations*</option>
+<option value="universe/factions">factions</option>
+<option value="universe/graphics">graphics*</option>
+<option value="universe/groups">groups*</option>
+<option value="universe/moons">moons+</option>
+<option value="universe/planets">planets+</option>
+<option value="universe/races">races</option>
+<option value="universe/regions">regions*</option>
+<option value="universe/schematics">schematics+</option>
+<option value="universe/stargates">stargates+</option>
+<option value="universe/stars">stars+</option>
+<option value="universe/stations">stations+</option>
+<option value="universe/structures">structures*</option>
+<option value="universe/system_jumps">system_jumps</option>
+<option value="universe/system_kills">system_kills</option>
+<option value="universe/systems">systems*</option>
+<option value="universe/types">types*</option>
+</optgroup><optgroup label="wars">
+<option value="wars">[root]*</option>
+</optgroup>
+</select><br>
+Append?<input type=checkbox id="chkA"><input type=text id="txtA"><br>
+<input type=button value="Get data" onClick=GetGenericData(this)><br>
+<div id="LogA">Log space</div>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+</body>
+</html>

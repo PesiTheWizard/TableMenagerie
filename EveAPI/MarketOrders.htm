@@ -1,0 +1,323 @@
+<html>
+<head>
+<title>Market orders - Eve API</title>
+<script>
+function GetMarketOrders(ClBt)
+{
+	ClBt.disabled = true;
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	const TB = document.getElementById("st");
+	const DchkAL = document.getElementById("chkAL");
+	const DtxtAL = document.getElementById("txtAL");
+	const DselRegion = document.getElementById("selRegion");
+	const DlogA = document.getElementById("logA");
+	const DchkTypeID = document.getElementById("chkTypeID");
+	const DtxtTypeID = document.getElementById("txtTypeID");
+	const DselOrderType = document.getElementById("selOrderType");
+	if(DlogA==null)
+	{
+		console.log("logA find fail");
+		ClBt.disabled = false;
+		return;
+	}
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselRegion==null)||(DchkTypeID==null)||(DtxtTypeID==null)||(DselOrderType==null) )
+	{
+		DlogA.innerText = "getElementById fail";
+		ClBt.disabled = false;
+		return;
+	}
+	const TIDV = parseInt(DtxtTypeID.value);
+	if(DchkTypeID.checked && (isNaN(TIDV) || TIDV<0))
+	{
+		DlogA.innerText = "TypeID used must be a number";
+		ClBt.disabled = false;
+		return;
+	}
+	const PQ = DchkTypeID.checked?`&type_id=${TIDV}`:"";
+	const EPQ = `https://esi.evetech.net/markets/${parseInt(DselRegion.value)}/orders?order_type=${DselOrderType.value}${PQ}`;
+	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim()}}:{};
+	DlogA.innerText = `Fetching ${EPQ}...`;
+	OGresp.innerText = "Fetching market data...";
+	svr.innerText = "Waiting for response...";
+	const TS1 = Date.now();
+	fetch(EPQ,hAL).then((response) => {
+		OGresp.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.json();
+	}).then((response) => {
+		const TS = Date.now();
+		DlogA.innerText = `Fetched ${EPQ}`;
+		const rcats = Object.keys(response);
+		for(let i=0;i<rcats.length;i++)
+		{
+			const currPrt = response[rcats[i]];
+			const tabRw = document.createElement('tr');
+			lister(rcats[i],tabRw,'td');
+			const dur = parseInt(currPrt["duration"]);
+			lister(dur,tabRw,'td');
+			lister(currPrt["is_buy_order"]??"",tabRw,'td');
+			const dofc = currPrt["issued"];
+			lister(dofc,tabRw,'td');
+			lister(currPrt["location_id"]??"",tabRw,'td');
+			lister(currPrt["min_volume"]??"",tabRw,'td');
+			lister(currPrt["order_id"]??"",tabRw,'td');
+			const Pr = parseFloat(currPrt["price"]);
+			lister(Pr,tabRw,'td');
+			lister(currPrt["range"]??"",tabRw,'td');
+			lister(currPrt["system_id"]??"",tabRw,'td');
+			lister(currPrt["type_id"]??"",tabRw,'td');
+			const VolR = parseInt(currPrt["volume_remain"]);
+			const VolT = parseInt(currPrt["volume_total"]);
+			lister(VolR,tabRw,'td');
+			lister(VolT,tabRw,'td');
+			lister(VolT-VolR,tabRw,'td');
+			lister((VolT-VolR)*Pr,tabRw,'td');
+			lister((new Date(dofc).valueOf()-TS)/86400000+dur,tabRw,'td');
+			TB.appendChild(tabRw);
+		}
+		return TS;
+	}).then((TS2) => {
+		svr.innerText = "JSON response received in ".concat((TS2-TS1)/1000," seconds");
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+function a(ctsb, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
+	const gt = document.getElementById("st").childNodes;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
+	{
+		fn = gt[cup];
+		sn = gt[cup-1];
+		s1 = fn.childNodes[ctsb].textContent;
+		s2 = sn.childNodes[ctsb].textContent;
+		if(asnum)
+		{//empty strings result in NaN
+			s1 = parseFloat(s1);
+			s2 = parseFloat(s2);
+			if(isNaN(s1)||isNaN(s2)){continue;}
+		}
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if(asnum)
+				{
+					sign = parseFloat(sign);
+					if(isNaN(sign)){break;}
+				}
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
+		}
+	}
+}
+</script>
+<style>
+input,select
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+td
+{
+	white-space:nowrap;
+}
+span
+{
+	cursor:pointer;
+}
+thead>tr:first-of-type>th
+{
+	writing-mode:sideways-lr;
+}
+</style>
+</head>
+<body>
+<input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
+Region:<select id="selRegion">
+<optgroup label="Empire">
+<option value="10000054">Aridia</option>
+<option value="10000069">Black Rise</option>
+<option value="10000038">The Bleak Lands</option>
+<option value="10000033">The Citadel</option>
+<option value="10000001">Derelik</option>
+<option value="10000036">Devoid</option>
+<option value="10000043">Domain</option>
+<option value="10000064">Essence</option>
+<option value="10000037">Everyshore</option>
+<option value="10000002">The Forge</option>
+<option value="10000067">Genesis</option>
+<option value="10000030">Heimatar</option>
+<option value="10000052">Kador</option>
+<option value="10000049">Khanid</option>
+<option value="10000065">Kor-Azor</option>
+<option value="10000016">Lonetrek</option>
+<option value="10000042">Metropolis</option>
+<option value="10000028">Molden Heath</option>
+<option value="10000048">Placid</option>
+<option value="10000032">Sinq Laison</option>
+<option value="10000044">Solitude</option>
+<option value="10000020">Tash-Murkon</option>
+<option value="10000068">Verge Vendor</option>
+</optgroup>
+<option value="10000003">Vale of the Silent</option>
+<option value="10000004">UUA-F4</option>
+<option value="10000005">Detorid</option>
+<option value="10000006">Wicked Creek</option>
+<option value="10000007">Cache</option>
+<option value="10000008">Scalding Pass</option>
+<option value="10000009">Insmother</option>
+<option value="10000010">Tribute</option>
+<option value="10000011">Great Wildlands</option>
+<option value="10000012">Curse</option>
+<option value="10000013">Malpais</option>
+<option value="10000014">Catch</option>
+<option value="10000015">Venal</option>
+<option value="10000017">J7HZ-F</option>
+<option value="10000018">The Spire</option>
+<option value="10000019">A821-A</option>
+<option value="10000021">Outer Passage</option>
+<option value="10000022">Stain</option>
+<option value="10000023">Pure Blind</option>
+<option value="10000025">Immensea</option>
+<option value="10000027">Etherium Reach</option>
+<option value="10000029">Geminate</option>
+<option value="10000031">Impass</option>
+<option value="10000034">The Kalevala Expanse</option>
+<option value="10000035">Deklein</option>
+<option value="10000039">Esoteria</option>
+<option value="10000040">Oasa</option>
+<option value="10000041">Syndicate</option>
+<option value="10000045">Tenal</option>
+<option value="10000046">Fade</option>
+<option value="10000047">Providence</option>
+<option value="10000050">Querious</option>
+<option value="10000051">Cloud Ring</option>
+<option value="10000053">Cobalt Edge</option>
+<option value="10000055">Branch</option>
+<option value="10000056">Feythabolis</option>
+<option value="10000057">Outer Ring</option>
+<option value="10000058">Fountain</option>
+<option value="10000059">Paragon Soul</option>
+<option value="10000060">Delve</option>
+<option value="10000061">Tenerifis</option>
+<option value="10000062">Omist</option>
+<option value="10000063">Period Basis</option>
+<option value="10000066">Perrigen Falls</option>
+<option value="10000070">Pochven</option>
+<option value="10001000">Yasna Zakh</option>
+<option value="10001004">Exordium</option>
+<option value="11000001">A-R00001</option>
+<option value="11000002">A-R00002</option>
+<option value="11000003">A-R00003</option>
+<option value="11000004">B-R00004</option>
+<option value="11000005">B-R00005</option>
+<option value="11000006">B-R00006</option>
+<option value="11000007">B-R00007</option>
+<option value="11000008">B-R00008</option>
+<option value="11000009">C-R00009</option>
+<option value="11000010">C-R00010</option>
+<option value="11000011">C-R00011</option>
+<option value="11000012">C-R00012</option>
+<option value="11000013">C-R00013</option>
+<option value="11000014">C-R00014</option>
+<option value="11000015">C-R00015</option>
+<option value="11000016">D-R00016</option>
+<option value="11000017">D-R00017</option>
+<option value="11000018">D-R00018</option>
+<option value="11000019">D-R00019</option>
+<option value="11000020">D-R00020</option>
+<option value="11000021">D-R00021</option>
+<option value="11000022">D-R00022</option>
+<option value="11000023">D-R00023</option>
+<option value="11000024">E-R00024</option>
+<option value="11000025">E-R00025</option>
+<option value="11000026">E-R00026</option>
+<option value="11000027">E-R00027</option>
+<option value="11000028">E-R00028</option>
+<option value="11000029">E-R00029</option>
+<option value="11000030">F-R00030</option>
+<option value="11000031">G-R00031</option>
+<option value="11000032">H-R00032</option>
+<option value="11000033">K-R00033</option>
+<option value="12000001">ADR01</option>
+<option value="12000002">ADR02</option>
+<option value="12000003">ADR03</option>
+<option value="12000004">ADR04</option>
+<option value="12000005">ADR05</option>
+<option value="14000001">VR-01</option>
+<option value="14000002">VR-02</option>
+<option value="14000003">VR-03</option>
+<option value="14000004">VR-04</option>
+<option value="14000005">VR-05</option>
+<option value="19000001">GPMR-01</option>
+</select><br>
+Order type:<select id="selOrderType">
+<option value="all" selected>all</option>
+<option value="buy">buy</option>
+<option value="sell">sell</option>
+</select><br>
+<input type=checkbox id="chkTypeID">TypeID:<input id="txtTypeID"> <input type=button value="Get market orders" onClick=GetMarketOrders(this)><br>
+<div id="logA"> </div>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+<table border=1>
+<thead>
+<tr><th>API entry</th><th>Duration</th><th>Buy order?</th><th>Issued</th><th>Location ID</th><th>min volume</th><th>Order ID</th><th>Price</th><th>Range</th><th>System ID</th><th>Type ID</th><th>Volume remain</th><th>Volume total</th><th>~Units moved~</th><th>~ISK moved~</th><th>~Expiry~</th></tr>
+<tr>
+<th><span onClick=a(0,true,true)>&#9650;</span> <span onClick=a(0,false,true)>&#9660;</span></th>
+<th><span onClick=a(1,true,true)>&#9650;</span> <span onClick=a(1,false,true)>&#9660;</span></th>
+<th><span onClick=a(2,true,false)>&#9650;</span> <span onClick=a(2,false,false)>&#9660;</span></th>
+<th><span onClick=a(3,true,false)>&#9650;</span> <span onClick=a(3,false,false)>&#9660;</span></th>
+<th><span onClick=a(4,true,true)>&#9650;</span> <span onClick=a(4,false,true)>&#9660;</span></th>
+<th><span onClick=a(5,true,true)>&#9650;</span> <span onClick=a(5,false,true)>&#9660;</span></th>
+<th><span onClick=a(6,true,true)>&#9650;</span> <span onClick=a(6,false,true)>&#9660;</span></th>
+<th><span onClick=a(7,true,true)>&#9650;</span> <span onClick=a(7,false,true)>&#9660;</span></th>
+<th><span onClick=a(8,true,false)>&#9650;</span> <span onClick=a(8,false,false)>&#9660;</span></th>
+<th><span onClick=a(9,true,true)>&#9650;</span> <span onClick=a(9,false,true)>&#9660;</span></th>
+<th><span onClick=a(10,true,true)>&#9650;</span> <span onClick=a(10,false,true)>&#9660;</span></th>
+<th><span onClick=a(11,true,true)>&#9650;</span> <span onClick=a(11,false,true)>&#9660;</span></th>
+<th><span onClick=a(12,true,true)>&#9650;</span> <span onClick=a(12,false,true)>&#9660;</span></th>
+<th><span onClick=a(13,true,true)>&#9650;</span> <span onClick=a(13,false,true)>&#9660;</span></th>
+<th><span onClick=a(14,true,true)>&#9650;</span> <span onClick=a(14,false,true)>&#9660;</span></th>
+<th><span onClick=a(15,true,true)>&#9650;</span> <span onClick=a(15,false,true)>&#9660;</span></th>
+</tr></thead>
+<tbody id="st"></tbody>
+</table>
+</body>
+</html>

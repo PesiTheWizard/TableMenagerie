@@ -1,0 +1,91 @@
+<html>
+<head>
+<title>Alloy&Compound market calculator</title>
+<script language="JavaScript">
+function calculate()
+{
+	const trit = parseFloat(document.Minerals?.TritMarket?.value);
+	const pye = parseFloat(document.Minerals?.PyeMarket?.value);
+	const mex = parseFloat(document.Minerals?.MexMarket?.value);
+	const iso = parseFloat(document.Minerals?.IsoMarket?.value);
+	const noc = parseFloat(document.Minerals?.NocMarket?.value);
+	const zyd = parseFloat(document.Minerals?.ZydMarket?.value);
+	const mega = parseFloat(document.Minerals?.MegaMarket?.value);
+	const morph = parseFloat(document.Minerals?.MorphMarket?.value);
+	document.getElementById("condensed").innerText= (trit*160 + pye*40 + mex*10);
+	document.getElementById("crystal").innerText= (mex*24 + iso*6);
+	document.getElementById("dark").innerText= (iso*32 + noc*8);
+	document.getElementById("gleaming").innerText= (trit*768 + noc*3);
+	document.getElementById("glossy").innerText= (mex*384 + noc*24 + mega*1);
+	document.getElementById("lucent").innerText= (pye*192 + mex*48 + iso*12 + noc*3);
+	document.getElementById("lustering").innerText= (mex*192 + iso*48 + noc*12 + zyd*3);
+	document.getElementById("motley").innerText= (iso*40 + noc*10);
+	document.getElementById("opulent").innerText= (morph*2);
+	document.getElementById("plush").innerText= (trit*4096 + pye*1024 + iso*64 + zyd*4);
+	document.getElementById("precious").innerText= (pye*128 + iso*8);
+	document.getElementById("sheen").innerText= (trit*512 + pye*128 + iso*8 + noc*2);
+}
+/*
+At some point these were changed. The old refining values were...
+condensed : ((trit * 88) + (pye * 44) + (mex * 11))
+crystal   : ((mex * 39) + (iso * 2))
+dark      : ((iso * 23) + (noc * 10))
+gleaming  : ((trit * 300) + (noc * 5))
+glossy    : ((mex * 200) + (noc * 4) + (mega * 3))
+lucent    : ((pye * 174) + (mex * 2) + (iso * 11) + (noc * 5))
+lustering : ((mex * 88) + (iso * 32) + (noc * 35) + (zyd * 1))
+motley    : ((iso * 28) + (noc * 13))
+opulent   : (morph * 2)
+plush     : ((trit * 3200) + (pye * 800) + (iso * 20) + (zyd * 9))
+precious  : ((pye * 7) + (iso * 18))
+sheen     : ((trit * 124) + (pye * 44) + (iso * 23) + (noc * 1))
+*/
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+<form name="Minerals">
+<table border=1>
+<thead>
+<tr><th>Minerals</th><th>Base Price</th><th>Market price</th></tr>
+</thead>
+<tbody>
+<tr><td>Tritanium</td><td>2</td><td><Input type=TextField name="TritMarket" value=2></td></tr>
+<tr><td>Pyerite</td><td>8</td><td><Input type=TextField name="PyeMarket" value=8></td></tr>
+<tr><td>Mexallon</td><td>32</td><td><Input type=TextField name="MexMarket" value=32></td></tr>
+<tr><td>Isogen</td><td>128</td><td><Input type=TextField name="IsoMarket" value=128></td></tr>
+<tr><td>Nocxium</td><td>512</td><td><Input type=TextField name="NocMarket" value=512></td></tr>
+<tr><td>Zydrine</td><td>2048</td><td><Input type=TextField name="ZydMarket" value=2048></td></tr>
+<tr><td>Megacyte</td><td>8192</td><td><Input type=TextField name="MegaMarket" value=8192></td></tr>
+<tr><td>Morphite</td><td>32768</td><td><Input type=TextField name="MorphMarket" value=32768></td></tr>
+</tbody>
+</table>
+<input type=button value="Calculate" OnClick=calculate()>
+</form>
+<table border=1>
+<thead>
+<tr><th>Alloys&Compounds</th><th>Mineral market value</th></tr>
+</thead>
+<tbody>
+<tr><td>Condensed Alloy</td><td id="condensed"></td></tr>
+<tr><td>Crystal Compound</td><td id="crystal"></td></tr>
+<tr><td>Dark Compound</td><td id="dark"></td></tr>
+<tr><td>Gleaming Alloy</td><td id="gleaming"></td></tr>
+<tr><td>Glossy Compound</td><td id="glossy"></td></tr>
+<tr><td>Lucent Compound</td><td id="lucent"></td></tr>
+<tr><td>Lustering Alloy</td><td id="lustering"></td></tr>
+<tr><td>Motley Compound</td><td id="motley"></td></tr>
+<tr><td>Opulent Compound</td><td id="opulent"></td></tr>
+<tr><td>Plush Compound</td><td id="plush"></td></tr>
+<tr><td>Precious Alloy</td><td id="precious"></td></tr>
+<tr><td>Sheen Compound</td><td id="sheen"></td></tr>
+</tbody>
+</table>
+</body>
+</html>

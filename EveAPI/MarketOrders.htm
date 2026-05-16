@@ -15,6 +15,8 @@ function GetMarketOrders(ClBt)
 	const DlogA = document.getElementById("logA");
 	const DchkTypeID = document.getElementById("chkTypeID");
 	const DtxtTypeID = document.getElementById("txtTypeID");
+	const DchkPage = document.getElementById("chkPage");
+	const DtxtPage = document.getElementById("txtPage");
 	const DselOrderType = document.getElementById("selOrderType");
 	if(DlogA==null)
 	{
@@ -22,7 +24,7 @@ function GetMarketOrders(ClBt)
 		ClBt.disabled = false;
 		return;
 	}
-	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselRegion==null)||(DchkTypeID==null)||(DtxtTypeID==null)||(DselOrderType==null) )
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselRegion==null)||(DchkTypeID==null)||(DtxtTypeID==null)||(DchkPage==null)||(DtxtPage==null)||(DselOrderType==null) )
 	{
 		DlogA.innerText = "getElementById fail";
 		ClBt.disabled = false;
@@ -35,8 +37,16 @@ function GetMarketOrders(ClBt)
 		ClBt.disabled = false;
 		return;
 	}
-	const PQ = DchkTypeID.checked?`&type_id=${TIDV}`:"";
-	const EPQ = `https://esi.evetech.net/markets/${parseInt(DselRegion.value)}/orders?order_type=${DselOrderType.value}${PQ}`;
+	const PIDV = parseInt(DtxtPage.value);
+	if(DchkPage.checked && (isNaN(PIDV) || PIDV<1))
+	{
+		DlogA.innerText = "Page used must be a number at least 1";
+		ClBt.disabled = false;
+		return;
+	}
+	const TQ = DchkTypeID.checked?`&type_id=${TIDV}`:"";
+	const PQ = DchkPage.checked?`&page=${PIDV}`:"";
+	const EPQ = `https://esi.evetech.net/markets/${parseInt(DselRegion.value)}/orders?order_type=${DselOrderType.value}${TQ}${PQ}`;
 	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim()}}:{};
 	DlogA.innerText = `Fetching ${EPQ}...`;
 	OGresp.innerText = "Fetching market data...";
@@ -73,7 +83,7 @@ function GetMarketOrders(ClBt)
 			lister(VolR,tabRw,'td');
 			lister(VolT,tabRw,'td');
 			lister(VolT-VolR,tabRw,'td');
-			lister((VolT-VolR)*Pr,tabRw,'td');
+			lister(parseFloat(((VolT-VolR)*Pr).toFixed(4)),tabRw,'td');
 			lister((new Date(dofc).valueOf()-TS)/86400000+dur,tabRw,'td');
 			TB.appendChild(tabRw);
 		}
@@ -144,6 +154,15 @@ so the set of childnodes at and below the cup is unchanged.
 		}
 	}
 }
+function LdT()
+{
+	document.getElementById("txtTypeID").value = document.TypeSelector.PickedType.value;
+}
+function moreOnTable()
+{
+	document.getElementById("hdrs").innerHTML = "";
+	document.getElementById("orderFetcher").disabled = false;
+}
 </script>
 <style>
 input,select
@@ -155,7 +174,7 @@ td
 {
 	white-space:nowrap;
 }
-span
+span,summary
 {
 	cursor:pointer;
 }
@@ -163,10 +182,16 @@ thead>tr:first-of-type>th
 {
 	writing-mode:sideways-lr;
 }
+dl
+{
+	margin-top:2px;
+	margin-bottom:2px;
+}
 </style>
 </head>
 <body>
 <input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
+<table border=1><tr><td valign=bottom>
 Region:<select id="selRegion">
 <optgroup label="Empire">
 <option value="10000054">Aridia</option>
@@ -290,7 +315,60 @@ Order type:<select id="selOrderType">
 <option value="buy">buy</option>
 <option value="sell">sell</option>
 </select><br>
-<input type=checkbox id="chkTypeID">TypeID:<input id="txtTypeID"> <input type=button value="Get market orders" onClick=GetMarketOrders(this)><br>
+<input type=checkbox id="chkTypeID">TypeID:<input id="txtTypeID"><br>
+<input type=checkbox id="chkPage">Page:<input id="txtPage" value="1"><br>
+<input type=button id="orderFetcher" value="Get market orders" onclick=GetMarketOrders(this)><br>
+</td><td valign=bottom>
+<form name="TypeSelector">
+<details><summary>ID Picker</summary>
+<dl>
+	<dd><details><summary>Minerals</summary>
+	<input type=radio name="PickedType" value="34" checked>Tritanium<br>
+	<input type=radio name="PickedType" value="35">Pyerite<br>
+	<input type=radio name="PickedType" value="36">Mexallon<br>
+	<input type=radio name="PickedType" value="37">Isogen<br>
+	<input type=radio name="PickedType" value="38">Nocxium<br>
+	<input type=radio name="PickedType" value="39">Zydrine<br>
+	<input type=radio name="PickedType" value="40">Megacyte<br>
+	<input type=radio name="PickedType" value="11399">Morphite
+	</details></dd>
+	<dd><details><summary>Ore</summary>
+	<input type=radio name="PickedType" value="1230">Veldspar<br>
+	<input type=radio name="PickedType" value="1228">Scordite<br>
+	<input type=radio name="PickedType" value="18">Plagioclase<br>
+	<input type=radio name="PickedType" value="1224">Pyroxeres<br>
+	<input type=radio name="PickedType" value="1227">Omber<br>
+	<input type=radio name="PickedType" value="1231">Hemorphite<br>
+	<input type=radio name="PickedType" value="19">Spodumain<br>
+	<input type=radio name="PickedType" value="20">Kernite<br>
+	<input type=radio name="PickedType" value="11396">Mercoxit<br>
+	<input type=radio name="PickedType" value="1226">Jaspet<br>
+	<input type=radio name="PickedType" value="21">Hedbergite<br>
+	<input type=radio name="PickedType" value="1229">Gneiss<br>
+	<input type=radio name="PickedType" value="1232">Dark Ochre<br>
+	<input type=radio name="PickedType" value="1225">Crokite<br>
+	<input type=radio name="PickedType" value="1223">Bistot<br>
+	<input type=radio name="PickedType" value="22">Arkonor
+	</details></dd>
+	<dd><details><summary>Alloys&Compounds</summary>
+	<input type=radio name="PickedType" value="11739">Condensed Alloy<br>
+	<input type=radio name="PickedType" value="11741">Crystal Compound<br>
+	<input type=radio name="PickedType" value="11735">Dark Compound<br>
+	<input type=radio name="PickedType" value="11740">Gleaming Alloy<br>
+	<input type=radio name="PickedType" value="11724">Glossy Compound<br>
+	<input type=radio name="PickedType" value="11738">Lucent Compound<br>
+	<input type=radio name="PickedType" value="11736">Lustering Alloy<br>
+	<input type=radio name="PickedType" value="11733">Motley Compound<br>
+	<input type=radio name="PickedType" value="11734">Opulent Compound<br>
+	<input type=radio name="PickedType" value="11725">Plush Compound<br>
+	<input type=radio name="PickedType" value="11737">Precious Alloy<br>
+	<input type=radio name="PickedType" value="11732">Sheen Compound
+	</details></dd>
+</dl>
+</details>
+</form>
+<input type=button value="load TypeID" onclick=LdT()>
+</td></tr></table>
 <div id="logA"> </div>
 <hr>
 <div id="stts"></div>

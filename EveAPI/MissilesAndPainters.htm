@@ -45,22 +45,32 @@ Up to 1.336875: T1 loot painter in Vigil/Bellicose with ship skill level 3
 Up to 1.34375 : Target Painter I in Vigil/Bellicose with ship skill level 5; T1 loot painter with Signature Focusing 5
 Up to 1.345   : Target Painter II in Vigil/Bellicose with ship skill level 2; Target Painter II with Signature Focusing 3
 Up to 1.3465  : faction painter with Signature Focusing 1
+Up to 1.35    : officer painter
 Up to 1.35475 : faction painter in Vigil/Bellicose with ship skill level 1
 Up to 1.3575  : T1 loot painter in Vigil/Bellicose with ship skill level 4
 Up to 1.36    : Target Painter II with Signature Focusing 4
 Up to 1.363   : faction painter with Signature Focusing 2
-Up to 1.3675  : Target Painter II in Vigil/Bellicose with ship skill level 3
+Up to 1.3675  : Target Painter II in Vigil/Bellicose with ship skill level 3; officer painter with Signature Focusing 1
 Up to 1.375   : Target Painter I in Hyena/Huginn; Target Painter II with Signature Focusing 5
+Up to 1.37625 : officer painter in Vigil/Bellicose with ship skill level 1
 Up to 1.378125: T1 loot painter in Vigil/Bellicose with ship skill level 5
 Up to 1.3795  : faction painter in Vigil/Bellicose with ship skill level 2; faction painter with Signature Focusing 3
+Up to 1.385   : officer painter with Signature Focusing 2
 Up to 1.39    : Target Painter II in Vigil/Bellicose with ship skill level 4
 Up to 1.396   : faction painter with Signature Focusing 4
+Up to 1.4025  : officer painter in Vigil/Bellicose with ship skill level 2; officer painter with Signature Focusing 3
 Up to 1.40425 : faction painter in Vigil/Bellicose with ship skill level 3
 Up to 1.4125  : T1 loot painter in Hyena/Huginn; Target Painter II in Vigil/Bellicose with ship skill level 5; faction painter with Signature Focusing 5
+Up to 1.42    : officer painter with Signature Focusing 4
+Up to 1.42875 : officer painter in Vigil/Bellicose with ship skill level 3
 Up to 1.429   : faction painter in Vigil/Bellicose with ship skill level 4
+Up to 1.4375  : officer painter with Signature Focusing 5
 Up to 1.45    : Target Painter II in Hyena/Huginn
 Up to 1.45375 : faction painter in Vigil/Bellicose with ship skill level 5
+Up to 1.455   : officer painter in Vigil/Bellicose with ship skill level 4
+Up to 1.48125 : officer painter in Vigil/Bellicose with ship skill level 5
 Up to 1.495   : faction painter in Hyena/Huginn
+Up to 1.525   : officer painter in Hyena/Huginn
 Up to 1.65    : Standup Target Painter I
 Up to 1.72    : Standup Target Painter II
 </pre>
@@ -68,15 +78,15 @@ Up to 1.72    : Standup Target Painter II
 <script>
 const ExplosionRadii = [30,32,34,36,38,40,51.75,55.2,58.65,62.1,65.55,69,105,112,119,126,133,140,161.25,172,182.75,193.5,204.25,215,247.5,264,280.5,297,313.5,330];
 const ShipList = [
-	"Shuttle / light scout drone",
+	"Shuttle / light scout drone / Capsule",
 	"Slasher / Dramiel",
 	"Executioner",
-	"Garmur",
-	"Burst / Condor / Succubus",
+	"Garmur / Damavik",
+	"Burst / Condor / Succubus / Echelon",
 	"Vigil / Inquisitor",
 	"Rifter / Atron / Bantam / Tormentor / Cruor / Daredevil / Astero",
 	"Breacher / Navitas",
-	"Punisher",
+	"Punisher / Skybreaker",
 	"Probe / Kestrel / Crucifier",
 	"Merlin / Magnate",
 	"Maulus / Heron / Venture / Prospect / Endurance / Worm",
@@ -89,31 +99,34 @@ const ShipList = [
 	"Thrasher",
 	"Talwar / Tholos",
 	"Coercer",
-	"Cormorant",
+	"Cormorant / Scimitar / Oneiros / Sunesis",
 	"Dragoon",
 	"Catalyst",
 	"Corax",
+	"Basilisk / Guardian",
 	"Algos",
 	"Mamba",
 	"Scythe / Infiltrator EV-600",
 	"Exequror / Pioneer / Outrider",
 	"Light fighter,small",
-	"Augoror",
+	"Augoror / Scythe Fleet Issue",
 	"Osprey",
-	"Stabber / heavy attack drone / Shadow",
+	"Stabber / heavy attack drone / Shadow / Rodiva",
 	"Prowler",
 	"Prorator / Light fighter,large / Heavy fighter,small",
-	"Omen / Crane / Cynabal",
+	"Omen / Crane / Cynabal / Osprey Navy Issue",
 	"Bellicose / Thorax / Viator / Phantasm / Heavy fighter,large",
-	"Rupture / Caracal",
-	"Arbitrator / Maller / Ashimmu / Vigilant",
-	"Celestis / Moa / Orthrus",
-	"Vexor / Gila",
-	"Blackbird / Mastodon / Stratios",
-	"Wreathe",
-	"Impel",
+	"Rupture / Caracal / Rapier / Muninn / Zealot",
+	"Arbitrator / Maller / Ashimmu / Vigilant / Vexor Navy Issue",
+	"Celestis / Moa / Orthrus / Cerberus / Sacrilege",
+	"Eagle / Devoter",
+	"Vexor / Gila / Ishtar / Curse",
+	"Blackbird / Mastodon / Stratios / Lachesis / Onyx / Pilgrim",
+	"Wreathe / Arazu",
+	"Impel / Phobos",
 	"Occator / Bustard",
-	"Sigil",
+	"Rook",
+	"Sigil / Falcon",
 	"Mammoth",
 	"Hoarder / Nereus",
 	"Badger",
@@ -125,17 +138,22 @@ const ShipList = [
 	"Talos / Iteron Mark V",
 	"Khizriel",
 	"Tayra",
+	"Claymore / Sleipnir",
 	"Cyclone / Hurricane / Noctis / Cenotaph",
+	"Drekavac",
+	"Damnation / Absolution",
 	"Prophecy / Harbinger",
+	"Gnosis",
+	"Vulture / Nighthawk",
 	"Panther",
 	"Drake",
-	"Odysseus / Porpoise / sentry drone",
+	"Odysseus / Porpoise / Astarte / Eos / sentry drone",
 	"Brutix / Myrmidon",
 	"Alligator",
 	"Typhoon Fleet Issue",
 	"Ferox"
 ];
-const SigRadii = [25,30,31,32,33,34,35,36,37,38,39,40,41,42,48,50,52,54,56,60,62,65,66,68,69,72,73,75,80,88,90,95,100,105,110,115,120,125,130,135,145,150,155,160,165,175,180,185,190,195,200,205,210,215,220,225,230,250,270,288,295,300,305,310,320,325];
+const SigRadii = [25,30,31,32,33,34,35,36,37,38,39,40,41,42,48,50,52,54,56,60,62,65,66,68,69,70,72,73,75,80,88,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185,190,195,200,205,210,215,220,225,230,240,250,255,265,270,275,285,288,295,300,305,310,320,325];
 const t = document.getElementById("st");
 const L = SigRadii.length;
 function lister(listedText, PN, ElType)

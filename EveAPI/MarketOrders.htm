@@ -174,11 +174,15 @@ td
 {
 	white-space:nowrap;
 }
+th.nc
+{
+	visibility:hidden;
+}
 span,summary
 {
 	cursor:pointer;
 }
-thead>tr:first-of-type>th
+thead.res>tr:first-of-type>th
 {
 	writing-mode:sideways-lr;
 }
@@ -194,7 +198,7 @@ dl
 <table border=1><tr><td valign=bottom>
 Region:<select id="selRegion">
 <optgroup label="Empire">
-<option value="10000054">Aridia</option>
+<option value="10000054">Aridia_</option>
 <option value="10000069">Black Rise</option>
 <option value="10000038">The Bleak Lands</option>
 <option value="10000033">The Citadel</option>
@@ -214,57 +218,59 @@ Region:<select id="selRegion">
 <option value="10000028">Molden Heath</option>
 <option value="10000048">Placid</option>
 <option value="10000032">Sinq Laison</option>
-<option value="10000044">Solitude</option>
+<option value="10000044">Solitude_</option>
 <option value="10000020">Tash-Murkon</option>
 <option value="10000068">Verge Vendor</option>
+<option value="10001004">Exordium</option>
 </optgroup>
-<option value="10000003">Vale of the Silent</option>
-<option value="10000004">UUA-F4</option>
-<option value="10000005">Detorid</option>
-<option value="10000006">Wicked Creek</option>
+<optgroup label="Classic 0.0">
+<option value="10000055">Branch</option>
 <option value="10000007">Cache</option>
-<option value="10000008">Scalding Pass</option>
-<option value="10000009">Insmother</option>
-<option value="10000010">Tribute</option>
-<option value="10000011">Great Wildlands</option>
-<option value="10000012">Curse</option>
-<option value="10000013">Malpais</option>
 <option value="10000014">Catch</option>
-<option value="10000015">Venal</option>
-<option value="10000017">J7HZ-F</option>
-<option value="10000018">The Spire</option>
-<option value="10000019">A821-A</option>
-<option value="10000021">Outer Passage</option>
-<option value="10000022">Stain</option>
-<option value="10000023">Pure Blind</option>
-<option value="10000025">Immensea</option>
-<option value="10000027">Etherium Reach</option>
-<option value="10000029">Geminate</option>
-<option value="10000031">Impass</option>
-<option value="10000034">The Kalevala Expanse</option>
-<option value="10000035">Deklein</option>
-<option value="10000039">Esoteria</option>
-<option value="10000040">Oasa</option>
-<option value="10000041">Syndicate</option>
-<option value="10000045">Tenal</option>
-<option value="10000046">Fade</option>
-<option value="10000047">Providence</option>
-<option value="10000050">Querious</option>
 <option value="10000051">Cloud Ring</option>
 <option value="10000053">Cobalt Edge</option>
-<option value="10000055">Branch</option>
-<option value="10000056">Feythabolis</option>
-<option value="10000057">Outer Ring</option>
-<option value="10000058">Fountain</option>
-<option value="10000059">Paragon Soul</option>
+<option value="10000012">Curse</option>
+<option value="10000035">Deklein</option>
 <option value="10000060">Delve</option>
-<option value="10000061">Tenerifis</option>
+<option value="10000005">Detorid</option>
+<option value="10000039">Esoteria</option>
+<option value="10000027">Etherium Reach</option>
+<option value="10000046">Fade</option>
+<option value="10000056">Feythabolis</option>
+<option value="10000058">Fountain</option>
+<option value="10000029">Geminate</option>
+<option value="10000011">Great Wildlands</option>
+<option value="10000025">Immensea</option>
+<option value="10000031">Impass</option>
+<option value="10000009">Insmother</option>
+<option value="10000034">The Kalevala Expanse</option>
+<option value="10000013">Malpais</option>
+<option value="10000040">Oasa</option>
 <option value="10000062">Omist</option>
+<option value="10000021">Outer Passage</option>
+<option value="10000057">Outer Ring</option>
+<option value="10000059">Paragon Soul</option>
 <option value="10000063">Period Basis</option>
 <option value="10000066">Perrigen Falls</option>
+<option value="10000047">Providence</option>
+<option value="10000023">Pure Blind</option>
+<option value="10000050">Querious</option>
+<option value="10000008">Scalding Pass</option>
+<option value="10000018">The Spire</option>
+<option value="10000022">Stain</option>
+<option value="10000041">Syndicate</option>
+<option value="10000045">Tenal</option>
+<option value="10000061">Tenerifis</option>
+<option value="10000010">Tribute</option>
+<option value="10000003">Vale of the Silent</option>
+<option value="10000015">Venal</option>
+<option value="10000006">Wicked Creek</option>
+</optgroup>
+<option value="10000004">UUA-F4</option>
+<option value="10000017">J7HZ-F</option>
+<option value="10000019">A821-A</option>
 <option value="10000070">Pochven</option>
 <option value="10001000">Yasna Zakh</option>
-<option value="10001004">Exordium</option>
 <option value="11000001">A-R00001</option>
 <option value="11000002">A-R00002</option>
 <option value="11000003">A-R00003</option>
@@ -364,10 +370,48 @@ Order type:<select id="selOrderType">
 	<input type=radio name="PickedType" value="11737">Precious Alloy<br>
 	<input type=radio name="PickedType" value="11732">Sheen Compound
 	</details></dd>
+	<dd><details><summary>Standard Projectile Ammo</summary>
+	<table border=1><thead>
+	<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th></tr>
+	</thead><tbody>
+	<tr><td>Carbonized Lead</td><td><input type=radio name="PickedType" value="178"></td><td><input type=radio name="PickedType" value="186"></td><td><input type=radio name="PickedType" value="194"></td></tr>
+	<tr><td>Nuclear</td><td><input type=radio name="PickedType" value="179"></td><td><input type=radio name="PickedType" value="187"></td><td><input type=radio name="PickedType" value="195"></td></tr>
+	<tr><td>Proton</td><td><input type=radio name="PickedType" value="180"></td><td><input type=radio name="PickedType" value="188"></td><td><input type=radio name="PickedType" value="196"></td></tr>
+	<tr><td>Depleted Uranium</td><td><input type=radio name="PickedType" value="181"></td><td><input type=radio name="PickedType" value="189"></td><td><input type=radio name="PickedType" value="197"></td></tr>
+	<tr><td>Titanium Sabot</td><td><input type=radio name="PickedType" value="182"></td><td><input type=radio name="PickedType" value="190"></td><td><input type=radio name="PickedType" value="198"></td></tr>
+	<tr><td>Fusion</td><td><input type=radio name="PickedType" value="183"></td><td><input type=radio name="PickedType" value="191"></td><td><input type=radio name="PickedType" value="199"></td></tr>
+	<tr><td>Phased Plasma</td><td><input type=radio name="PickedType" value="184"></td><td><input type=radio name="PickedType" value="192"></td><td><input type=radio name="PickedType" value="200"></td></tr>
+	<tr><td>EMP</td><td><input type=radio name="PickedType" value="185"></td><td><input type=radio name="PickedType" value="193"></td><td><input type=radio name="PickedType" value="201"></td></tr>
+	</tbody></table>
+	</details></dd>
+	<dd><details><summary>Electronic warfare</summary>
+	<input type=radio name="PickedType" value="12709">Target Painter I<br>
+	<input type=radio name="PickedType" value="2108">Tracking Disruptor I<br>
+	<input type=radio name="PickedType" value="1968">Remote Sensor Dampener I<br>
+	<input type=radio name="PickedType" value="526">Stasis Webifier I<br>
+	<input type=radio name="PickedType" value="1957">Multispectral ECM I
+	</details></dd>
+	<dd><details><summary>Shield extenders</summary>
+	<input type=radio name="PickedType" value="377">Small Shield Extender I<br>
+	<input type=radio name="PickedType" value="3829">Medium Shield Extender I<br>
+	<input type=radio name="PickedType" value="3839">Large Shield Extender I
+	</details></dd>
+	<dd><details><summary>Cap batteries</summary>
+	<input type=radio name="PickedType" value="1185">Small Cap Battery I<br>
+	<input type=radio name="PickedType" value="2018">Medium Cap Battery I<br>
+	<input type=radio name="PickedType" value="2020">Large Cap Battery I
+	</details></dd>
 </dl>
 </details>
 </form>
 <input type=button value="load TypeID" onclick=LdT()>
+</td><td>
+Jita(30000142):The Forge<br>
+Amarr(30002187)/Misaba(30003563):Domain<br>
+Rens(30002510):Heimatar<br>
+Dodixie(30002659):Sinq Laison<br>
+Hek(30002053):Metropolis<br>
+Manifest(30100032):Exordium
 </td></tr></table>
 <div id="logA"> </div>
 <hr>
@@ -375,25 +419,25 @@ Order type:<select id="selOrderType">
 <ul id="hdrs"></ul>
 <div id="svar"></div>
 <table border=1>
-<thead>
+<thead class="res">
 <tr><th>API entry</th><th>Duration</th><th>Buy order?</th><th>Issued</th><th>Location ID</th><th>min volume</th><th>Order ID</th><th>Price</th><th>Range</th><th>System ID</th><th>Type ID</th><th>Volume remain</th><th>Volume total</th><th>~Units moved~</th><th>~ISK moved~</th><th>~Expiry~</th></tr>
 <tr>
-<th><span onClick=a(0,true,true)>&#9650;</span> <span onClick=a(0,false,true)>&#9660;</span></th>
-<th><span onClick=a(1,true,true)>&#9650;</span> <span onClick=a(1,false,true)>&#9660;</span></th>
-<th><span onClick=a(2,true,false)>&#9650;</span> <span onClick=a(2,false,false)>&#9660;</span></th>
-<th><span onClick=a(3,true,false)>&#9650;</span> <span onClick=a(3,false,false)>&#9660;</span></th>
-<th><span onClick=a(4,true,true)>&#9650;</span> <span onClick=a(4,false,true)>&#9660;</span></th>
-<th><span onClick=a(5,true,true)>&#9650;</span> <span onClick=a(5,false,true)>&#9660;</span></th>
-<th><span onClick=a(6,true,true)>&#9650;</span> <span onClick=a(6,false,true)>&#9660;</span></th>
-<th><span onClick=a(7,true,true)>&#9650;</span> <span onClick=a(7,false,true)>&#9660;</span></th>
-<th><span onClick=a(8,true,false)>&#9650;</span> <span onClick=a(8,false,false)>&#9660;</span></th>
-<th><span onClick=a(9,true,true)>&#9650;</span> <span onClick=a(9,false,true)>&#9660;</span></th>
-<th><span onClick=a(10,true,true)>&#9650;</span> <span onClick=a(10,false,true)>&#9660;</span></th>
-<th><span onClick=a(11,true,true)>&#9650;</span> <span onClick=a(11,false,true)>&#9660;</span></th>
-<th><span onClick=a(12,true,true)>&#9650;</span> <span onClick=a(12,false,true)>&#9660;</span></th>
-<th><span onClick=a(13,true,true)>&#9650;</span> <span onClick=a(13,false,true)>&#9660;</span></th>
-<th><span onClick=a(14,true,true)>&#9650;</span> <span onClick=a(14,false,true)>&#9660;</span></th>
-<th><span onClick=a(15,true,true)>&#9650;</span> <span onClick=a(15,false,true)>&#9660;</span></th>
+<th><span onClick=a(0,true,true)>&#9650;</span>&nbsp;<span onClick=a(0,false,true)>&#9660;</span></th>
+<th><span onClick=a(1,true,true)>&#9650;</span>&nbsp;<span onClick=a(1,false,true)>&#9660;</span></th>
+<th><span onClick=a(2,true,false)>&#9650;</span>&nbsp;<span onClick=a(2,false,false)>&#9660;</span></th>
+<th><span onClick=a(3,true,false)>&#9650;</span>&nbsp;<span onClick=a(3,false,false)>&#9660;</span></th>
+<th><span onClick=a(4,true,true)>&#9650;</span>&nbsp;<span onClick=a(4,false,true)>&#9660;</span></th>
+<th><span onClick=a(5,true,true)>&#9650;</span>&nbsp;<span onClick=a(5,false,true)>&#9660;</span></th>
+<th><span onClick=a(6,true,true)>&#9650;</span>&nbsp;<span onClick=a(6,false,true)>&#9660;</span></th>
+<th><span onClick=a(7,true,true)>&#9650;</span>&nbsp;<span onClick=a(7,false,true)>&#9660;</span></th>
+<th><span onClick=a(8,true,false)>&#9650;</span>&nbsp;<span onClick=a(8,false,false)>&#9660;</span></th>
+<th><span onClick=a(9,true,true)>&#9650;</span>&nbsp;<span onClick=a(9,false,true)>&#9660;</span></th>
+<th><span onClick=a(10,true,true)>&#9650;</span>&nbsp;<span onClick=a(10,false,true)>&#9660;</span></th>
+<th><span onClick=a(11,true,true)>&#9650;</span>&nbsp;<span onClick=a(11,false,true)>&#9660;</span></th>
+<th><span onClick=a(12,true,true)>&#9650;</span>&nbsp;<span onClick=a(12,false,true)>&#9660;</span></th>
+<th><span onClick=a(13,true,true)>&#9650;</span>&nbsp;<span onClick=a(13,false,true)>&#9660;</span></th>
+<th><span onClick=a(14,true,true)>&#9650;</span>&nbsp;<span onClick=a(14,false,true)>&#9660;</span></th>
+<th><span onClick=a(15,true,true)>&#9650;</span>&nbsp;<span onClick=a(15,false,true)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

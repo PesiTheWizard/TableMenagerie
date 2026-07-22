@@ -1,8 +1,8 @@
 <html>
 <head>
-<title>Market orders - Eve API</title>
+<title>Market history - Eve API</title>
 <script>
-function GetMarketOrders(ClBt)
+function GetMarketHistory(ClBt)
 {
 	ClBt.disabled = true;
 	const OGresp = document.getElementById("stts");
@@ -13,43 +13,30 @@ function GetMarketOrders(ClBt)
 	const DtxtAL = document.getElementById("txtAL");
 	const DselRegion = document.getElementById("selRegion");
 	const DlogA = document.getElementById("logA");
-	const DchkTypeID = document.getElementById("chkTypeID");
 	const DtxtTypeID = document.getElementById("txtTypeID");
-	const DchkPage = document.getElementById("chkPage");
-	const DtxtPage = document.getElementById("txtPage");
-	const DselOrderType = document.getElementById("selOrderType");
 	if(DlogA==null)
 	{
 		console.log("logA find fail");
 		ClBt.disabled = false;
 		return;
 	}
-	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselRegion==null)||(DchkTypeID==null)||(DtxtTypeID==null)||(DchkPage==null)||(DtxtPage==null)||(DselOrderType==null) )
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselRegion==null)||(DtxtTypeID==null) )
 	{
 		DlogA.innerText = "getElementById fail";
 		ClBt.disabled = false;
 		return;
 	}
 	const TIDV = parseInt(DtxtTypeID.value);
-	if(DchkTypeID.checked && (isNaN(TIDV) || TIDV<0))
+	if(isNaN(TIDV) || TIDV<0)
 	{
-		DlogA.innerText = "TypeID used must be a number";
+		DlogA.innerText = "TypeID must be a natural number";
 		ClBt.disabled = false;
 		return;
 	}
-	const PIDV = parseInt(DtxtPage.value);
-	if(DchkPage.checked && (isNaN(PIDV) || PIDV<1))
-	{
-		DlogA.innerText = "Page used must be a number at least 1";
-		ClBt.disabled = false;
-		return;
-	}
-	const TQ = DchkTypeID.checked?`&type_id=${TIDV}`:"";
-	const PQ = DchkPage.checked?`&page=${PIDV}`:"";
-	const EPQ = `https://esi.evetech.net/markets/${parseInt(DselRegion.value)}/orders?order_type=${DselOrderType.value}${TQ}${PQ}`;
+	const EPQ = `https://esi.evetech.net/markets/${parseInt(DselRegion.value)}/history?type_id=${TIDV}`;
 	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim()}}:{};
 	DlogA.innerText = `Fetching ${EPQ}...`;
-	OGresp.innerText = "Fetching market data...";
+	OGresp.innerText = "Fetching market history...";
 	svr.innerText = "Waiting for response...";
 	const TS1 = Date.now();
 	fetch(EPQ,hAL).then((response) => {
@@ -65,26 +52,15 @@ function GetMarketOrders(ClBt)
 			const currPrt = response[rcats[i]];
 			const tabRw = document.createElement('tr');
 			lister(rcats[i],tabRw,'td');
-			const dur = parseInt(currPrt["duration"]);
-			lister(dur,tabRw,'td');
-			lister(currPrt["is_buy_order"]??"",tabRw,'td');
-			const dofc = currPrt["issued"];
-			lister(dofc,tabRw,'td');
-			lister(currPrt["location_id"]??"",tabRw,'td');
-			lister(currPrt["min_volume"]??"",tabRw,'td');
-			lister(currPrt["order_id"]??"",tabRw,'td');
-			const Pr = parseFloat(currPrt["price"]);
-			lister(Pr,tabRw,'td');
-			lister(currPrt["range"]??"",tabRw,'td');
-			lister(currPrt["system_id"]??"",tabRw,'td');
-			lister(currPrt["type_id"]??"",tabRw,'td');
-			const VolR = parseInt(currPrt["volume_remain"]);
-			const VolT = parseInt(currPrt["volume_total"]);
-			lister(VolR,tabRw,'td');
-			lister(VolT,tabRw,'td');
-			lister(VolT-VolR,tabRw,'td');
-			lister(parseFloat(((VolT-VolR)*Pr).toFixed(4)),tabRw,'td');
-			lister((new Date(dofc).valueOf()-TS)/86400000+dur,tabRw,'td');
+			const avr = parseFloat(currPrt["average"]);
+			lister(avr,tabRw,'td');
+			lister(currPrt["date"]??"",tabRw,'td');
+			lister(currPrt["highest"]??"",tabRw,'td');
+			lister(currPrt["lowest"]??"",tabRw,'td');
+			lister(currPrt["order_count"]??"",tabRw,'td');
+			const vol = parseFloat(currPrt["volume"]);
+			lister(vol,tabRw,'td');
+			lister(avr*vol,tabRw,'td');
 			TB.appendChild(tabRw);
 		}
 		return TS;
@@ -161,7 +137,7 @@ function LdT()
 function moreOnTable()
 {
 	document.getElementById("hdrs").innerHTML = "";
-	document.getElementById("orderFetcher").disabled = false;
+	document.getElementById("historyFetcher").disabled = false;
 }
 </script>
 <style>
@@ -200,12 +176,12 @@ tr.cpr>th
 <body>
 <input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
 <table border=1><tr><td valign=bottom>
-Jita(30000142):The Forge<br>
-Amarr(30002187)/Misaba(30003563):Domain<br>
-Rens(30002510):Heimatar<br>
-Dodixie(30002659):Sinq Laison<br>
-Hek(30002053):Metropolis<br>
-Manifest(30100032):Exordium
+Jita:The Forge<br>
+Amarr/Misaba:Domain<br>
+Rens:Heimatar<br>
+Dodixie:Sinq Laison<br>
+Hek:Metropolis<br>
+Manifest:Exordium
 <hr>
 Region:<select id="selRegion">
 <optgroup label="Empire">
@@ -327,14 +303,8 @@ Region:<select id="selRegion">
 <option value="14000005">VR-05</option>
 <option value="19000001">GPMR-01</option>
 </select><br>
-Order type:<select id="selOrderType">
-<option value="all" selected>all</option>
-<option value="buy">buy</option>
-<option value="sell">sell</option>
-</select><br>
-<input type=checkbox id="chkTypeID">TypeID:<input id="txtTypeID"><br>
-<input type=checkbox id="chkPage">Page:<input id="txtPage" value="1"><br>
-<input type=button id="orderFetcher" value="Get market orders" onclick=GetMarketOrders(this)><br>
+TypeID:<input id="txtTypeID"><br>
+<input type=button id="historyFetcher" value="Get market history" onclick=GetMarketHistory(this)><br>
 </td><td valign=bottom>
 <form name="TypeSelector">
 <details><summary>ID Picker</summary>
@@ -593,24 +563,16 @@ Order type:<select id="selOrderType">
 <div id="svar"></div>
 <table border=1>
 <thead class="res">
-<tr><th>API entry</th><th>Duration</th><th>Buy order?</th><th>Issued</th><th>Location ID</th><th>min volume</th><th>Order ID</th><th>Price</th><th>Range</th><th>System ID</th><th>Type ID</th><th>Volume remain</th><th>Volume total</th><th title="total-remain">~Units moved~</th><th title="(total-remain)*price">~ISK moved~</th><th>~Expiry~</th></tr>
+<tr><th>API entry</th><th>Average</th><th>Date</th><th>Highest</th><th>Lowest</th><th>Order count</th><th>Volume</th><th title="average*volume">~ISK moved~</th></tr>
 <tr>
 <th><span onClick=a(0,true,true)>&#9650;</span>&nbsp;<span onClick=a(0,false,true)>&#9660;</span></th>
 <th><span onClick=a(1,true,true)>&#9650;</span>&nbsp;<span onClick=a(1,false,true)>&#9660;</span></th>
 <th><span onClick=a(2,true,false)>&#9650;</span>&nbsp;<span onClick=a(2,false,false)>&#9660;</span></th>
-<th><span onClick=a(3,true,false)>&#9650;</span>&nbsp;<span onClick=a(3,false,false)>&#9660;</span></th>
+<th><span onClick=a(3,true,true)>&#9650;</span>&nbsp;<span onClick=a(3,false,true)>&#9660;</span></th>
 <th><span onClick=a(4,true,true)>&#9650;</span>&nbsp;<span onClick=a(4,false,true)>&#9660;</span></th>
 <th><span onClick=a(5,true,true)>&#9650;</span>&nbsp;<span onClick=a(5,false,true)>&#9660;</span></th>
 <th><span onClick=a(6,true,true)>&#9650;</span>&nbsp;<span onClick=a(6,false,true)>&#9660;</span></th>
 <th><span onClick=a(7,true,true)>&#9650;</span>&nbsp;<span onClick=a(7,false,true)>&#9660;</span></th>
-<th><span onClick=a(8,true,false)>&#9650;</span>&nbsp;<span onClick=a(8,false,false)>&#9660;</span></th>
-<th><span onClick=a(9,true,true)>&#9650;</span>&nbsp;<span onClick=a(9,false,true)>&#9660;</span></th>
-<th><span onClick=a(10,true,true)>&#9650;</span>&nbsp;<span onClick=a(10,false,true)>&#9660;</span></th>
-<th><span onClick=a(11,true,true)>&#9650;</span>&nbsp;<span onClick=a(11,false,true)>&#9660;</span></th>
-<th><span onClick=a(12,true,true)>&#9650;</span>&nbsp;<span onClick=a(12,false,true)>&#9660;</span></th>
-<th><span onClick=a(13,true,true)>&#9650;</span>&nbsp;<span onClick=a(13,false,true)>&#9660;</span></th>
-<th><span onClick=a(14,true,true)>&#9650;</span>&nbsp;<span onClick=a(14,false,true)>&#9660;</span></th>
-<th><span onClick=a(15,true,true)>&#9650;</span>&nbsp;<span onClick=a(15,false,true)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

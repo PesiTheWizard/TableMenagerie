@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>LP store offers - Eve API</title>
+<script>
+function GetOffers(ClBt)
+{
+	ClBt.disabled = true;
+	const OGresp = document.getElementById("stts");
+	const HL = document.getElementById("hdrs");
+	const svr = document.getElementById("svar");
+	const TB = document.getElementById("st");
+	const DchkAL = document.getElementById("chkAL");
+	const DtxtAL = document.getElementById("txtAL");
+	const DselCorp = document.getElementById("selCorp");
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null)||(DselCorp==null) )
+	{
+		console.log("getElementById fail");
+		return;
+	}
+	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim()}}:{};
+	OGresp.innerText = "Fetching LP store data...";
+	svr.innerText = "Waiting for response...";
+	const TS1 = Date.now();
+	fetch(`https://esi.evetech.net/loyalty/stores/${parseInt(DselCorp.value)}/offers`,hAL).then((response) => {
+		OGresp.innerText = "Response code = ".concat(response.status);
+		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
+		return response.json();
+	}).then((response) => {
+		const TS = Date.now();
+		const rcats = Object.keys(response);
+		for(let i=0;i<rcats.length;i++)
+		{
+			const currPrt = response[rcats[i]];
+			const tabRw = document.createElement('tr');
+			lister(rcats[i],tabRw,'td');
+			lister(currPrt["ak_cost"]??"",tabRw,'td');
+			lister(currPrt["isk_cost"]??"",tabRw,'td');
+			lister(currPrt["lp_cost"]??"",tabRw,'td');
+			lister(currPrt["offer_id"]??"",tabRw,'td');
+			lister(currPrt["quantity"]??"",tabRw,'td');
+			lister(currPrt["required_items"]?.length??"",tabRw,'td');
+			lister(currPrt["type_id"]??"",tabRw,'td');
+			TB.appendChild(tabRw);
+		}
+		return TS;
+	}).then((TS2) => {
+		svr.innerText = "JSON response received in ".concat((TS2-TS1)/1000," seconds");
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+function lister(listedText, ParntNde, ElType)
+{
+	const listEntry = document.createElement(ElType);
+	const entryText = document.createTextNode(listedText);
+	listEntry.appendChild(entryText);
+	ParntNde.appendChild(listEntry);
+}
+function a(ctsb, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
+	const gt = document.getElementById("st").childNodes;
+	const tl = gt.length;//total length, stop if cup reaches this
+	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
+	for(let cup=1;cup < tl;cup++)
+/* This is insertionsort
+cup starts at 1 because it compares index to index-1.
+A list of 1 is already sorted and then this loop never runs.
+cup strictly grows and is not modified inside the loop so the loop will end.
+The node at current cup is either left alone or inserted into a position "behind" it,
+so the set of childnodes at and below the cup is unchanged.
+*/
+	{
+		fn = gt[cup];
+		sn = gt[cup-1];
+		s1 = fn.childNodes[ctsb].textContent;
+		s2 = sn.childNodes[ctsb].textContent;
+		if(asnum)
+		{//empty strings result in NaN
+			s1 = parseFloat(s1);
+			s2 = parseFloat(s2);
+			if(isNaN(s1)||isNaN(s2)){continue;}
+		}
+		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
+		{//we have reason to enter the inner loop
+			//fn is the one who will eventually be moved
+			let scout = cup-2;//fn was already compared to the one just below it so step back 2 spots at least
+			let rearguard = cup-1;
+			let sign;
+			while(scout >= 0)
+			{
+				sign = gt[scout].childNodes[ctsb].textContent;
+				if(asnum)
+				{
+					sign = parseFloat(sign);
+					if(isNaN(sign)){break;}
+				}
+				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
+				{
+					break;
+				}
+				else//we have to go further to find the proper place
+				{
+					scout--;
+					rearguard--;
+				}
+			}
+			//fn's position should be between scout and rearguard. Scout might be -1 but rearguard will always be at least 0
+			gt[rearguard].before(fn);
+		}
+	}
+}
+</script>
+<style>
+input,select
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+td,th
+{
+	white-space:nowrap;
+}
+span
+{
+	cursor:pointer;
+}
+thead>tr:first-of-type>th
+{
+	writing-mode:sideways-lr;
+}
+</style>
+</head>
+<body>
+<input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
+<select id="selCorp">
+<option value="1000182">Tribal Liberation Force</option>
+<option value="1000106">Egonics Inc.</option>
+<option value="1000180">State Protectorate</option>
+<option value="1000179">24th Imperial Crusade</option>
+</select>
+<input type=button value="Get offers" onClick=GetOffers(this)>
+<hr>
+<div id="stts"></div>
+<ul id="hdrs"></ul>
+<div id="svar"></div>
+<table border=1>
+<thead>
+<tr><th>API entry</th><th>AK cost</th><th>ISK cost</th><th>LP cost</th><th>Offer ID</th><th>Quantity</th><th>required items, length</th><th>Type ID</th></tr>
+<tr>
+<th><span onClick=a(0,true,true)>&#9650;</span> <span onClick=a(0,false,true)>&#9660;</span></th>
+<th><span onClick=a(1,true,true)>&#9650;</span> <span onClick=a(1,false,true)>&#9660;</span></th>
+<th><span onClick=a(2,true,true)>&#9650;</span> <span onClick=a(2,false,true)>&#9660;</span></th>
+<th><span onClick=a(3,true,true)>&#9650;</span> <span onClick=a(3,false,true)>&#9660;</span></th>
+<th><span onClick=a(4,true,true)>&#9650;</span> <span onClick=a(4,false,true)>&#9660;</span></th>
+<th><span onClick=a(5,true,true)>&#9650;</span> <span onClick=a(5,false,true)>&#9660;</span></th>
+<th><span onClick=a(6,true,true)>&#9650;</span> <span onClick=a(6,false,true)>&#9660;</span></th>
+<th><span onClick=a(7,true,true)>&#9650;</span> <span onClick=a(7,false,true)>&#9660;</span></th>
+</tr></thead>
+<tbody id="st"></tbody>
+</table>
+</body>
+</html>

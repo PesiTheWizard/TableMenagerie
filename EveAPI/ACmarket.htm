@@ -12,6 +12,7 @@ function calculate()
 	const zyd = parseFloat(document.Minerals?.ZydMarket?.value);
 	const mega = parseFloat(document.Minerals?.MegaMarket?.value);
 	const morph = parseFloat(document.Minerals?.MorphMarket?.value);
+
 	document.getElementById("condensed").innerText= (trit*160 + pye*40 + mex*10);
 	document.getElementById("crystal").innerText= (mex*24 + iso*6);
 	document.getElementById("dark").innerText= (iso*32 + noc*8);
@@ -24,6 +25,56 @@ function calculate()
 	document.getElementById("plush").innerText= (trit*4096 + pye*1024 + iso*64 + zyd*4);
 	document.getElementById("precious").innerText= (pye*128 + iso*8);
 	document.getElementById("sheen").innerText= (trit*512 + pye*128 + iso*8 + noc*2);
+
+	document.getElementById("spaCLs").innerText= (trit*27 + pye*21);
+	document.getElementById("spaNs").innerText= (trit*38 + pye*32);
+	document.getElementById("spaPs").innerText= (trit*58 + pye*23 + iso*1);
+	document.getElementById("spaDUs").innerText= (trit*118 + mex*1 + iso*2);
+	document.getElementById("spaTSs").innerText= (trit*58 + pye*64 + mex*1);
+	document.getElementById("spaFs").innerText= (trit*162 + pye*3 + iso*3);
+	document.getElementById("spaPPs").innerText= (trit*164 + pye*17 + iso*3);
+	document.getElementById("spaEs").innerText= (trit*204 + pye*17 + noc*1);
+	document.getElementById("spaCLm").innerText= (trit*164 + pye*17 + iso*3);
+	document.getElementById("spaNm").innerText= (trit*116 + pye*129 + mex*2);
+	document.getElementById("spaPm").innerText= (trit*139 + pye*194);
+	document.getElementById("spaDUm").innerText= (trit*290 + pye*119 + mex*14 + iso*2);
+	document.getElementById("spaTSm").innerText= (trit*288 + pye*254);
+	document.getElementById("spaFm").innerText= (trit*239 + pye*318 + mex*1);
+	document.getElementById("spaPPm").innerText= (trit*668 + pye*36 + mex*4 + iso*14);
+	document.getElementById("spaEm").innerText= (trit*449 + pye*417 + mex*7);
+	document.getElementById("spaCLl").innerText= (trit*249 + pye*198 + iso*1);
+	document.getElementById("spaNl").innerText= (trit*520 + pye*100 + mex*2 + iso*2 + noc*2);
+	document.getElementById("spaPl").innerText= (trit*511 + pye*428);
+	document.getElementById("spaDUl").innerText= (trit*458 + pye*508);
+	document.getElementById("spaTSl").innerText= (trit*1040 + pye*156 + mex*104);
+	document.getElementById("spaFl").innerText= (trit*1236 + pye*223 + mex*110);
+	document.getElementById("spaPPl").innerText= (trit*1529 + mex*89 + iso*23);
+	document.getElementById("spaEl").innerText= (trit*1778 + pye*127 + mex*89 + iso*29);
+	document.getElementById("SBs").innerText= (trit*1327 + pye*481 + mex*113);
+	document.getElementById("SBm").innerText= (pye*1327 + mex*481 + iso*113);
+	document.getElementById("SBl").innerText= (mex*1327 + iso*481 + noc*113);
+	document.getElementById("ARs").innerText= (trit*858 + pye*288 + mega*4);
+	document.getElementById("ARm").innerText= (trit*2271 + pye*1063 + mex*906 + iso*1 + noc*4);
+	document.getElementById("ARl").innerText= (trit*4662 + pye*1857 + mex*1027 + iso*44 + noc*51);
+	document.getElementById("SEs").innerText= (trit*916 + pye*64 + mex*29 + noc*4);
+	document.getElementById("SEm").innerText= (trit*1890 + pye*456 + mex*179 + iso*6);
+	document.getElementById("SEl").innerText= (trit*3383 + pye*2769 + mex*181);
+	document.getElementById("CBs").innerText= (trit*684 + pye*427 + mex*153 + iso*2 + noc*2);
+	document.getElementById("CBm").innerText= (trit*1338 + pye*1058 + mex*493 + iso*2 + noc*1);
+	document.getElementById("CBl").innerText= (trit*4574 + pye*1734 + mex*1307 + zyd*4);
+
+	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
+	document.getElementById("painters").innerText= (trit*840 + pye*183 + mex*470 + iso*4 + mega*4);
+	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
+	document.getElementById("Shuttle").innerText= (trit*2778);
+	document.getElementById("Frigate").innerText= (trit*13333 + pye*3333 + mex*1333);
+	document.getElementById("TrackEnh").innerText= (trit*538 + pye*88 + mex*369 + iso*1 + noc*4);
+	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
+	document.getElementById("StasWeb").innerText= (trit*862 + pye*792 + mex*529);
+	document.getElementById("MultECM").innerText= (iso*62 + noc*49);
+	document.getElementById("ShieldRecharger").innerText= (trit*458 + pye*610 + mex*51 + iso*4 + noc*3);
+	document.getElementById("Overdrive").innerText= (trit*234 + pye*3413);
+	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
 }
 /*
 At some point these were changed. The old refining values were...
@@ -47,6 +98,10 @@ input
 	margin-top:1px;
 	margin-bottom:1px;
 }
+table
+{
+	display:inline-block;
+}
 </style>
 </head>
 <body>
@@ -65,7 +120,7 @@ input
 <tr><td>Megacyte</td><td>8192</td><td><Input type=TextField name="MegaMarket" value=8192></td></tr>
 <tr><td>Morphite</td><td>32768</td><td><Input type=TextField name="MorphMarket" value=32768></td></tr>
 </tbody>
-</table>
+</table><br>
 <input type=button value="Calculate" OnClick=calculate()>
 </form>
 <table border=1>
@@ -85,6 +140,46 @@ input
 <tr><td>Plush Compound</td><td id="plush"></td></tr>
 <tr><td>Precious Alloy</td><td id="precious"></td></tr>
 <tr><td>Sheen Compound</td><td id="sheen"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>LP turnins</th><th>Small</th><th>Medium</th><th>Large</th></tr>
+</thead>
+<tbody>
+<tr><td>Carbonized Lead(100)</td><td id="spaCLs"></td><td id="spaCLm"></td><td id="spaCLl"></td></tr>
+<tr><td>Nuclear(100)</td><td id="spaNs"></td><td id="spaNm"></td><td id="spaNl"></td></tr>
+<tr><td>Proton(100)</td><td id="spaPs"></td><td id="spaPm"></td><td id="spaPl"></td></tr>
+<tr><td>Depleted Uranium(100)</td><td id="spaDUs"></td><td id="spaDUm"></td><td id="spaDUl"></td></tr>
+<tr><td>Titanium Sabot(100)</td><td id="spaTSs"></td><td id="spaTSm"></td><td id="spaTSl"></td></tr>
+<tr><td>Fusion(100)</td><td id="spaFs"></td><td id="spaFm"></td><td id="spaFl"></td></tr>
+<tr><td>Phased Plasma(100)</td><td id="spaPPs"></td><td id="spaPPm"></td><td id="spaPPl"></td></tr>
+<tr><td>EMP(100)</td><td id="spaEs"></td><td id="spaEm"></td><td id="spaEl"></td></tr>
+<tr><td>Shield Booster I</td><td id="SBs"></td><td id="SBm"></td><td id="SBl"></td></tr>
+<tr><td>Armor Repairer I</td><td id="ARs"></td><td id="ARm"></td><td id="ARl"></td></tr>
+<tr><td>Shield Extender I</td><td id="SEs"></td><td id="SEm"></td><td id="SEl"></td></tr>
+<tr><td>Cap Battery I</td><td id="CBs"></td><td id="CBm"></td><td id="CBl"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Other</th><th>Mineral market value</th></tr>
+</thead>
+<tbody>
+<tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
+<tr><td>Target Painter I</td><td id="painters"></td></tr>
+<tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
+<tr><td>Shuttle</td><td id="Shuttle"></td></tr>
+<tr><td>Non-scan Frigate</td><td id="Frigate"></td></tr>
+<tr><td>Tracking Enhancer I</td><td id="TrackEnh"></td></tr>
+<tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>
+<tr><td>Stasis Webifier I</td><td id="StasWeb"></td></tr>
+<tr><td>Multispectral ECM I</td><td id="MultECM"></td></tr>
+<tr><td>Shield Recharger I</td><td id="ShieldRecharger"></td></tr>
+<tr><td>Overdrive Injector System I</td><td id="Overdrive"></td></tr>
+<tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
 </tbody>
 </table>
 </body>

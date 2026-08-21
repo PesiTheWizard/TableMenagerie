@@ -210,7 +210,7 @@ function textToJSONhandler(stuff,t,als,arrObj)
 		datehelper("seenAt");
 		for(let i=0;i<playtime.length;i++)
 		{
-			lister(JO["playTime"]?(JO["playTime"][playtime[i]]??""):NA,tablRw,'td');
+			lister(JO["playTime"]?(JO["playTime"][playtime[i]]??"-0"):NA,tablRw,'td');
 		}
 		blisthelper("profile",arrObj["profile"]);
 		lister(JO["title"]??"",tablRw,'td');
@@ -328,7 +328,7 @@ Site = <select id="selSite">
 <option selected>lichess</option>
 <option>lishogi</option>
 </select><br>
-<input type=text id="NofBotsToGet" value="200"> <input type=button value="Get this many bots" onClick=initialGet(this)>
+<input type=text id="NofBotsToGet" value="400"> <input type=button value="Get this many bots" onClick=initialGet(this)>
 <div id="logA">Log space</div>
 <hr>
 <div id="stts"></div>

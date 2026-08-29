@@ -17,13 +17,14 @@ function GetGenericData(ClBt)
 	}
 	const bApp = document.getElementById("chkA")?.checked??false;
 	const Dtxapp = document.getElementById("txtA");
-	const sfol = bApp?`/${parseInt(Dtxapp.value)}`:"";
+	const sfol = bApp?`/${Dtxapp.value.trim()}`:"";
 	const endPoint = `https://esi.evetech.net/${site.value}${sfol}`;
+	const sv = {'headers':{'X-Compatibility-Date':'2026-08-18'}};
 	const TS1 = Date.now();
 	DlogA.innerText = "Fetching ".concat(endPoint);
 	OGresp.innerText = "Fetching raw data...";
 	svr.innerText = "Waiting for response...";
-	fetch(endPoint).then((response) => {
+	fetch(endPoint,sv).then((response) => {
 		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.text();
@@ -72,8 +73,9 @@ input
 <option value="dogma/attributes">attributes*</option>
 <option value="dogma/effects">effects*</option>
 </optgroup><optgroup label="freelance jobs">
-<option value="freelance-jobs" disabled>[root]*</option>
+<option value="freelance-jobs">[root]*</option>
 </optgroup><optgroup label="fw">
+<option value="fw/leaderboards">leaderboards</option>
 <option value="fw/stats">stats</option>
 <option value="fw/systems">systems</option>
 <option value="fw/wars">wars</option>
@@ -82,12 +84,27 @@ input
 </optgroup><optgroup label="industry">
 <option value="industry/facilities">facilities</option>
 <option value="industry/systems">systems</option>
+</optgroup><optgroup label="insurance">
+<option value="insurance/prices">prices</option>
+</optgroup><optgroup label="killmails">
+<option value="killmails">[root]+/</option>
+</optgroup><optgroup label="loyalty">
+<option value="loyalty/stores">stores+/</option>
 </optgroup><optgroup label="markets">
 <option value="markets/groups">groups*</option>
 <option value="markets/prices">prices</option>
+<option value="markets/structures" disabled>structures+</option>
 </optgroup><optgroup label="meta">
 <option value="meta/changelog">changelog</option>
 <option value="meta/compatibility-dates">compatibility dates</option>
+</optgroup><optgroup label="military-campaigns">
+<option value="military-campaigns">[root]*/</option>
+</optgroup><optgroup label="skyhooks">
+<option value="skyhooks/raidable">raidable</option>
+</optgroup><optgroup label="sovereignty">
+<option value="sovereignty/campaigns">campaigns</option>
+<option value="sovereignty/map">map</option>
+<option value="sovereignty/structures">structures</option>
 </optgroup><optgroup label="status">
 <option value="status">[root]</option>
 </optgroup><optgroup label="universe">

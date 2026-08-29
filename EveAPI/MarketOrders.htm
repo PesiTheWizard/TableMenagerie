@@ -194,6 +194,11 @@ dl
 tr.cpr>th
 {
 	font-size:smaller;
+	letter-spacing:-1px;
+}
+input[type=radio]
+{
+	margin-left:3px;
 }
 </style>
 </head>
@@ -349,6 +354,7 @@ Order type:<select id="selOrderType">
 	<input type=radio name="PickedType" value="40">Megacyte<br>
 	<input type=radio name="PickedType" value="11399">Morphite
 	</details></dd>
+
 	<dd><details><summary>Ore</summary>
 	<table border=1><thead>
 	<tr class="cpr"><th class="nc" rowspan=2></th><th colspan=3>Standard</th><th colspan=3>Compressed</th></tr>
@@ -372,6 +378,7 @@ Order type:<select id="selOrderType">
 	<tr><td>Arkonor</td>    <td><input type=radio name="PickedType" value="22"></td>   <td><input type=radio name="PickedType" value="17425"></td><td><input type=radio name="PickedType" value="17426"></td><td><input type=radio name="PickedType" value="62568"></td><td><input type=radio name="PickedType" value="62569"></td><td><input type=radio name="PickedType" value="62570"></td></tr>
 	</tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Alloys&Compounds</summary>
 	<input type=radio name="PickedType" value="11739">Condensed Alloy<br>
 	<input type=radio name="PickedType" value="11741">Crystal Compound<br>
@@ -403,18 +410,19 @@ Order type:<select id="selOrderType">
 		<tr><td>EMP</td>             <td><input type=radio name="PickedType" value="185"></td><td><input type=radio name="PickedType" value="193"></td><td><input type=radio name="PickedType" value="201"></td><td><input type=radio name="PickedType" value="19992"></td><td><input type=radio name="PickedType" value="20008"></td><td><input type=radio name="PickedType" value="20735"></td><td><input type=radio name="PickedType" value="21898"></td><td><input type=radio name="PickedType" value="21896"></td><td><input type=radio name="PickedType" value="21894"></td><td><input type=radio name="PickedType" value="20767"></td><td><input type=radio name="PickedType" value="20783"></td><td><input type=radio name="PickedType" value="20799"></td></tr>
 		</tbody></table>
 		</details></dd>
-		<dd><details><summary>Frequency Crystals</summary>
+		<dd><details><summary>Frequency crystals</summary>
 		<table border=1><thead>
-		<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th></tr>
+		<tr class="cpr"><th rowspan=2 class="nc"></th><th colspan=3>Standard</th><th colspan=3 title="damage*1.10">Blood</th><th colspan=3 title="damage*1.10">Sansha</th><th colspan=3 title="damage*1.15">Imperial Navy</th><th colspan=3 title="damage*1.20">Dark Blood</th><th colspan=3 title="damage*1.20">True Sansha</th></tr>
+		<tr><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th></tr>
 		</thead><tbody>
-		<tr><td>Radio</td>         <td><input type=radio name="PickedType" value="239"></td><td><input type=radio name="PickedType" value="247"></td><td><input type=radio name="PickedType" value="255"></td></tr>
-		<tr><td>Microwave</td>     <td><input type=radio name="PickedType" value="240"></td><td><input type=radio name="PickedType" value="248"></td><td><input type=radio name="PickedType" value="256"></td></tr>
-		<tr><td>Infrared</td>      <td><input type=radio name="PickedType" value="241"></td><td><input type=radio name="PickedType" value="249"></td><td><input type=radio name="PickedType" value="257"></td></tr>
-		<tr><td>Standard</td>      <td><input type=radio name="PickedType" value="242"></td><td><input type=radio name="PickedType" value="250"></td><td><input type=radio name="PickedType" value="258"></td></tr>
-		<tr><td>Ultraviolet</td>   <td><input type=radio name="PickedType" value="243"></td><td><input type=radio name="PickedType" value="251"></td><td><input type=radio name="PickedType" value="259"></td></tr>
-		<tr><td>Xray</td>          <td><input type=radio name="PickedType" value="244"></td><td><input type=radio name="PickedType" value="252"></td><td><input type=radio name="PickedType" value="260"></td></tr>
-		<tr><td>Gamma</td>         <td><input type=radio name="PickedType" value="245"></td><td><input type=radio name="PickedType" value="253"></td><td><input type=radio name="PickedType" value="261"></td></tr>
-		<tr><td>Multifrequency</td><td><input type=radio name="PickedType" value="246"></td><td><input type=radio name="PickedType" value="254"></td><td><input type=radio name="PickedType" value="262"></td></tr>
+		<tr><td title="Capacitor need -15%">Radio</td>      <td><input type=radio name="PickedType" value="239"></td><td><input type=radio name="PickedType" value="247"></td><td><input type=radio name="PickedType" value="255"></td><td><input type=radio name="PickedType" value="21194"></td><td><input type=radio name="PickedType" value="21450"></td><td><input type=radio name="PickedType" value="21224"></td><td><input type=radio name="PickedType" value="19978"></td><td><input type=radio name="PickedType" value="20010"></td><td><input type=radio name="PickedType" value="20018"></td><td><input type=radio name="PickedType" value="23085"></td><td><input type=radio name="PickedType" value="23103"></td><td><input type=radio name="PickedType" value="23119"></td><td><input type=radio name="PickedType" value="21256"></td><td><input type=radio name="PickedType" value="21272"></td><td><input type=radio name="PickedType" value="21288"></td><td><input type=radio name="PickedType" value="20849"></td><td><input type=radio name="PickedType" value="20865"></td><td><input type=radio name="PickedType" value="20881"></td></tr>
+		<tr><td title="Capacitor need -25%">Microwave</td>  <td><input type=radio name="PickedType" value="240"></td><td><input type=radio name="PickedType" value="248"></td><td><input type=radio name="PickedType" value="256"></td><td><input type=radio name="PickedType" value="21196"></td><td><input type=radio name="PickedType" value="21210"></td><td><input type=radio name="PickedType" value="21226"></td><td><input type=radio name="PickedType" value="19980"></td><td><input type=radio name="PickedType" value="20012"></td><td><input type=radio name="PickedType" value="20020"></td><td><input type=radio name="PickedType" value="23083"></td><td><input type=radio name="PickedType" value="23101"></td><td><input type=radio name="PickedType" value="23117"></td><td><input type=radio name="PickedType" value="21258"></td><td><input type=radio name="PickedType" value="21274"></td><td><input type=radio name="PickedType" value="21290"></td><td><input type=radio name="PickedType" value="20851"></td><td><input type=radio name="PickedType" value="20867"></td><td><input type=radio name="PickedType" value="20883"></td></tr>
+		<tr><td title="Capacitor need -35%">Infrared</td>   <td><input type=radio name="PickedType" value="241"></td><td><input type=radio name="PickedType" value="249"></td><td><input type=radio name="PickedType" value="257"></td><td><input type=radio name="PickedType" value="21198"></td><td><input type=radio name="PickedType" value="21212"></td><td><input type=radio name="PickedType" value="21228"></td><td><input type=radio name="PickedType" value="19982"></td><td><input type=radio name="PickedType" value="20014"></td><td><input type=radio name="PickedType" value="20022"></td><td><input type=radio name="PickedType" value="23081"></td><td><input type=radio name="PickedType" value="23099"></td><td><input type=radio name="PickedType" value="23115"></td><td><input type=radio name="PickedType" value="21260"></td><td><input type=radio name="PickedType" value="21276"></td><td><input type=radio name="PickedType" value="21292"></td><td><input type=radio name="PickedType" value="20853"></td><td><input type=radio name="PickedType" value="20869"></td><td><input type=radio name="PickedType" value="20885"></td></tr>
+		<tr><td title="Capacitor need -45%">Standard</td>   <td><input type=radio name="PickedType" value="242"></td><td><input type=radio name="PickedType" value="250"></td><td><input type=radio name="PickedType" value="258"></td><td><input type=radio name="PickedType" value="21200"></td><td><input type=radio name="PickedType" value="21214"></td><td><input type=radio name="PickedType" value="21230"></td><td><input type=radio name="PickedType" value="19984"></td><td><input type=radio name="PickedType" value="20016"></td><td><input type=radio name="PickedType" value="20024"></td><td><input type=radio name="PickedType" value="23079"></td><td><input type=radio name="PickedType" value="23097"></td><td><input type=radio name="PickedType" value="23113"></td><td><input type=radio name="PickedType" value="21262"></td><td><input type=radio name="PickedType" value="21278"></td><td><input type=radio name="PickedType" value="21294"></td><td><input type=radio name="PickedType" value="20855"></td><td><input type=radio name="PickedType" value="20871"></td><td><input type=radio name="PickedType" value="20887"></td></tr>
+		<tr><td title="Capacitor need -35%">Ultraviolet</td><td><input type=radio name="PickedType" value="243"></td><td><input type=radio name="PickedType" value="251"></td><td><input type=radio name="PickedType" value="259"></td><td><input type=radio name="PickedType" value="21202"></td><td><input type=radio name="PickedType" value="21216"></td><td><input type=radio name="PickedType" value="21232"></td><td><input type=radio name="PickedType" value="20817"></td><td><input type=radio name="PickedType" value="20825"></td><td><input type=radio name="PickedType" value="20833"></td><td><input type=radio name="PickedType" value="23077"></td><td><input type=radio name="PickedType" value="23095"></td><td><input type=radio name="PickedType" value="23111"></td><td><input type=radio name="PickedType" value="21264"></td><td><input type=radio name="PickedType" value="21280"></td><td><input type=radio name="PickedType" value="21296"></td><td><input type=radio name="PickedType" value="20857"></td><td><input type=radio name="PickedType" value="20873"></td><td><input type=radio name="PickedType" value="20889"></td></tr>
+		<tr><td title="Capacitor need -25%">Xray</td>       <td><input type=radio name="PickedType" value="244"></td><td><input type=radio name="PickedType" value="252"></td><td><input type=radio name="PickedType" value="260"></td><td><input type=radio name="PickedType" value="21204"></td><td><input type=radio name="PickedType" value="21218"></td><td><input type=radio name="PickedType" value="21234"></td><td><input type=radio name="PickedType" value="20819"></td><td><input type=radio name="PickedType" value="20827"></td><td><input type=radio name="PickedType" value="20835"></td><td><input type=radio name="PickedType" value="23075"></td><td><input type=radio name="PickedType" value="23093"></td><td><input type=radio name="PickedType" value="23109"></td><td><input type=radio name="PickedType" value="21266"></td><td><input type=radio name="PickedType" value="21282"></td><td><input type=radio name="PickedType" value="21298"></td><td><input type=radio name="PickedType" value="20859"></td><td><input type=radio name="PickedType" value="20875"></td><td><input type=radio name="PickedType" value="20891"></td></tr>
+		<tr><td title="Capacitor need -15%">Gamma</td>      <td><input type=radio name="PickedType" value="245"></td><td><input type=radio name="PickedType" value="253"></td><td><input type=radio name="PickedType" value="261"></td><td><input type=radio name="PickedType" value="21206"></td><td><input type=radio name="PickedType" value="21220"></td><td><input type=radio name="PickedType" value="21236"></td><td><input type=radio name="PickedType" value="20821"></td><td><input type=radio name="PickedType" value="20829"></td><td><input type=radio name="PickedType" value="20837"></td><td><input type=radio name="PickedType" value="23073"></td><td><input type=radio name="PickedType" value="23091"></td><td><input type=radio name="PickedType" value="23107"></td><td><input type=radio name="PickedType" value="21268"></td><td><input type=radio name="PickedType" value="21284"></td><td><input type=radio name="PickedType" value="21300"></td><td><input type=radio name="PickedType" value="20861"></td><td><input type=radio name="PickedType" value="20877"></td><td><input type=radio name="PickedType" value="20893"></td></tr>
+		<tr><td>Multifrequency</td>                         <td><input type=radio name="PickedType" value="246"></td><td><input type=radio name="PickedType" value="254"></td><td><input type=radio name="PickedType" value="262"></td><td><input type=radio name="PickedType" value="21208"></td><td><input type=radio name="PickedType" value="21222"></td><td><input type=radio name="PickedType" value="21238"></td><td><input type=radio name="PickedType" value="20823"></td><td><input type=radio name="PickedType" value="20831"></td><td><input type=radio name="PickedType" value="20839"></td><td><input type=radio name="PickedType" value="23071"></td><td><input type=radio name="PickedType" value="23089"></td><td><input type=radio name="PickedType" value="23105"></td><td><input type=radio name="PickedType" value="21270"></td><td><input type=radio name="PickedType" value="21286"></td><td><input type=radio name="PickedType" value="21302"></td><td><input type=radio name="PickedType" value="20863"></td><td><input type=radio name="PickedType" value="20879"></td><td><input type=radio name="PickedType" value="20895"></td></tr>
 		</tbody></table>
 		</details></dd>
 		<dd><details><summary>Hybrid charges</summary>
@@ -435,7 +443,7 @@ Order type:<select id="selOrderType">
 		<table border=1><thead>
 		<tr><th rowspan=3 class="nc"></th><th colspan=16>Targeted</th><th colspan=8>Auto-Targeting</th></tr>
 		<tr class="cpr"><th colspan=4>Standard</th><th colspan=4>Guristas</th><th colspan=4>Caldari Navy</th><th colspan=4>Dread Guristas</th><th colspan=4>Standard</th><th colspan=4>Legion</th></tr>
-		<tr><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th></tr>
+		<tr class="cpr"><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th></tr>
 		</thead><tbody>
 		<tr><td>Rockets</td> <td><input type=radio name="PickedType" value="2512"></td> <td><input type=radio name="PickedType" value="2514"></td> <td><input type=radio name="PickedType" value="266"></td>  <td><input type=radio name="PickedType" value="2516"></td> <td><input type=radio name="PickedType" value="27319"></td><td><input type=radio name="PickedType" value="27313"></td><td><input type=radio name="PickedType" value="27331"></td><td><input type=radio name="PickedType" value="27325"></td><td><input type=radio name="PickedType" value="27321"></td><td><input type=radio name="PickedType" value="27315"></td><td><input type=radio name="PickedType" value="27333"></td><td><input type=radio name="PickedType" value="27327"></td><td><input type=radio name="PickedType" value="27323"></td><td><input type=radio name="PickedType" value="27317"></td><td><input type=radio name="PickedType" value="27335"></td><td><input type=radio name="PickedType" value="27329"></td></tr>
 		<tr><td>Light</td>   <td><input type=radio name="PickedType" value="212"></td>  <td><input type=radio name="PickedType" value="211"></td>  <td><input type=radio name="PickedType" value="210"></td>  <td><input type=radio name="PickedType" value="213"></td>  <td><input type=radio name="PickedType" value="27383"></td><td><input type=radio name="PickedType" value="27367"></td><td><input type=radio name="PickedType" value="27353"></td><td><input type=radio name="PickedType" value="27379"></td><td><input type=radio name="PickedType" value="27387"></td><td><input type=radio name="PickedType" value="27371"></td><td><input type=radio name="PickedType" value="27361"></td><td><input type=radio name="PickedType" value="27381"></td><td><input type=radio name="PickedType" value="27385"></td><td><input type=radio name="PickedType" value="27369"></td><td><input type=radio name="PickedType" value="27365"></td><td><input type=radio name="PickedType" value="27375"></td>
@@ -450,6 +458,22 @@ Order type:<select id="selOrderType">
 		</details></dd>
 	</dl>
 	</details></dd>
+
+	<dd><details><summary>Weapons</summary>
+	<table border=1><thead>
+	<tr><th class="nc"></th><th>Small</th><th>Medium</th><th>Large</th></tr>
+	</thead><tbody>
+	<tr><td>AutoCannons</td><td><input type=radio name="PickedType" value="484">125mm Gatling AutoCannon I<br><input type=radio name="PickedType" value="485">150mm Light AutoCannon I<br><input type=radio name="PickedType" value="486">200mm AutoCannon I</td><td><input type=radio name="PickedType" value="489">Dual 180mm AutoCannon I<br><input type=radio name="PickedType" value="490">220mm Vulcan AutoCannon I<br><input type=radio name="PickedType" value="491">425mm AutoCannon I</td><td><input type=radio name="PickedType" value="494">Dual 425mm AutoCannon I<br><input type=radio name="PickedType" value="495">Dual 650mm Repeating Cannon I<br><input type=radio name="PickedType" value="496">800mm Repeating Cannon I</td></tr>
+	<tr><td>Artillery Cannons</td><td><input type=radio name="PickedType" value="487">250mm Light Artillery Cannon I<br><input type=radio name="PickedType" value="488">280mm Howitzer Artillery I</td><td><input type=radio name="PickedType" value="492">650mm Artillery Cannon I<br><input type=radio name="PickedType" value="493">720mm Howitzer Artillery I</td><td><input type=radio name="PickedType" value="497">1200mm Artillery Cannon I<br><input type=radio name="PickedType" value="498">1400mm Howitzer Artillery I</td></tr>
+	<tr><td>Pulse Lasers</td><td><input type=radio name="PickedType" value="450">Gatling Pulse Laser I<br><input type=radio name="PickedType" value="451">Dual Light Pulse Laser I<br><input type=radio name="PickedType" value="453">Small Focused Pulse Laser I</td><td><input type=radio name="PickedType" value="456">Focused Medium Pulse Laser I<br><input type=radio name="PickedType" value="458">Heavy Pulse Laser I</td><td><input type=radio name="PickedType" value="460">Dual Heavy Pulse Laser I<br><input type=radio name="PickedType" value="462">Mega Pulse Laser I</td></tr>
+	<tr><td>Beam Lasers</td><td><input type=radio name="PickedType" value="452">Dual Light Beam Laser I<br><input type=radio name="PickedType" value="454">Small Focused Beam Laser I</td><td><input type=radio name="PickedType" value="455">Quad Light Beam Laser I<br><input type=radio name="PickedType" value="457">Focused Medium Beam Laser I<br><input type=radio name="PickedType" value="459">Heavy Beam Laser I</td><td><input type=radio name="PickedType" value="461">Dual Heavy Beam Laser I<br><input type=radio name="PickedType" value="463">Mega Beam Laser I<br><input type=radio name="PickedType" value="464">Tachyon Beam Laser I</td></tr>
+	<tr><td>Blasters</td><td><input type=radio name="PickedType" value="562">Light Electron Blaster I<br><input type=radio name="PickedType" value="563">Light Ion Blaster I<br><input type=radio name="PickedType" value="564">Light Neutron Blaster I</td><td><input type=radio name="PickedType" value="566">Heavy Electron Blaster I<br><input type=radio name="PickedType" value="569">Heavy Ion Blaster I<br><input type=radio name="PickedType" value="568">Heavy Neutron Blaster I</td><td><input type=radio name="PickedType" value="571">Electron Blaster Cannon I<br><input type=radio name="PickedType" value="575">Ion Blaster Cannon I<br><input type=radio name="PickedType" value="573">Neutron Blaster Cannon I</td></tr>
+	<tr><td>Railguns</td><td><input type=radio name="PickedType" value="561">75mm Gatling Rail I<br><input type=radio name="PickedType" value="10678">125mm Railgun I<br><input type=radio name="PickedType" value="565">150mm Railgun I</td><td><input type=radio name="PickedType" value="567">Dual 150mm Railgun I<br><input type=radio name="PickedType" value="12344">200mm Railgun I<br><input type=radio name="PickedType" value="570">250mm Railgun I</td><td><input type=radio name="PickedType" value="572">Dual 250mm Railgun I<br><input type=radio name="PickedType" value="12354">350mm Railgun I<br><input type=radio name="PickedType" value="574">425mm Railgun I</td></tr>
+	<tr><td>Missile Launchers</td><td><input type=radio name="PickedType" value="499">Light Missile Launcher I</td><td><input type=radio name="PickedType" value="501">Heavy Missile Launcher I</td><td><input type=radio name="PickedType" value="13320">Cruise Missile Launcher I</td></tr>
+	<tr><td>Smartbombs</td><td><input type=radio name="PickedType" value="1563">Small EMP Smartbomb I<br><input type=radio name="PickedType" value="1557">Small Plasma Smartbomb I<br><input type=radio name="PickedType" value="1551">Small Graviton Smartbomb I<br><input type=radio name="PickedType" value="1547">Small Proton Smartbomb I</td><td><input type=radio name="PickedType" value="3953">Medium EMP Smartbomb I<br><input type=radio name="PickedType" value="3947">Medium Plasma Smartbomb I<br><input type=radio name="PickedType" value="3941">Medium Graviton Smartbomb I<br><input type=radio name="PickedType" value="3937">Medium Proton Smartbomb I</td><td><input type=radio name="PickedType" value="3993">Large EMP Smartbomb I<br><input type=radio name="PickedType" value="3987">Large Plasma Smartbomb I<br><input type=radio name="PickedType" value="3981">Large Graviton Smartbomb I<br><input type=radio name="PickedType" value="3977">Large Proton Smartbomb I</td></tr>
+	</tbody></table>
+	</details></dd>
+
 	<dd><details><summary>Ships</summary>
 	<table border=1><thead>
 	<tr><th>Amarr</th><th>Caldari</th><th>Gallente</th><th>Minmatar</th></tr>
@@ -497,6 +521,7 @@ Order type:<select id="selOrderType">
 	<input type=radio name="PickedType" value="653">Wreathe
 	</td></tr></tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Electronic Warfare</summary>
 	<input type=radio name="PickedType" value="12709">Target Painter I<br>
 <!--
@@ -509,7 +534,8 @@ Order type:<select id="selOrderType">
 	<input type=radio name="PickedType" value="526">Stasis Webifier I<br>
 	<input type=radio name="PickedType" value="1957">Multispectral ECM I
 	</details></dd>
-	<dd><details><summary>Insignia</summary>
+
+	<dd><details><summary>Insignia & such</summary>
 	<table border=1><thead><tr><th>Amarr</th><th>Minmatar</th></tr>
 	</thead><tbody><tr><td>
 	<input type=radio name="PickedType" value="15610">Imperial Navy Sergeant Insignia I<br>
@@ -529,17 +555,27 @@ Order type:<select id="selOrderType">
 	<input type=radio name="PickedType" value="15631">Republic Fleet High Captain Insignia I<br>
 	<input type=radio name="PickedType" value="15632">Republic Fleet Commander Insignia I<br>
 	<input type=radio name="PickedType" value="15661">Republic Fleet Commander Insignia II
+	</td></tr><tr><td>
+	<input type=radio name="PickedType" value="93609">Imperial War Reserves Supply Package<br>
+	<input type=radio name="PickedType" value="73397">Amarr Decoder Package<br>
+	<input type=radio name="PickedType" value="73401">Amarr Encoder Splice
+	</td><td>
+	<input type=radio name="PickedType" value="93612">Republic Fleet Ordnance Supply Package<br>
+	<input type=radio name="PickedType" value="73398">Minmatar Decoder Package<br>
+	<input type=radio name="PickedType" value="73402">Minmatar Encoder Splice
 	</td></tr></tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Shield boosters</summary>
 	<input type=radio name="PickedType" value="10039">Civilian Shield Booster<br>
 	<table border=1><thead>
-	<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th><th>XL</th></tr>
+	<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th><th>X</th></tr>
 	</thead><tbody>
 	<tr><td>I</td><td><input type=radio name="PickedType" value="399"></td><td><input type=radio name="PickedType" value="10836"></td><td><input type=radio name="PickedType" value="10838"></td><td><input type=radio name="PickedType" value="10840"></td></tr>
 	<tr><td>Republic Fleet</td><td><input type=radio name="PickedType" value="15902"></td><td><input type=radio name="PickedType" value="15903"></td><td><input type=radio name="PickedType" value="15904"></td><td><input type=radio name="PickedType" value="15901"></td></tr>
 	</tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Armor repairers</summary>
 	<input type=radio name="PickedType" value="21853">Civilian Armor Repairer<br>
 	<table border=1><thead>
@@ -549,6 +585,7 @@ Order type:<select id="selOrderType">
 	<tr><td>Republic Fleet</td><td><input type=radio name="PickedType" value="17494"></td><td><input type=radio name="PickedType" value="17493"></td><td><input type=radio name="PickedType" value="17492"></td></tr>
 	</tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Shield extenders</summary>
 	<table border=1><thead>
 	<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th></tr>
@@ -558,6 +595,7 @@ Order type:<select id="selOrderType">
 	<tr><td>Thukker</td><td><input type=radio name="PickedType" value="28742"></td><td><input type=radio name="PickedType" value="28746"></td><td><input type=radio name="PickedType" value="28744"></td></tr>
 	</tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Cap batteries</summary>
 	<table border=1><thead>
 	<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th></tr>
@@ -567,12 +605,13 @@ Order type:<select id="selOrderType">
 	<tr><td>Thukker</td><td><input type=radio name="PickedType" value="41214"></td><td><input type=radio name="PickedType" value="41217"></td><td><input type=radio name="PickedType" value="41220"></td></tr>
 	</tbody></table>
 	</details></dd>
+
 	<dd><details><summary>Vendor trash</summary>
 	<input type=radio name="PickedType" value="48121">Triglavian Survey Database<br>
 	<input type=radio name="PickedType" value="56708">Interstellar Navigation Logs<br>
 	<input type=radio name="PickedType" value="60459">Rogue Drone Infestation Data<br>
-	<input type=radio name="PickedType" value="93609">Imperial War Reserves Supply Package
 	</details></dd>
+
 	<dd><details><summary>Other</summary>
 	<input type=radio name="PickedType" value="16273">Liquid Ozone<br>
 	<input type=radio name="PickedType" value="21857">1MN Civilian Afterburner<br>
@@ -616,3 +655,8 @@ Order type:<select id="selOrderType">
 </table>
 </body>
 </html>
+<!--
+Blood/Sansha: +10%
+Imperial Navy: +15%
+Dark Blood/True Sanshas: +20%
+-->

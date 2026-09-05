@@ -491,6 +491,16 @@ Order type:<select id="selOrderType">
 	</dl>
 	</details></dd>
 
+	<dd><details><summary>Combat drones</summary>
+	<table border=1><thead>
+	<tr><th class="nc"></th><th>EMP</th><th>Thermal</th><th>Kinetic</th><th>Explosive</th></tr>
+	</thead><tbody>
+	<tr><td>Light scout</td><td><input type=radio name="PickedType" value="2203">Acolyte I<br><input type=radio name="PickedType" value="31864">I.N. Acolyte</td><td><input type=radio name="PickedType" value="2454">Hobgoblin I<br><input type=radio name="PickedType" value="31880">F.N. Hobgoblin</td><td><input type=radio name="PickedType" value="2464">Hornet I<br><input type=radio name="PickedType" value="31872">C.N. Hornet</td><td><input type=radio name="PickedType" value="2486">Warrior I<br><input type=radio name="PickedType" value="31888">R.F. Warrior</td></tr>
+	<tr><td>Medium scout</td><td><input type=radio name="PickedType" value="2173">Infiltrator I<br><input type=radio name="PickedType" value="31866">I.N. Infiltrator</td><td><input type=radio name="PickedType" value="2183">Hammerhead I<br><input type=radio name="PickedType" value="31882">F.N. Hammerhead</td><td><input type=radio name="PickedType" value="15508">Vespa I<br><input type=radio name="PickedType" value="31874">C.N. Vespa</td><td><input type=radio name="PickedType" value="15510">Valkyrie I<br><input type=radio name="PickedType" value="31890">R.F. Valkyrie</td></tr>
+	<tr><td>Heavy attack</td><td><input type=radio name="PickedType" value="2193">Praetor I</td><td><input type=radio name="PickedType" value="2444">Ogre I</td><td><input type=radio name="PickedType" value="1201">Wasp I</td><td><input type=radio name="PickedType" value="2476">Berserker I</td></tr>
+	</tbody></table>
+	</details></dd>
+
 	<dd><details><summary>Weapons</summary>
 	<table border=1><thead>
 	<tr><th class="nc"></th><th>Small</th><th>Medium</th><th>Large</th></tr>
@@ -556,30 +566,33 @@ Order type:<select id="selOrderType">
 
 	<dd><details><summary>Sized modules</summary>
 	<table border=1><thead>
-	<tr class="cpr"><th rowspan=2 class="nc"></th><th colspan=4>I</th><th colspan=4>Republic fleet</th><th colspan=3>Thukker</th></tr>
-	<tr><th>S</th><th>M</th><th>L</th><th>X</th><th>S</th><th>M</th><th>L</th><th>X</th><th>S</th><th>M</th><th>L</th></tr>
+	<tr class="cpr"><th rowspan=2 class="nc"></th><th colspan=4>I</th><th colspan=4>Republic fleet</th><th colspan=3>Thukker</th><th colspan=3>Imperial Navy</th></tr>
+	<tr><th>S</th><th>M</th><th>L</th><th>X</th><th>S</th><th>M</th><th>L</th><th>X</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th></tr>
 	</thead><tbody>
 	<tr><td>Shield booster</td>        <td><input type=radio name="PickedType" value="399"></td><td><input type=radio name="PickedType" value="10836"></td><td><input type=radio name="PickedType" value="10838"></td><td><input type=radio name="PickedType" value="10840"></td><td><input type=radio name="PickedType" value="15902"></td><td><input type=radio name="PickedType" value="15903"></td><td><input type=radio name="PickedType" value="15904"></td><td><input type=radio name="PickedType" value="15901"></td></tr>
-	<tr><td>Armor repairer</td>        <td><input type=radio name="PickedType" value="523"></td><td><input type=radio name="PickedType" value="3528"></td><td><input type=radio name="PickedType" value="3538"></td><td class="nc"></td><td><input type=radio name="PickedType" value="17494"></td><td><input type=radio name="PickedType" value="17493"></td><td><input type=radio name="PickedType" value="17492"></td></tr>
+	<tr><td>Armor repairer</td>        <td><input type=radio name="PickedType" value="523"></td><td><input type=radio name="PickedType" value="3528"></td><td><input type=radio name="PickedType" value="3538"></td><td class="nc"></td><td><input type=radio name="PickedType" value="17494"></td><td><input type=radio name="PickedType" value="17493"></td><td><input type=radio name="PickedType" value="17492"></td><td colspan=4 class="nc"></td><td><input type=radio name="PickedType" value="17548"></td><td><input type=radio name="PickedType" value="17547"></td><td><input type=radio name="PickedType" value="17546"></td></tr>
 	<tr><td>Hull Repairer</td>         <td><input type=radio name="PickedType" value="524"></td><td><input type=radio name="PickedType" value="3653"></td><td><input type=radio name="PickedType" value="3663"></td></tr>
 	<tr><td>Shield extender</td>       <td><input type=radio name="PickedType" value="377"></td><td><input type=radio name="PickedType" value="3829"></td><td><input type=radio name="PickedType" value="3839"></td><td class="nc"></td><td><input type=radio name="PickedType" value="31924"></td><td><input type=radio name="PickedType" value="31928"></td><td><input type=radio name="PickedType" value="31932"></td><td class="nc"></td><td><input type=radio name="PickedType" value="28742"></td><td><input type=radio name="PickedType" value="28746"></td><td><input type=radio name="PickedType" value="28744"></td></tr>
 	<tr><td>Cap battery</td>           <td><input type=radio name="PickedType" value="1185"></td><td><input type=radio name="PickedType" value="2018"></td><td><input type=radio name="PickedType" value="2020"></td><td class="nc"></td><td><input type=radio name="PickedType" value="41212"></td><td><input type=radio name="PickedType" value="41215"></td><td><input type=radio name="PickedType" value="41218"></td><td class="nc"></td><td><input type=radio name="PickedType" value="41214"></td><td><input type=radio name="PickedType" value="41217"></td><td><input type=radio name="PickedType" value="41220"></td></tr>
 	<tr><td>Remote Shield Booster</td> <td><input type=radio name="PickedType" value="3586"></td><td><input type=radio name="PickedType" value="3596"></td><td><input type=radio name="PickedType" value="3606"></td></tr>
 	<tr><td>Remote Armor Repairer</td> <td><input type=radio name="PickedType" value="11355"></td><td><input type=radio name="PickedType" value="11357"></td><td><input type=radio name="PickedType" value="11359"></td></tr>
 	<tr><td>Remote Hull Repairer</td>  <td><input type=radio name="PickedType" value="27932"></td><td><input type=radio name="PickedType" value="27930"></td><td><input type=radio name="PickedType" value="27904"></td></tr>
-	<tr><td>Remote Cap Transmitter</td><td><input type=radio name="PickedType" value="529"></td><td><input type=radio name="PickedType" value="12217"></td><td><input type=radio name="PickedType" value="12225"></td></tr>
-	<tr><td>Energy Neutralizer</td>    <td><input type=radio name="PickedType" value="533"></td><td><input type=radio name="PickedType" value="12265"></td><td><input type=radio name="PickedType" value="12269"></td></tr>
-	<tr><td>Energy Nosferatu</td>      <td><input type=radio name="PickedType" value="530"></td><td><input type=radio name="PickedType" value="12257"></td><td><input type=radio name="PickedType" value="12261"></td></tr>
-	<tr><td>Capacitor Booster</td>     <td><input type=radio name="PickedType" value="3566"></td><td><input type=radio name="PickedType" value="577"></td><td><input type=radio name="PickedType" value="3576"></td></tr>
+	<tr><td>Remote Cap Transmitter</td><td><input type=radio name="PickedType" value="529"></td><td><input type=radio name="PickedType" value="12217"></td><td><input type=radio name="PickedType" value="12225"></td><td colspan=8 class="nc"></td><td><input type=radio name="PickedType" value="31950"></td><td><input type=radio name="PickedType" value="31948"></td><td><input type=radio name="PickedType" value="31946"></td></tr>
+	<tr><td>Energy Neutralizer</td>    <td><input type=radio name="PickedType" value="533"></td><td><input type=radio name="PickedType" value="12265"></td><td><input type=radio name="PickedType" value="12269"></td><td colspan=8 class="nc"></td><td><input type=radio name="PickedType" value="15800"></td><td><input type=radio name="PickedType" value="15802"></td><td><input type=radio name="PickedType" value="15804"></td></tr>
+	<tr><td>Energy Nosferatu</td>      <td><input type=radio name="PickedType" value="530"></td><td><input type=radio name="PickedType" value="12257"></td><td><input type=radio name="PickedType" value="12261"></td><td colspan=8 class="nc"></td><td><input type=radio name="PickedType" value="15881"></td><td><input type=radio name="PickedType" value="15883"></td><td><input type=radio name="PickedType" value="15885"></td></tr>
+	<tr><td>Capacitor Booster</td>     <td><input type=radio name="PickedType" value="3566"></td><td><input type=radio name="PickedType" value="577"></td><td><input type=radio name="PickedType" value="3576"></td><td colspan=8 class="nc"></td><td><input type=radio name="PickedType" value="15780"></td><td><input type=radio name="PickedType" value="15784"></td><td><input type=radio name="PickedType" value="15786"></td></tr>
 	</tbody></table>
 	</details></dd>
 
 	<dd><details><summary>Unsized modules</summary>
 	<table border=1><thead class="res">
-	<tr class="cpr"><th class="nc"></th><th>I</th><th>Republic fleet</th><th>Thukker</th></tr>
+	<tr class="cpr"><th class="nc"></th><th>I</th><th>Republic fleet</th><th>Thukker</th><th>Imperial Navy</th></tr>
 	</thead><tbody>
 	<tr><td>Ballistic Control System</td>    <td><input type=radio name="PickedType" value="12274"></td><td><input type=radio name="PickedType" value="15683"></td></tr>
+	<tr><td>Capacitor Power Relay</td>       <td><input type=radio name="PickedType" value="1445"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="17528"></td></tr>
+	<tr><td>Cap Recharger</td>               <td><input type=radio name="PickedType" value="1195"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="17526"></td></tr>
 	<tr><td>Gyrostabilizer</td>              <td><input type=radio name="PickedType" value="520"></td><td><input type=radio name="PickedType" value="15806"></td></tr>
+	<tr><td>Heat Sink</td>                   <td><input type=radio name="PickedType" value="2363"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="15810"></td></tr>
 	<tr><td>Nanofiber Internal Structure</td><td><input type=radio name="PickedType" value="2603"></td><td><input type=radio name="PickedType" value="15813"></td></tr>
 	<tr><td>Overdrive Injector System</td>   <td><input type=radio name="PickedType" value="1244"></td><td><input type=radio name="PickedType" value="15812"></td></tr>
 	<tr><td>Power Diagnostic System</td>     <td><input type=radio name="PickedType" value="1539"></td><td class="nc"></td><td><input type=radio name="PickedType" value="28739"></td></tr>
@@ -589,6 +602,19 @@ Order type:<select id="selOrderType">
 	<tr><td>Tracking Enhancer</td>           <td><input type=radio name="PickedType" value="1998"></td><td><input type=radio name="PickedType" value="15965"></td></tr>
 	<tr><td>Warp Disruptor</td>              <td><input type=radio name="PickedType" value="3242"></td><td><input type=radio name="PickedType" value="15891"></td></tr>
 	<tr><td>Warp Scrambler</td>              <td><input type=radio name="PickedType" value="447"></td><td><input type=radio name="PickedType" value="15893"></td></tr>
+	</tbody></table>
+	</details></dd>
+
+	<dd><details><summary>Protection</summary>
+	<table border=1><thead>
+	<tr><th rowspan=2 class="nc"></th><th colspan=5>I</th></tr>
+	<tr class="cpr"><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>&#9788;</th></tr>
+	</thead><tbody>
+	<tr><td>Shield Hardener</td>   <td><input type=radio name="PickedType" value="2293"></td><td><input type=radio name="PickedType" value="2295"></td><td><input type=radio name="PickedType" value="2291"></td><td><input type=radio name="PickedType" value="2289"></td><td><input type=radio name="PickedType" value="578"></td></tr>
+	<tr><td>Shield Amplifier</td>  <td><input type=radio name="PickedType" value="1808"></td><td><input type=radio name="PickedType" value="2537"></td><td><input type=radio name="PickedType" value="2545"></td><td><input type=radio name="PickedType" value="2529"></td></tr>
+	<tr><td>Energized Membrane</td><td><input type=radio name="PickedType" value="11217"></td><td><input type=radio name="PickedType" value="11257"></td><td><input type=radio name="PickedType" value="11247"></td><td><input type=radio name="PickedType" value="11227"></td><td><input type=radio name="PickedType" value="11267"></td></tr>
+	<tr><td>Armor Hardener</td>    <td><input type=radio name="PickedType" value="11301"></td><td><input type=radio name="PickedType" value="11277"></td><td><input type=radio name="PickedType" value="11305"></td><td><input type=radio name="PickedType" value="11303"></td></tr>
+	<tr><td>Coating</td>           <td><input type=radio name="PickedType" value="1197"></td><td><input type=radio name="PickedType" value="1294"></td><td><input type=radio name="PickedType" value="1284"></td><td><input type=radio name="PickedType" value="1264"></td><td><input type=radio name="PickedType" value="1304"></td></tr>
 	</tbody></table>
 	</details></dd>
 
@@ -678,8 +704,3 @@ Order type:<select id="selOrderType">
 </table>
 </body>
 </html>
-<!--
-Blood/Sansha: +10%
-Imperial Navy: +15%
-Dark Blood/True Sanshas: +20%
--->

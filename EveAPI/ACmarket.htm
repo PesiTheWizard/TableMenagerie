@@ -13,6 +13,24 @@ function calculate()
 	const mega = parseFloat(document.Minerals?.MegaMarket?.value);
 	const morph = parseFloat(document.Minerals?.MorphMarket?.value);
 
+	document.getElementById("BallConSys").innerText= (trit*1351 + mex*636 + iso*4 + zyd*14 + mega*4);
+	document.getElementById("CapPowRel").innerText= (trit*1116 + pye*861 + noc*3);
+	document.getElementById("CapRech").innerText= (trit*763 + pye*321 + mex*412 + mega*2);
+	document.getElementById("CoProc").innerText= (trit*2398 + pye*466 + mex*179 + iso*1 + noc*4);
+	document.getElementById("Gyrostab").innerText= (trit*773 + pye*491 + mex*518 + iso*3 + zyd*4);
+	document.getElementById("HeatSink").innerText= (trit*676 + mex*318 + iso*2 + zyd*6 + mega*2);
+	document.getElementById("NanIntStruct").innerText= (iso*10 + noc*1);
+	document.getElementById("Overdrive").innerText= (trit*234 + pye*3413);
+	document.getElementById("PowDiagSys").innerText= (pye*658 + mex*2 + iso*4 + noc*1 + zyd*4);
+	document.getElementById("ShieldBoostAmp").innerText= (pye*23700 + mex*574 + noc*87 + mega*34);
+	document.getElementById("ShieldRecharger").innerText= (trit*458 + pye*610 + mex*51 + iso*4 + noc*3);
+	document.getElementById("StasWeb").innerText= (trit*862 + pye*792 + mex*529);
+	document.getElementById("painters").innerText= (trit*840 + pye*183 + mex*470 + iso*4 + mega*4);
+	document.getElementById("TrackComp").innerText= (trit*949 + mega*2);
+	document.getElementById("TrackEnh").innerText= (trit*538 + pye*88 + mex*369 + iso*1 + noc*4);
+	document.getElementById("WarpDisruptor").innerText= (trit*502 + pye*297 + mex*334 + iso*197 + zyd*4);
+	document.getElementById("WarpScrambler").innerText= (trit*502 + pye*297 + mex*334 + iso*197 + zyd*4);
+
 	document.getElementById("condensed").innerText= (trit*160 + pye*40 + mex*10);
 	document.getElementById("crystal").innerText= (mex*24 + iso*6);
 	document.getElementById("dark").innerText= (iso*32 + noc*8);
@@ -62,19 +80,21 @@ function calculate()
 	document.getElementById("CBSs").innerText= (trit*277 + noc*6 + mega*2);
 	document.getElementById("CBSm").innerText= (trit*242 + pye*148 + mex*569 + zyd*2 + mega*2);
 	document.getElementById("CBSl").innerText= (trit*1677 + pye*561 + mex*488 + iso*404 + noc*6);
+	document.getElementById("ABs").innerText= (trit*708 + pye*643 + mex*1 + noc*1);
+	document.getElementById("ABm").innerText= (trit*3818 + pye*3477 + mex*3 + iso*2);
+	document.getElementById("ABl").innerText= (trit*19884 + pye*8922 + mex*1113 + iso*49 + noc*24 + zyd*4 + mega*2);
+	document.getElementById("MWDs").innerText= (trit*3967 + pye*2131 + mex*228 + iso*13 + noc*2);
+	document.getElementById("MWDm").innerText= (trit*17367 + pye*14709 + mex*68 + iso*1 + noc*1 + zyd*2 + mega*4);
+	document.getElementById("MWDl").innerText= (trit*63753 + pye*16381 + mex*4321 + iso*1006 + noc*308 + zyd*112 + mega*20);
 
-	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
-	document.getElementById("painters").innerText= (trit*840 + pye*183 + mex*470 + iso*4 + mega*4);
-	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
 	document.getElementById("Shuttle").innerText= (trit*2778);
 	document.getElementById("Frigate").innerText= (trit*13333 + pye*3333 + mex*1333);
-	document.getElementById("TrackEnh").innerText= (trit*538 + pye*88 + mex*369 + iso*1 + noc*4);
-	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
-	document.getElementById("StasWeb").innerText= (trit*862 + pye*792 + mex*529);
-	document.getElementById("MultECM").innerText= (iso*62 + noc*49);
-	document.getElementById("ShieldRecharger").innerText= (trit*458 + pye*610 + mex*51 + iso*4 + noc*3);
-	document.getElementById("Overdrive").innerText= (trit*234 + pye*3413);
+	document.getElementById("ScanFrigate").innerText= (trit*13333 + pye*6111 + mex*2444);
+	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
 	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
+	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
+	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
+	document.getElementById("MultECM").innerText= (iso*62 + noc*49);
 
 	document.getElementById("spaCLs").innerText= (trit*27 + pye*21);
 	document.getElementById("spaNs").innerText= (trit*38 + pye*32);
@@ -150,6 +170,82 @@ function calculate()
 	document.getElementById("sfcXRl").innerText= (pye*2 + mex*67 + iso*20 + noc*4 + zyd*17 + mega*29);
 	document.getElementById("sfcGAl").innerText= (pye*51 + mex*2 + iso*3 + noc*20 + zyd*7 + mega*44);
 	document.getElementById("sfcMUl").innerText= (pye*36 + mex*4 + iso*24 + noc*3 + zyd*14 + mega*50);
+
+	document.getElementById("SHem").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
+	document.getElementById("SHth").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
+	document.getElementById("SHki").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
+	document.getElementById("SHex").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
+	document.getElementById("SHmu").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
+	document.getElementById("SAem").innerText= (trit*2106 + pye*2077);
+	document.getElementById("SAth").innerText= (trit*2106 + pye*2077);
+	document.getElementById("SAki").innerText= (trit*2106 + pye*2077);
+	document.getElementById("SAex").innerText= (trit*2106 + pye*2077);
+	document.getElementById("AHem").innerText= (trit*12461 + pye*5417 + noc*3 + zyd*16);
+	document.getElementById("AHth").innerText= (trit*13467 + pye*8383 + mex*570 + iso*18 + noc*3 + zyd*16);
+	document.getElementById("AHki").innerText= (trit*12494 + pye*6187 + iso*2 + noc*7 + zyd*14 + mega*2);
+	document.getElementById("AHex").innerText= (trit*14720 + pye*5174 + iso*94 + noc*13 + zyd*14 + mega*2);
+	document.getElementById("EMem").innerText= (trit*10178 + pye*6494 + mex*7 + noc*3 + mega*2);
+	document.getElementById("EMth").innerText= (trit*10178 + pye*6494 + mex*7 + noc*3 + mega*2);
+	document.getElementById("EMki").innerText= (trit*10178 + pye*6494 + mex*7 + noc*3 + mega*2);
+	document.getElementById("EMex").innerText= (trit*10178 + pye*6494 + mex*7 + noc*3 + mega*2);
+	document.getElementById("EMmu").innerText= (trit*6013 + pye*4514 + mex*1612 + zyd*2 + mega*2);
+	document.getElementById("Cem").innerText= (trit*666 + pye*502 + mex*1 + iso*1);
+	document.getElementById("Cth").innerText= (trit*666 + pye*502 + mex*1 + iso*1);
+	document.getElementById("Cki").innerText= (trit*666 + pye*502 + mex*1 + iso*1);
+	document.getElementById("Cex").innerText= (trit*666 + pye*502 + mex*1 + iso*1);
+	document.getElementById("Cmu").innerText= (trit*896 + pye*698 + mex*29);
+
+	document.getElementById("Autocannon1s").innerText= (trit*231 + pye*220);
+	document.getElementById("Autocannon2s").innerText= (trit*996 + pye*300 + zyd*2);
+	document.getElementById("Autocannon3s").innerText= (trit*1667 + pye*144 + mex*83 + iso*22);
+	document.getElementById("Autocannon1m").innerText= (trit*827 + pye*598 + mex*493);
+	document.getElementById("Autocannon2m").innerText= (trit*4453 + pye*1287 + mex*1199 + mega*2);
+	document.getElementById("Autocannon3m").innerText= (trit*4529 + pye*1643 + mex*2413 + noc*1);
+	document.getElementById("Autocannon1l").innerText= (trit*13684 + pye*4117 + mex*3851 + zyd*2 + mega*8);
+	document.getElementById("Autocannon2l").innerText= (trit*45551 + pye*12150 + mex*6060 + iso*1596 + noc*126 + zyd*16);
+	document.getElementById("Autocannon3l").innerText= (trit*68307 + pye*17839 + mex*7197 + iso*1951 + noc*234 + zyd*12 + mega*26);
+	document.getElementById("Artillery1s").innerText= (trit*1596 + pye*690 + mex*144);
+	document.getElementById("Artillery2s").innerText= (trit*2729 + pye*148 + mex*171 + zyd*4);
+	document.getElementById("Artillery1m").innerText= (trit*9089 + pye*2786 + mex*2827 + iso*14 + noc*1);
+	document.getElementById("Artillery2m").innerText= (trit*9133 + pye*2981 + mex*3599 + iso*2 + noc*18);
+	document.getElementById("Artillery1l").innerText= (trit*91067 + pye*23527 + mex*8613 + iso*2294 + noc*324 + zyd*18 + mega*52);
+	document.getElementById("Artillery2l").innerText= (trit*113880 + pye*29214 + mex*9747 + iso*2650 + noc*411 + zyd*42 + mega*74);
+	document.getElementById("Blaster1s").innerText= (trit*996 + pye*300 + zyd*2);
+	document.getElementById("Blaster2s").innerText= (trit*1667 + pye*144 + mex*83 + iso*22);
+	document.getElementById("Blaster3s").innerText= (trit*1596 + pye*690 + mex*144);
+	document.getElementById("Blaster1m").innerText= (trit*4453 + pye*1287 + mex*1199 + mega*2);
+	document.getElementById("Blaster2m").innerText= (trit*4529 + pye*1643 + mex*2413 + noc*1);
+	document.getElementById("Blaster3m").innerText= (trit*9089 + pye*2786 + mex*2827 + iso*14 + noc*1);
+	document.getElementById("Blaster1l").innerText= (trit*45551 + pye*12150 + mex*6060 + iso*1596 + noc*126 + zyd*16);
+	document.getElementById("Blaster2l").innerText= (trit*68307 + pye*17839 + mex*7197 + iso*1951 + noc*234 + zyd*12 + mega*26);
+	document.getElementById("Blaster3l").innerText= (trit*91067 + pye*23527 + mex*8613 + iso*2294 + noc*324 + zyd*18 + mega*52);
+	document.getElementById("Railgun1s").innerText= (trit*231 + pye*220);
+	document.getElementById("Railgun2s").innerText= (trit*1311 + pye*473 + mex*103 + iso*2);
+	document.getElementById("Railgun3s").innerText= (trit*2729 + pye*148 + mex*171 + zyd*4);
+	document.getElementById("Railgun1m").innerText= (trit*827 + pye*598 + mex*493);
+	document.getElementById("Railgun2m").innerText= (trit*4600 + pye*1583 + mex*1167 + iso*63 + noc*50 + zyd*18);
+	document.getElementById("Railgun3m").innerText= (trit*9133 + pye*2981 + mex*3599 + iso*2 + noc*18);
+	document.getElementById("Railgun1l").innerText= (trit*13683 + pye*4117 + mex*3851 + zyd*2 + mega*8);
+	document.getElementById("Railgun2l").innerText= (trit*77413 + pye*19793 + mex*5731 + iso*1206 + noc*343 + zyd*206 + mega*18);
+	document.getElementById("Railgun3l").innerText= (trit*113880 + pye*29214 + mex*9747 + iso*2650 + noc*411 + zyd*42 + mega*74);
+	document.getElementById("RocketLauncher").innerText= (trit*556 + pye*278);
+	document.getElementById("HAML").innerText= (trit*3258 + pye*2926 + noc*7 + zyd*4);
+	document.getElementById("TorpLauncher").innerText= (trit*122 + pye*1342 + noc*9 + zyd*4 + mega*22);
+	document.getElementById("LightMissileLauncher").innerText= (trit*471 + pye*716);
+	document.getElementById("HeavyMissileLauncher").innerText= (trit*3258 + pye*2926 + mex*107);
+	document.getElementById("CruiseMissileLauncher").innerText= (trit*92 + pye*1007 + noc*7 + zyd*4 + mega*18);
+	document.getElementById("SbEMs").innerText= (trit*7884 + pye*5283 + mex*17 + zyd*4 + mega*2);
+	document.getElementById("SbTHs").innerText= (trit*7889 + pye*4948 + mex*51 + noc*1 + mega*2);
+	document.getElementById("SbKIs").innerText= (trit*6649 + pye*4381 + mex*97 + noc*1 + mega*2);
+	document.getElementById("SbEXs").innerText= (trit*6538 + pye*4288 + mex*7 + noc*2 + zyd*6);
+	document.getElementById("SbEMm").innerText= (trit*22764 + pye*18344 + mex*28 + zyd*6);
+	document.getElementById("SbTHm").innerText= (trit*22160 + mex*2402 + noc*61 + mega*8);
+	document.getElementById("SbKIm").innerText= (trit*19022 + pye*13484 + noc*27 + zyd*8 + mega*2);
+	document.getElementById("SbEXm").innerText= (trit*18831 + pye*15610 + mex*4 + noc*3 + zyd*2);
+	document.getElementById("SbEMl").innerText= (trit*46329 + pye*36498 + noc*3 + zyd*4 + mega*2);
+	document.getElementById("SbTHl").innerText= (trit*40924 + pye*14320 + mex*2112 + noc*58 + zyd*2 + mega*20);
+	document.getElementById("SbKIl").innerText= (trit*3600 + pye*30887 + noc*42 + zyd*16 + mega*16);
+	document.getElementById("SbEXl").innerText= (trit*37951 + pye*30339 + mex*16 + noc*1 + zyd*14);
 }
 /*
 At some point these were changed. The old refining values were...
@@ -198,23 +294,29 @@ table
 </table><br>
 <input type=button value="Calculate" OnClick=calculate()>
 </form>
+
 <table border=1>
 <thead>
-<tr><th>Alloys&Compounds</th><th>Mineral market value</th></tr>
+<tr><th>Unsized modules</th></tr>
 </thead>
 <tbody>
-<tr><td>Condensed Alloy</td><td id="condensed"></td></tr>
-<tr><td>Crystal Compound</td><td id="crystal"></td></tr>
-<tr><td>Dark Compound</td><td id="dark"></td></tr>
-<tr><td>Gleaming Alloy</td><td id="gleaming"></td></tr>
-<tr><td>Glossy Compound</td><td id="glossy"></td></tr>
-<tr><td>Lucent Compound</td><td id="lucent"></td></tr>
-<tr><td>Lustering Alloy</td><td id="lustering"></td></tr>
-<tr><td>Motley Compound</td><td id="motley"></td></tr>
-<tr><td>Opulent Compound</td><td id="opulent"></td></tr>
-<tr><td>Plush Compound</td><td id="plush"></td></tr>
-<tr><td>Precious Alloy</td><td id="precious"></td></tr>
-<tr><td>Sheen Compound</td><td id="sheen"></td></tr>
+<tr><td>Ballistic Control System I</td><td id="BallConSys"></td></tr>
+<tr><td>Capacitor Power Relay I</td><td id="CapPowRel"></td></tr>
+<tr><td>Cap Recharger I</td><td id="CapRech"></td></tr>
+<tr><td>Co-Processor I</td><td id="CoProc"></td></tr>
+<tr><td>Gyrostabilizer I</td><td id="Gyrostab"></td></tr>
+<tr><td>Heat Sink I</td><td id="HeatSink"></td></tr>
+<tr><td>Nanofiber Internal Structure I</td><td id="NanIntStruct"></td></tr>
+<tr><td>Overdrive Injector System I</td><td id="Overdrive"></td></tr>
+<tr><td>Power Diagnostic System I</td><td id="PowDiagSys"></td></tr>
+<tr><td>Shield Boost Amplifier I</td><td id="ShieldBoostAmp"></td></tr>
+<tr><td>Shield Recharger I</td><td id="ShieldRecharger"></td></tr>
+<tr><td>Stasis Webifier I</td><td id="StasWeb"></td></tr>
+<tr><td>Target Painter I</td><td id="painters"></td></tr>
+<tr><td>Tracking Computer I</td><td id="TrackComp"></td></tr>
+<tr><td>Tracking Enhancer I</td><td id="TrackEnh"></td></tr>
+<tr><td>Warp Disruptor I</td><td id="WarpDisruptor"></td></tr>
+<tr><td>Warp Scrambler I</td><td id="WarpScrambler"></td></tr>
 </tbody>
 </table>
 
@@ -235,26 +337,44 @@ table
 <tr><td>Energy Neutralizer I</td><td id="ENs"></td><td id="ENm"></td><td id="ENl"></td></tr>
 <tr><td>Energy Nosferatu I</td><td id="NOSs"></td><td id="NOSm"></td><td id="NOSl"></td></tr>
 <tr><td>Capacitor Booster I</td><td id="CBSs"></td><td id="CBSm"></td><td id="CBSl"></td></tr>
+<tr><td>Afterburner I*</td><td title="1MN" id="ABs"></td><td title="10MN" id="ABm"></td><td title="100MN" id="ABl"></td></tr>
+<tr><td>Microwarpdrive I*</td><td title="5MN" id="MWDs"></td><td title="50MN" id="MWDm"></td><td title="500MN" id="MWDl"></td></tr>
 </tbody>
 </table>
 
 <table border=1>
 <thead>
-<tr><th>Other</th><th>Mineral market value</th></tr>
+<tr><th>Alloys&Compounds</th></tr>
 </thead>
 <tbody>
-<tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
-<tr><td>Target Painter I</td><td id="painters"></td></tr>
-<tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
+<tr><td>Condensed Alloy</td><td id="condensed"></td></tr>
+<tr><td>Crystal Compound</td><td id="crystal"></td></tr>
+<tr><td>Dark Compound</td><td id="dark"></td></tr>
+<tr><td>Gleaming Alloy</td><td id="gleaming"></td></tr>
+<tr><td>Glossy Compound</td><td id="glossy"></td></tr>
+<tr><td>Lucent Compound</td><td id="lucent"></td></tr>
+<tr><td>Lustering Alloy</td><td id="lustering"></td></tr>
+<tr><td>Motley Compound</td><td id="motley"></td></tr>
+<tr><td>Opulent Compound</td><td id="opulent"></td></tr>
+<tr><td>Plush Compound</td><td id="plush"></td></tr>
+<tr><td>Precious Alloy</td><td id="precious"></td></tr>
+<tr><td>Sheen Compound</td><td id="sheen"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Other</th></tr>
+</thead>
+<tbody>
 <tr><td>Shuttle</td><td id="Shuttle"></td></tr>
 <tr><td>Non-scan Frigate</td><td id="Frigate"></td></tr>
-<tr><td>Tracking Enhancer I</td><td id="TrackEnh"></td></tr>
-<tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>
-<tr><td>Stasis Webifier I</td><td id="StasWeb"></td></tr>
-<tr><td>Multispectral ECM I</td><td id="MultECM"></td></tr>
-<tr><td>Shield Recharger I</td><td id="ShieldRecharger"></td></tr>
-<tr><td>Overdrive Injector System I</td><td id="Overdrive"></td></tr>
+<tr><td>Scan Frigate</td><td id="ScanFrigate"></td></tr>
+<tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
 <tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
+<tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
+<tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>
+<tr><td>Multispectral ECM I</td><td id="MultECM"></td></tr>
 </tbody>
 </table>
 
@@ -303,6 +423,44 @@ table
 <tr><td>Xray</td>          <td id="sfcXRs"></td><td id="sfcXRm"></td><td id="sfcXRl"></td></tr>
 <tr><td>Gamma</td>         <td id="sfcGAs"></td><td id="sfcGAm"></td><td id="sfcGAl"></td></tr>
 <tr><td>Multifrequency</td><td id="sfcMUs"></td><td id="sfcMUm"></td><td id="sfcMUl"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Protections</th><th>EM</th><th>Thermal</th><th>Kinetic</th><th>Explosive</th><th>Multi</th></tr>
+</thead>
+<tbody>
+<tr><td>Shield Hardener I</td><td id="SHem"></td><td id="SHth"></td><td id="SHki"></td><td id="SHex"></td><td id="SHmu"></td></tr>
+<tr><td>Shield Amplifier I</td><td id="SAem"></td><td id="SAth"></td><td id="SAki"></td><td id="SAex"></td></tr>
+<tr><td>Armor Hardener I</td><td id="AHem"></td><td id="AHth"></td><td id="AHki"></td><td id="AHex"></td></tr>
+<tr><td>Energized Membrane I</td><td id="EMem"></td><td id="EMth"></td><td id="EMki"></td><td id="EMex"></td><td id="EMmu"></td></tr>
+<tr><td>Coating I</td><td id="Cem"></td><td id="Cth"></td><td id="Cki"></td><td id="Cex"></td><td id="Cmu"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Weapons</th><th colspan=2>Small</th><th colspan=2>Medium</th><th colspan=2>Large</th></tr>
+</thead>
+<tbody>
+<tr><td rowspan=3>AutoCannons</td><td>125mm Gatling AutoCannon I</td><td id="Autocannon1s"></td><td>Dual 180mm AutoCannon I</td><td id="Autocannon1m"></td><td>Dual 425mm AutoCannon I</td><td id="Autocannon1l"></td></tr>
+<tr><td>150mm Light AutoCannon I</td><td id="Autocannon2s"></td><td>220mm Vulcan AutoCannon I</td><td id="Autocannon2m"></td><td>Dual 650mm Repeating Cannon I</td><td id="Autocannon2l"></td></tr>
+<tr><td>200mm AutoCannon I</td><td id="Autocannon3s"></td><td>425mm AutoCannon I</td><td id="Autocannon3m"></td><td>800mm Repeating Cannon I</td><td id="Autocannon3l"></td></tr>
+<tr><td rowspan=2>Artillery Cannons</td><td>250mm Light Artillery Cannon I</td><td id="Artillery1s"></td><td>650mm Artillery Cannon I</td><td id="Artillery1m"></td><td>1200mm Artillery Cannon I</td><td id="Artillery1l"></td></tr>
+<tr><td>280mm Howitzer Artillery I</td><td id="Artillery2s"></td><td>720mm Howitzer Artillery I</td><td id="Artillery2m"></td><td>1400mm Howitzer Artillery I</td><td id="Artillery2l"></td></tr>
+<tr><td rowspan=3>Blasters</td><td>Light Electron Blaster I</td><td id="Blaster1s"></td><td>Heavy Electron Blaster I</td><td id="Blaster1m"></td><td>Electron Blaster Cannon I</td><td id="Blaster1l"></td></tr>
+<tr><td>Light Ion Blaster I</td><td id="Blaster2s"></td><td>Heavy Ion Blaster I</td><td id="Blaster2m"></td><td>Ion Blaster Cannon I</td><td id="Blaster2l"></td></tr>
+<tr><td>Light Neutron Blaster I</td><td id="Blaster3s"></td><td>Heavy Neutron Blaster I</td><td id="Blaster3m"></td><td>Neutron Blaster Cannon I</td><td id="Blaster3l"></td></tr>
+<tr><td rowspan=3>Railguns</td><td>75mm Gatling Rail I</td><td id="Railgun1s"></td><td>Dual 150mm Railgun I</td><td id="Railgun1m"></td><td>Dual 250mm Railgun I</td><td id="Railgun1l"></td></tr>
+<tr><td>125mm Railgun I</td><td id="Railgun2s"></td><td>200mm Railgun I</td><td id="Railgun2m"></td><td>350mm Railgun I</td><td id="Railgun2l"></td></tr>
+<tr><td>150mm Railgun I</td><td id="Railgun3s"></td><td>250mm Railgun I</td><td id="Railgun3m"></td><td>425mm Railgun I</td><td id="Railgun3l"></td></tr>
+<tr><td rowspan=2>Missile Launchers</td><td>Rocket Launcher I</td><td id="RocketLauncher"></td><td>Heavy Assault Missile Launcher I</td><td id="HAML"></td><td>Torpedo Launcher I</td><td id="TorpLauncher"></td></tr>
+<tr><td>Light Missile Launcher I</td><td id="LightMissileLauncher"></td><td>Heavy Missile Launcher I</td><td id="HeavyMissileLauncher"></td><td>Cruise Missile Launcher I</td><td id="CruiseMissileLauncher"></td></tr>
+<tr><td rowspan=4>Smartbombs</td><td>Small EMP Smartbomb I</td><td id="SbEMs"></td><td>Medium EMP Smartbomb I</td><td id="SbEMm"></td><td>Large EMP Smartbomb I</td><td id="SbEMl"></td></tr>
+<tr><td>Small Plasma Smartbomb I</td><td id="SbTHs"></td><td>Medium Plasma Smartbomb I</td><td id="SbTHm"></td><td>Large Plasma Smartbomb I</td><td id="SbTHl"></td></tr>
+<tr><td>Small Graviton Smartbomb I</td><td id="SbKIs"></td><td>Medium Graviton Smartbomb I</td><td id="SbKIm"></td><td>Large Graviton Smartbomb I</td><td id="SbKIl"></td></tr>
+<tr><td>Small Proton Smartbomb I</td><td id="SbEXs"></td><td>Medium Proton Smartbomb I</td><td id="SbEXm"></td><td>Large Proton Smartbomb I</td><td id="SbEXl"></td></tr>
 </tbody>
 </table>
 

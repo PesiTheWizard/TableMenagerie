@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>3n+1</title>
+<script>
+function DoTheThing()
+{
+	const Ninp = document.getElementById("txtBigNumber").value.trim();
+	const Dsvar = document.getElementById("svar");
+	const DLogA = document.getElementById("LogA");
+	let initN;
+	try
+	{
+		initN = BigInt(Ninp);
+	}
+	catch(e)
+	{
+		DLogA.innerText = e;
+		return;
+	}
+	if(initN<1n)
+	{
+		DlogA.innerText = "Must be at least 1"
+		return;
+	}
+	while(initN%2n===0n)
+	{initN = initN>>1n;}
+	DLogA.innerText = initN
+	Dsvar.innerText = initN.toString(2);
+	while(initN>1n)
+	{
+		initN = initN*3n+1n;
+		while(initN%2n===0n)
+		{initN = initN>>>1n;}
+		Dsvar.appendChild(document.createTextNode(`\n${initN.toString(2)}`));
+	}
+}
+</script>
+<style>
+input
+{
+	margin-top:1px;
+	margin-bottom:1px;
+}
+</style>
+</head>
+<body>
+Number = <input type=text size=110 id="txtBigNumber"><br>
+<input type="button" value="Examine!" onclick=DoTheThing()><br>
+<span id="LogA"> </span>
+<hr>
+<pre id="svar"></pre>
+</body>
+</html>

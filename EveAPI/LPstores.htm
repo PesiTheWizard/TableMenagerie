@@ -38,7 +38,15 @@ function GetOffers(ClBt)
 			lister(currPrt["lp_cost"]??"",tabRw,'td');
 			lister(currPrt["offer_id"]??"",tabRw,'td');
 			lister(currPrt["quantity"]??"",tabRw,'td');
-			lister(currPrt["required_items"]?.length??"",tabRw,'td');
+			const RI = currPrt["required_items"];
+			lister(RI?.length??"",tabRw,'td');
+			const RIK = Object.keys(RI);
+			let TIC=0;
+			for(let j=0;j<RIK.length;j++)
+			{
+				TIC+=RI[RIK[j]]["quantity"]??0;
+			}
+			lister(TIC,tabRw,'td');
 			lister(currPrt["type_id"]??"",tabRw,'td');
 			TB.appendChild(tabRw);
 		}
@@ -186,6 +194,36 @@ thead>tr:first-of-type>th
 <option value="1000130">Sisters of EVE</option>
 <option value="1000131">Society of Conscious Thought</option>
 <option value="1000132">Secure Commerce Commission</option>
+<option value="1000274">Vigilant Tyrannos</option>
+<option value="1000133">Salvation Angels</option>
+<option value="1000134">Blood Raiders</option>
+<option value="1000276">ORE Technologies</option>
+<option value="1000135">Serpentis Corporation</option>
+<option value="1000277">Frostline Laboratories</option>
+<option value="1000419">Paragon</option>
+<option value="1000136">Guardian Angels</option>
+<option value="1000137">DED</option>
+<option value="1000279">Project Discovery</option>
+<option value="1000138">Dominations</option>
+<option value="1000280">CONCORD Aerospace</option>
+<option value="1000139">Food Relief</option>
+<option value="1000281">Independent Gaming Commission</option>
+<option value="1000140">Genolution</option>
+<option value="1000282">Directive Intelligence Agency</option>
+<option value="1000141">Guristas Production</option>
+<option value="1000283">Imperial War Reserves</option>
+<option value="1000425">Cromeaux Inc</option>
+<option value="1000142">Impro</option>
+<option value="1000284">State Military Stockpile</option>
+<option value="1000426">Adaptive Provisioning</option>
+<option value="1000001">Doomheim</option>
+<option value="1000143">Inner Circle</option>
+<option value="1000285">Federal Strategic Materiel</option>
+<option value="1000427">Interplanetary Media Network</option>
+<option value="1000002">CBD Corporation</option>
+<option value="1000144">Intaki Bank</option>
+<option value="1000286">Republic Fleet Ordnance</option>
+<option value="1000428">Verity Enhancements</option>
 </select>
 <input type=button value="Get offers" onClick=GetOffers(this)>
 <hr>
@@ -194,7 +232,7 @@ thead>tr:first-of-type>th
 <div id="svar"></div>
 <table border=1>
 <thead>
-<tr><th>API entry</th><th>AK cost</th><th>ISK cost</th><th>LP cost</th><th>Offer ID</th><th>Quantity</th><th>required items, length</th><th>Type ID</th></tr>
+<tr><th>API entry</th><th>AK cost</th><th>ISK cost</th><th>LP cost</th><th>Offer ID</th><th>Quantity</th><th>required items, length</th><th>required items, amount</th><th>Type ID</th></tr>
 <tr>
 <th><span onClick=a(0,true,true)>&#9650;</span> <span onClick=a(0,false,true)>&#9660;</span></th>
 <th><span onClick=a(1,true,true)>&#9650;</span> <span onClick=a(1,false,true)>&#9660;</span></th>
@@ -204,6 +242,7 @@ thead>tr:first-of-type>th
 <th><span onClick=a(5,true,true)>&#9650;</span> <span onClick=a(5,false,true)>&#9660;</span></th>
 <th><span onClick=a(6,true,true)>&#9650;</span> <span onClick=a(6,false,true)>&#9660;</span></th>
 <th><span onClick=a(7,true,true)>&#9650;</span> <span onClick=a(7,false,true)>&#9660;</span></th>
+<th><span onClick=a(8,true,true)>&#9650;</span> <span onClick=a(8,false,true)>&#9660;</span></th>
 </tr></thead>
 <tbody id="st"></tbody>
 </table>

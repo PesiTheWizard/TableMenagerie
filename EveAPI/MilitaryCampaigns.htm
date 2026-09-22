@@ -8,30 +8,52 @@ const issuers = {
 	"7519d7db-1e95-4d0e-bbbe-c47cd47de3c0":"gallente",
 	"e7587202-8f4a-4314-b2cd-ec67e0e78e46":"caldari"
 };Object.freeze(issuers);
-function GetMilitaryCampaigns(ClBt)
+function GetMilitaryCampaigns(ClBt,Step)
 {
 	ClBt.disabled = true;
-	const OGresp = document.getElementById("stts");
-	const HL = document.getElementById("hdrs");
-	const svr = document.getElementById("svar");
-	const TB = document.getElementById("st");
+	const Dlog = document.getElementById(Step==0?"LogA":"LogB");
+	const OGresp = document.getElementById("stts"+Step);
+	const HL = document.getElementById("hdrs"+Step);
+	const svr = document.getElementById("svar"+Step);
+	const TB = document.getElementById("st"+Step);
 	const DchkAL = document.getElementById("chkAL");
 	const DtxtAL = document.getElementById("txtAL");
-	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null) )
+	if(Dlog===null)
 	{
 		console.log("getElementById fail");
 		return;
 	}
-	const hAL = DchkAL.checked?{'headers':{'Accept-Language':DtxtAL.value.trim(),'X-Compatibility-Date':'2026-08-18'}}:{'headers':{'X-Compatibility-Date':'2026-08-18'}};
+	if( (OGresp===null)||(HL===null)||(svr===null)||(TB===null)||(DchkAL===null)||(DtxtAL===null) )
+	{
+		Dlog.innerText = "getElementById fail";
+		return;
+	}
+	if(!(Step===0||Step===1))
+	{
+		Dlog.innerText = "Bad Step value";
+		return;
+	}
+	const CSelVal = document?.ConstructedTable?.CampSel?.value??undefined;
+	if(Step==1 && !(typeof(CSelVal)=="string" && CSelVal.length>10))
+	{
+		Dlog.innerText = "Wrongness detected!";
+		return;
+	}
+	const APIendpoint = [
+		"https://esi.evetech.net/military-campaigns",
+		`https://esi.evetech.net/military-campaigns/${CSelVal}/objectives`
+	][Step];
+	const hAL = {'X-Compatibility-Date':'2026-08-18'};
+	if(DchkAL.checked){hAL["Accept-Language"]=DtxtAL.value.trim();}
 	OGresp.innerText = "Fetching military campaign data...";
 	svr.innerText = "Waiting for response...";
 	const TS1 = Date.now();
-	fetch("https://esi.evetech.net/military-campaigns",hAL).then((response) => {
+	fetch(APIendpoint,{'headers':hAL}).then((response) => {
 		OGresp.innerText = "Response code = ".concat(response.status);
 		for(let [k,v] of response.headers){lister(`${k} : ${v}`,HL,'li');}
 		return response.json();
 	}).then((response) => {
-		const SH = response["campaigns"];
+		const SH = response[Step==0?"campaigns":"objectives"];
 		const TS = Date.now();
 		const rcats = Object.keys(SH);
 		for(let i=0;i<rcats.length;i++)
@@ -39,11 +61,42 @@ function GetMilitaryCampaigns(ClBt)
 			const currPrt = SH[rcats[i]];
 			const tabRw = document.createElement('tr');
 			lister(rcats[i],tabRw,'td');
-			lister(currPrt["id"]??"",tabRw,'td');
+			if(Step==0)
+			{//doing one cell manually because it should have a radio element
+				const TDwRB = document.createElement('td');
+				const RB = document.createElement('input');
+				RB.setAttribute("type","radio");
+				RB.setAttribute("name","CampSel");
+				RB.setAttribute("value",currPrt["id"]);
+				TDwRB.appendChild(RB);
+				TDwRB.appendChild(document.createTextNode(currPrt["id"]));
+				tabRw.appendChild(TDwRB);
+			}
+			else
+			{
+				lister(currPrt["id"]??"",tabRw,'td');
+			}
 			lister(currPrt["state"]??"",tabRw,'td');
-			lister(currPrt["progress"]??"",tabRw,'td');
+			const Prgrss = parseInt(currPrt["progress"]??"");
+			lister(Prgrss,tabRw,'td');
 			lister(currPrt["started"]??"",tabRw,'td');
-			lister(issuers[currPrt["id"]]??"",tabRw,'td');
+			const DUR = ((TS-(new Date(currPrt["started"]??0).valueOf()))/86400000).toFixed(4);
+			lister(DUR,tabRw,'td');
+			if(Step==0)
+			{
+				lister(issuers[currPrt["id"]]??"",tabRw,'td');
+			}
+			else
+			{
+				lister(currPrt["participants"]?.["total"]??"",tabRw,'td');
+				lister(currPrt["participants"]?.["committed"]??"",tabRw,'td');
+				const Cntrbtrs = parseInt(currPrt["participants"]?.["contributors"]??"");
+				lister(Cntrbtrs,tabRw,'td');
+				lister((Prgrss/Cntrbtrs).toFixed(2),tabRw,'td');
+				lister(currPrt["last_modified"]??"",tabRw,'td');
+				const DLM = ((TS-(new Date(currPrt["last_modified"]??0).valueOf()))/86400000).toFixed(4);
+				lister(DLM,tabRw,'td');
+			}
 			TB.appendChild(tabRw);
 		}
 		return TS;
@@ -60,9 +113,9 @@ function lister(listedText, ParntNde, ElType)
 	listEntry.appendChild(entryText);
 	ParntNde.appendChild(listEntry);
 }
-function a(ctsb, lth, asnum)
-{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an integer (use as little as possible. NaNs cause instant bailouts, should act as seperators)
-	const gt = document.getElementById("st").childNodes;
+function a(ctsb, Step, lth, asnum)
+{//ctsb - column to sort by, lth - low to high, asnum - sort the content of this column as an number (use as little as possible. NaNs cause instant bailouts, should act as seperators)
+	const gt = document.getElementById("st"+Step).childNodes;
 	const tl = gt.length;//total length, stop if cup reaches this
 	let fn, sn, s1, s2;//firstnode, secondnode; the nodes are tr-s
 	for(let cup=1;cup < tl;cup++)
@@ -80,8 +133,8 @@ so the set of childnodes at and below the cup is unchanged.
 		s2 = sn.childNodes[ctsb].textContent;
 		if(asnum)
 		{//empty strings result in NaN
-			s1 = parseInt(s1);
-			s2 = parseInt(s2);
+			s1 = parseFloat(s1);
+			s2 = parseFloat(s2);
 			if(isNaN(s1)||isNaN(s2)){continue;}
 		}
 		if((s1 != s2) && ((s1 < s2) == lth))//if the latter one is less, but should be ascending...
@@ -95,7 +148,7 @@ so the set of childnodes at and below the cup is unchanged.
 				sign = gt[scout].childNodes[ctsb].textContent;
 				if(asnum)
 				{
-					sign = parseInt(sign);
+					sign = parseFloat(sign);
 					if(isNaN(sign)){break;}
 				}
 				if((s1 == sign) || (s1 < sign) != lth)//found the proper place
@@ -136,23 +189,53 @@ thead>tr:first-of-type>th
 </head>
 <body>
 <input type=checkbox id="chkAL">Accept-Language:<input type=text id="txtAL" value="en" maxlength=127><br>
-<input type=button value="Get military campaigns" onClick=GetMilitaryCampaigns(this)>
+<input type=button value="Get military campaigns" onClick=GetMilitaryCampaigns(this,0)><br>
+<div id="LogA"> </div>
 <hr>
-<div id="stts"></div>
-<ul id="hdrs"></ul>
-<div id="svar"></div>
+<div id="stts0"></div>
+<ul id="hdrs0"></ul>
+<div id="svar0"></div>
+<form name="ConstructedTable">
 <table border=1>
 <thead>
-<tr><th>API entry</th><th>ID</th><th>State</th><th>Progress</th><th>Started</th><th>~Issuer~</th></tr>
+<tr><th>API entry</th><th>ID</th><th>State</th><th>Progress</th><th>Started</th><th>~Days since start~</th><th>~Issuer~</th></tr>
 <tr>
-<th><span onClick=a(0,true,true)>&#9650;</span> <span onClick=a(0,false,true)>&#9660;</span></th>
-<th><span onClick=a(1,true,false)>&#9650;</span> <span onClick=a(1,false,false)>&#9660;</span></th>
-<th><span onClick=a(2,true,false)>&#9650;</span> <span onClick=a(2,false,false)>&#9660;</span></th>
-<th><span onClick=a(3,true,true)>&#9650;</span> <span onClick=a(3,false,true)>&#9660;</span></th>
-<th><span onClick=a(4,true,false)>&#9650;</span> <span onClick=a(4,false,false)>&#9660;</span></th>
-<th><span onClick=a(5,true,false)>&#9650;</span> <span onClick=a(5,false,false)>&#9660;</span></th>
+<th><span onClick=a(0,0,true,true)>&#9650;</span> <span onClick=a(0,0,false,true)>&#9660;</span></th>
+<th><span onClick=a(1,0,true,false)>&#9650;</span> <span onClick=a(1,0,false,false)>&#9660;</span></th>
+<th><span onClick=a(2,0,true,false)>&#9650;</span> <span onClick=a(2,0,false,false)>&#9660;</span></th>
+<th><span onClick=a(3,0,true,true)>&#9650;</span> <span onClick=a(3,0,false,true)>&#9660;</span></th>
+<th><span onClick=a(4,0,true,false)>&#9650;</span> <span onClick=a(4,0,false,false)>&#9660;</span></th>
+<th><span onClick=a(5,0,true,true)>&#9650;</span> <span onClick=a(5,0,false,true)>&#9660;</span></th>
+<th><span onClick=a(6,0,true,false)>&#9650;</span> <span onClick=a(6,0,false,false)>&#9660;</span></th>
 </tr></thead>
-<tbody id="st"></tbody>
+<tbody id="st0"></tbody>
+</table>
+</form>
+<hr>
+<input type=button value="Get objectives" onClick=GetMilitaryCampaigns(this,1)><br>
+<div id="LogB"> </div>
+<hr>
+<div id="stts1"></div>
+<ul id="hdrs1"></ul>
+<div id="svar1"></div>
+<table border=1>
+<thead>
+<tr><th>API entry</th><th>ID</th><th>State</th><th>Progress</th><th>Started</th><th>~Days since start~</th><th>participants/total</th><th>participants/committed</th><th>participants/contributors</th><th title="Progress/contributors">~Avg. contribution~</th><th>Last modified</th><th>~Days since modified~</th></tr>
+<tr>
+<th><span onClick=a(0,1,true,true)>&#9650;</span> <span onClick=a(0,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(1,1,true,false)>&#9650;</span> <span onClick=a(1,1,false,false)>&#9660;</span></th>
+<th><span onClick=a(2,1,true,false)>&#9650;</span> <span onClick=a(2,1,false,false)>&#9660;</span></th>
+<th><span onClick=a(3,1,true,true)>&#9650;</span> <span onClick=a(3,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(4,1,true,false)>&#9650;</span> <span onClick=a(4,1,false,false)>&#9660;</span></th>
+<th><span onClick=a(5,1,true,true)>&#9650;</span> <span onClick=a(5,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(6,1,true,true)>&#9650;</span> <span onClick=a(6,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(7,1,true,true)>&#9650;</span> <span onClick=a(7,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(8,1,true,true)>&#9650;</span> <span onClick=a(8,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(9,1,true,true)>&#9650;</span> <span onClick=a(9,1,false,true)>&#9660;</span></th>
+<th><span onClick=a(10,1,true,false)>&#9650;</span> <span onClick=a(10,1,false,false)>&#9660;</span></th>
+<th><span onClick=a(11,1,true,true)>&#9650;</span> <span onClick=a(11,1,false,true)>&#9660;</span></th>
+</tr></thead>
+<tbody id="st1"></tbody>
 </table>
 </body>
 </html>

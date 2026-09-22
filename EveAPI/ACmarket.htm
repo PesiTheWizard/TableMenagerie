@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Alloy&Compound market calculator</title>
+<title>Mineral market calculator</title>
 <script language="JavaScript">
 function calculate()
 {
@@ -13,10 +13,33 @@ function calculate()
 	const mega = parseFloat(document.Minerals?.MegaMarket?.value);
 	const morph = parseFloat(document.Minerals?.MorphMarket?.value);
 
+	document.getElementById("Veldspar1").innerText= (trit*400);
+	document.getElementById("Scordite1").innerText= (trit*150 + pye*110);
+	document.getElementById("Plagioclase1").innerText= (trit*175 + mex*70);
+	document.getElementById("Pyroxeres1").innerText= (pye*90 + mex*30);
+	document.getElementById("Omber1").innerText= (pye*90 + iso*75);
+	document.getElementById("Hemorphite1").innerText= (iso*240 + noc*90);
+	document.getElementById("Spodumain1").innerText= (trit*48000 + iso*1000 + noc*160 + zyd*80 + mega*40);
+	document.getElementById("Kernite1").innerText= (mex*60 + iso*120);
+	document.getElementById("Mercoxit1").innerText= (morph*140);
+	document.getElementById("Jaspet1").innerText= (mex*150 + noc*50);
+	document.getElementById("Hedbergite1").innerText= (pye*450 + noc*120);
+	document.getElementById("Gneiss1").innerText= (pye*2000 + mex*1500 + iso*800);
+	document.getElementById("DarkOchre1").innerText= (mex*1360 + iso*1200 + noc*320);
+	document.getElementById("Crokite1").innerText= (pye*800 + mex*2000 + noc*800);
+	document.getElementById("Bistot1").innerText= (pye*3200 + mex*1200 + zyd*160);
+	document.getElementById("Arkonor1").innerText= (pye*3200 + mex*1200 + mega*120);
+	document.getElementById("Coesite1").innerText= (pye*2000 + mex*400);
+	document.getElementById("Sylvite1").innerText= (pye*4000 + mex*400);
+	document.getElementById("Bitumens1").innerText= (pye*6000 + mex*400);
+	document.getElementById("Zeolites1").innerText= (pye*8000 + mex*400);
+
 	document.getElementById("BallConSys").innerText= (trit*1351 + mex*636 + iso*4 + zyd*14 + mega*4);
 	document.getElementById("CapPowRel").innerText= (trit*1116 + pye*861 + noc*3);
 	document.getElementById("CapRech").innerText= (trit*763 + pye*321 + mex*412 + mega*2);
 	document.getElementById("CoProc").innerText= (trit*2398 + pye*466 + mex*179 + iso*1 + noc*4);
+	document.getElementById("DamControl").innerText= (trit*1062 + pye*2 + mex*53);
+	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
 	document.getElementById("Gyrostab").innerText= (trit*773 + pye*491 + mex*518 + iso*3 + zyd*4);
 	document.getElementById("HeatSink").innerText= (trit*676 + mex*318 + iso*2 + zyd*6 + mega*2);
 	document.getElementById("NanIntStruct").innerText= (iso*10 + noc*1);
@@ -90,8 +113,8 @@ function calculate()
 	document.getElementById("Shuttle").innerText= (trit*2778);
 	document.getElementById("Frigate").innerText= (trit*13333 + pye*3333 + mex*1333);
 	document.getElementById("ScanFrigate").innerText= (trit*13333 + pye*6111 + mex*2444);
+	document.getElementById("Hauler").innerText= (trit*47222 + pye*9333 + mex*3750 + iso*356 + noc*133 + zyd*34 + mega*12);
 	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
-	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
 	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
 	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
 	document.getElementById("MultECM").innerText= (iso*62 + noc*49);
@@ -120,6 +143,14 @@ function calculate()
 	document.getElementById("spaFl").innerText= (trit*1236 + pye*223 + mex*110);
 	document.getElementById("spaPPl").innerText= (trit*1529 + mex*89 + iso*23);
 	document.getElementById("spaEl").innerText= (trit*1778 + pye*127 + mex*89 + iso*29);
+	document.getElementById("spaCLx").innerText= (trit*2489 + pye*1978 + iso*11);
+	document.getElementById("spaNx").innerText= (trit*5200 + pye*1000 + mex*22 + iso*22 + noc*22);
+	document.getElementById("spaPx").innerText= (trit*5111 + pye*4278);
+	document.getElementById("spaDUx").innerText= (trit*4578 + pye*5800);
+	document.getElementById("spaTSx").innerText= (trit*10400 + pye*1556 + mex*1044);
+	document.getElementById("spaFx").innerText= (trit*12356 + pye*2233 + mex*1100);
+	document.getElementById("spaPPx").innerText= (trit*15289 + mex*889 + iso*233);
+	document.getElementById("spaEx").innerText= (trit*17778 + pye*1267 + mex*889 + iso*289);
 
 	document.getElementById("shcIRs").innerText= (trit*27 + pye*21);
 	document.getElementById("shcTUs").innerText= (trit*38 + pye*32);
@@ -145,6 +176,14 @@ function calculate()
 	document.getElementById("shcURl").innerText= (trit*1236 + pye*223 + mex*110);
 	document.getElementById("shcPLl").innerText= (trit*1529 + mex*89 + iso*23);
 	document.getElementById("shcAMl").innerText= (trit*1778 + pye*127 + mex*89 + iso*29);
+	document.getElementById("shcIRx").innerText= (trit*2489 + pye*1978 + iso*11);
+	document.getElementById("shcTUx").innerText= (trit*5200 + pye*1000 + mex*22 + iso*22 + noc*22);
+	document.getElementById("shcIDx").innerText= (trit*5111 + pye*4278);
+	document.getElementById("shcLEx").innerText= (trit*4578 + pye*5800);
+	document.getElementById("shcTHx").innerText= (trit*10400 + pye*1556 + mex*1044);
+	document.getElementById("shcURx").innerText= (trit*12356 + pye*2233 + mex*1100);
+	document.getElementById("shcPLx").innerText= (trit*15289 + mex*889 + iso*233);
+	document.getElementById("shcAMx").innerText= (trit*17778 + pye*1267 + mex*889 + iso*289);
 
 	document.getElementById("sfcRAs").innerText= (pye*8 + iso*3 + noc*1 + zyd*1);
 	document.getElementById("sfcMIs").innerText= (trit*4 + pye*1 + mex*2 + iso*3 + noc*3);
@@ -170,6 +209,47 @@ function calculate()
 	document.getElementById("sfcXRl").innerText= (pye*2 + mex*67 + iso*20 + noc*4 + zyd*17 + mega*29);
 	document.getElementById("sfcGAl").innerText= (pye*51 + mex*2 + iso*3 + noc*20 + zyd*7 + mega*44);
 	document.getElementById("sfcMUl").innerText= (pye*36 + mex*4 + iso*24 + noc*3 + zyd*14 + mega*50);
+	document.getElementById("sfcRAx").innerText= (trit*133 + pye*56 + mex*56 + iso*467 + noc*167 + zyd*89 + mega*367);
+	document.getElementById("sfcMIx").innerText= (mex*867 + iso*33 + noc*11 + zyd*89 + mega*244);
+	document.getElementById("sfcINx").innerText= (pye*89 + mex*1100 + iso*44 + noc*44 + zyd*22 + mega*122);
+	document.getElementById("sfcSTx").innerText= (pye*567 + mex*550 + iso*33 + noc*39 + zyd*33 + mega*156);
+	document.getElementById("sfcULx").innerText= (pye*1044 + iso*22 + noc*33 + zyd*44 + mega*189);
+	document.getElementById("sfcXRx").innerText= (pye*22 + mex*667 + iso*200 + noc*44 + zyd*167 + mega*289);
+	document.getElementById("sfcGAx").innerText= (pye*511 + mex*22 + iso*33 + noc*200 + zyd*67 + mega*444);
+	document.getElementById("sfcMUx").innerText= (pye*356 + mex*44 + iso*244 + noc*33 + zyd*144 + mega*500);
+
+	document.getElementById("smRem").innerText= (trit*48 + pye*37);
+	document.getElementById("smRth").innerText= (trit*33 + pye*28);
+	document.getElementById("smRki").innerText= (trit*31 + pye*26);
+	document.getElementById("smRex").innerText= (trit*24 + pye*19);
+	document.getElementById("smLem").innerText= (trit*150 + pye*18 + mex*12);
+	document.getElementById("smLth").innerText= (trit*58 + pye*72);
+	document.getElementById("smLki").innerText= (trit*69 + pye*43 + mex*2);
+	document.getElementById("smLex").innerText= (trit*54 + pye*16 + mex*6);
+	document.getElementById("smHem").innerText= (trit*496 + pye*220 + noc*2);
+	document.getElementById("smHth").innerText= (trit*716 + pye*2 + mex*6 + noc*3);
+	document.getElementById("smHki").innerText= (trit*820 + noc*2);
+	document.getElementById("smHex").innerText= (trit*351 + pye*119 + noc*1);
+	document.getElementById("smAem").innerText= (trit*496 + pye*220 + noc*2);
+	document.getElementById("smAth").innerText= (trit*716 + pye*2 + mex*6 + noc*3);
+	document.getElementById("smAki").innerText= (trit*820 + pye*2 + noc*2);
+	document.getElementById("smAex").innerText= (trit*351 + pye*119 + noc*1);
+	document.getElementById("smTem").innerText= (trit*3924 + pye*356 + mex*28 + mega*6);
+	document.getElementById("smTth").innerText= (trit*3989 + pye*2939 + mex*29 + iso*2 + noc*2 + zyd*2);
+	document.getElementById("smTki").innerText= (trit*1876 + zyd*12 + mega*4);
+	document.getElementById("smTex").innerText= (trit*3729 + pye*833 + zyd*14);
+	document.getElementById("smCem").innerText= (trit*3084 + pye*472 + mex*68 + zyd*4);
+	document.getElementById("smCth").innerText= (trit*1842 + pye*707 + zyd*4);
+	document.getElementById("smCki").innerText= (trit*1867 + pye*144 + mex*17 + noc*2 + zyd*4);
+	document.getElementById("smCex").innerText= (trit*1447 + mex*81 + iso*4 + zyd*2);
+	document.getElementById("smXTem").innerText= (trit*39244 + pye*3556 + mex*278 + mega*66);
+	document.getElementById("smXTth").innerText= (trit*39889 + pye*29389 + mex*289 + iso*22 + noc*22 + zyd*22);
+	document.getElementById("smXTki").innerText= (trit*18756 + zyd*112 + mega*44);
+	document.getElementById("smXTex").innerText= (trit*37289 + pye*8333 + zyd*134);
+	document.getElementById("smXCem").innerText= (trit*39244 + pye*3556 + mex*278 + mega*66);
+	document.getElementById("smXCth").innerText= (trit*39889 + pye*29389 + mex*289 + iso*22 + noc*22 + zyd*22);
+	document.getElementById("smXCki").innerText= (trit*18756 + zyd*112 + mega*44);
+	document.getElementById("smXCex").innerText= (trit*37289 + pye*8333 + zyd*134);
 
 	document.getElementById("SHem").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
 	document.getElementById("SHth").innerText= (trit*8071 + pye*7488 + mex*219 + iso*2);
@@ -297,13 +377,43 @@ table
 
 <table border=1>
 <thead>
-<tr><th>Unsized modules</th></tr>
+<tr><th>Ore(100)</th></tr>
+</thead>
+<tbody>
+<tr><td title="10 m3">Veldspar</td><td id="Veldspar1"></td></tr>
+<tr><td title="15 m3">Scordite</td><td id="Scordite1"></td></tr>
+<tr><td title="35 m3">Plagioclase</td><td id="Plagioclase1"></td></tr>
+<tr><td title="30 m3">Pyroxeres</td><td id="Pyroxeres1"></td></tr>
+<tr><td title="60 m3">Omber</td><td id="Omber1"></td></tr>
+<tr><td title="300 m3">Hemorphite</td><td id="Hemorphite1"></td></tr>
+<tr><td title="1600 m3">Spodumain</td><td id="Spodumain1"></td></tr>
+<tr><td title="120 m3">Kernite</td><td id="Kernite1"></td></tr>
+<tr><td title="4000 m3">Mercoxit</td><td id="Mercoxit1"></td></tr>
+<tr><td title="200 m3">Jaspet</td><td id="Jaspet1"></td></tr>
+<tr><td title="300 m3">Hedbergite</td><td id="Hedbergite1"></td></tr>
+<tr><td title="500 m3">Gneiss</td><td id="Gneiss1"></td></tr>
+<tr><td title="800 m3">Dark Ochre</td><td id="DarkOchre1"></td></tr>
+<tr><td title="1600 m3">Crokite</td><td id="Crokite1"></td></tr>
+<tr><td title="1600 m3">Bistot</td><td id="Bistot1"></td></tr>
+<tr><td title="1600 m3">Arkonor</td><td id="Arkonor1"></td></tr>
+<tr><td title="1000 m3">Coesite*</td><td title="+65 Silicates" id="Coesite1"></td></tr>
+<tr><td title="1000 m3">Sylvite*</td><td title="+65 Evaporite Deposits" id="Sylvite1"></td></tr>
+<tr><td title="1000 m3">Bitumens*</td><td title="+65 Hydrocarbons" id="Bitumens1"></td></tr>
+<tr><td title="1000 m3">Zeolites*</td><td title="+65 Atmospheric Gases" id="Zeolites1"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Unsized, LP turnins</th></tr>
 </thead>
 <tbody>
 <tr><td>Ballistic Control System I</td><td id="BallConSys"></td></tr>
 <tr><td>Capacitor Power Relay I</td><td id="CapPowRel"></td></tr>
 <tr><td>Cap Recharger I</td><td id="CapRech"></td></tr>
 <tr><td>Co-Processor I</td><td id="CoProc"></td></tr>
+<tr><td>Damage Control I</td><td id="DamControl"></td></tr>
+<tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
 <tr><td>Gyrostabilizer I</td><td id="Gyrostab"></td></tr>
 <tr><td>Heat Sink I</td><td id="HeatSink"></td></tr>
 <tr><td>Nanofiber Internal Structure I</td><td id="NanIntStruct"></td></tr>
@@ -370,8 +480,8 @@ table
 <tr><td>Shuttle</td><td id="Shuttle"></td></tr>
 <tr><td>Non-scan Frigate</td><td id="Frigate"></td></tr>
 <tr><td>Scan Frigate</td><td id="ScanFrigate"></td></tr>
+<tr><td>Non-specialty Hauler</td><td id="Hauler"></td></tr>
 <tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
-<tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
 <tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
 <tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>
 <tr><td>Multispectral ECM I</td><td id="MultECM"></td></tr>
@@ -380,49 +490,65 @@ table
 
 <table border=1>
 <thead>
-<tr><th>Projectile ammo</th><th>Small</th><th>Medium</th><th>Large</th></tr>
+<tr><th>Projectiles(100)</th><th>Small</th><th>Medium</th><th>Large</th><th>X-large</th></tr>
 </thead>
 <tbody>
-<tr><td>Carbonized Lead(100)</td><td id="spaCLs"></td><td id="spaCLm"></td><td id="spaCLl"></td></tr>
-<tr><td>Nuclear(100)</td><td id="spaNs"></td><td id="spaNm"></td><td id="spaNl"></td></tr>
-<tr><td>Proton(100)</td><td id="spaPs"></td><td id="spaPm"></td><td id="spaPl"></td></tr>
-<tr><td>Depleted Uranium(100)</td><td id="spaDUs"></td><td id="spaDUm"></td><td id="spaDUl"></td></tr>
-<tr><td>Titanium Sabot(100)</td><td id="spaTSs"></td><td id="spaTSm"></td><td id="spaTSl"></td></tr>
-<tr><td>Fusion(100)</td><td id="spaFs"></td><td id="spaFm"></td><td id="spaFl"></td></tr>
-<tr><td>Phased Plasma(100)</td><td id="spaPPs"></td><td id="spaPPm"></td><td id="spaPPl"></td></tr>
-<tr><td>EMP(100)</td><td id="spaEs"></td><td id="spaEm"></td><td id="spaEl"></td></tr>
+<tr><td>Carbonized Lead</td><td id="spaCLs"></td><td id="spaCLm"></td><td id="spaCLl"></td><td id="spaCLx"></td></tr>
+<tr><td>Nuclear</td><td id="spaNs"></td><td id="spaNm"></td><td id="spaNl"></td><td id="spaNx"></td></tr>
+<tr><td>Proton</td><td id="spaPs"></td><td id="spaPm"></td><td id="spaPl"></td><td id="spaPx"></td></tr>
+<tr><td>Depleted Uranium</td><td id="spaDUs"></td><td id="spaDUm"></td><td id="spaDUl"></td><td id="spaDUx"></td></tr>
+<tr><td>Titanium Sabot</td><td id="spaTSs"></td><td id="spaTSm"></td><td id="spaTSl"></td><td id="spaTSx"></td></tr>
+<tr><td>Fusion</td><td id="spaFs"></td><td id="spaFm"></td><td id="spaFl"></td><td id="spaFx"></td></tr>
+<tr><td>Phased Plasma</td><td id="spaPPs"></td><td id="spaPPm"></td><td id="spaPPl"></td><td id="spaPPx"></td></tr>
+<tr><td>EMP</td><td id="spaEs"></td><td id="spaEm"></td><td id="spaEl"></td><td id="spaEx"></td></tr>
 </tbody>
 </table>
 
 <table border=1>
 <thead>
-<tr><th>Hybrid charges</th><th>Small</th><th>Medium</th><th>Large</th></tr>
+<tr><th>Hybrid(100)</th><th>Small</th><th>Medium</th><th>Large</th><th>X-large</th></tr>
 </thead>
 <tbody>
-<tr><td>Iron(100)</td>      <td id="shcIRs"></td><td id="shcIRm"></td><td id="shcIRl"></td></tr>
-<tr><td>Tungsten(100)</td>  <td id="shcTUs"></td><td id="shcTUm"></td><td id="shcTUl"></td></tr>
-<tr><td>Iridium(100)</td>   <td id="shcIDs"></td><td id="shcIDm"></td><td id="shcIDl"></td></tr>
-<tr><td>Lead(100)</td>      <td id="shcLEs"></td><td id="shcLEm"></td><td id="shcLEl"></td></tr>
-<tr><td>Thorium(100)</td>   <td id="shcTHs"></td><td id="shcTHm"></td><td id="shcTHl"></td></tr>
-<tr><td>Uranium(100)</td>   <td id="shcURs"></td><td id="shcURm"></td><td id="shcURl"></td></tr>
-<tr><td>Plutonium(100)</td> <td id="shcPLs"></td><td id="shcPLm"></td><td id="shcPLl"></td></tr>
-<tr><td>Antimatter(100)</td><td id="shcAMs"></td><td id="shcAMm"></td><td id="shcAMl"></td></tr>
+<tr><td>Iron</td>      <td id="shcIRs"></td><td id="shcIRm"></td><td id="shcIRl"></td><td id="shcIRx"></td></tr>
+<tr><td>Tungsten</td>  <td id="shcTUs"></td><td id="shcTUm"></td><td id="shcTUl"></td><td id="shcTUx"></td></tr>
+<tr><td>Iridium</td>   <td id="shcIDs"></td><td id="shcIDm"></td><td id="shcIDl"></td><td id="shcIDx"></td></tr>
+<tr><td>Lead</td>      <td id="shcLEs"></td><td id="shcLEm"></td><td id="shcLEl"></td><td id="shcLEx"></td></tr>
+<tr><td>Thorium</td>   <td id="shcTHs"></td><td id="shcTHm"></td><td id="shcTHl"></td><td id="shcTHx"></td></tr>
+<tr><td>Uranium</td>   <td id="shcURs"></td><td id="shcURm"></td><td id="shcURl"></td><td id="shcURx"></td></tr>
+<tr><td>Plutonium</td> <td id="shcPLs"></td><td id="shcPLm"></td><td id="shcPLl"></td><td id="shcPLx"></td></tr>
+<tr><td>Antimatter</td><td id="shcAMs"></td><td id="shcAMm"></td><td id="shcAMl"></td><td id="shcAMx"></td></tr>
 </tbody>
 </table>
 
 <table border=1>
 <thead>
-<tr><th>Frequency crystals</th><th>Small</th><th>Medium</th><th>Large</th></tr>
+<tr><th>Freq. crystals</th><th>Small</th><th>Medium</th><th>Large</th><th>X-large</th></tr>
 </thead>
 <tbody>
-<tr><td>Radio</td>         <td id="sfcRAs"></td><td id="sfcRAm"></td><td id="sfcRAl"></td></tr>
-<tr><td>Microwave</td>     <td id="sfcMIs"></td><td id="sfcMIm"></td><td id="sfcMIl"></td></tr>
-<tr><td>Infrared</td>      <td id="sfcINs"></td><td id="sfcINm"></td><td id="sfcINl"></td></tr>
-<tr><td>Standard</td>      <td id="sfcSTs"></td><td id="sfcSTm"></td><td id="sfcSTl"></td></tr>
-<tr><td>Ultraviolet</td>   <td id="sfcULs"></td><td id="sfcULm"></td><td id="sfcULl"></td></tr>
-<tr><td>Xray</td>          <td id="sfcXRs"></td><td id="sfcXRm"></td><td id="sfcXRl"></td></tr>
-<tr><td>Gamma</td>         <td id="sfcGAs"></td><td id="sfcGAm"></td><td id="sfcGAl"></td></tr>
-<tr><td>Multifrequency</td><td id="sfcMUs"></td><td id="sfcMUm"></td><td id="sfcMUl"></td></tr>
+<tr><td>Radio</td>         <td id="sfcRAs"></td><td id="sfcRAm"></td><td id="sfcRAl"></td><td id="sfcRAx"></td></tr>
+<tr><td>Microwave</td>     <td id="sfcMIs"></td><td id="sfcMIm"></td><td id="sfcMIl"></td><td id="sfcMIx"></td></tr>
+<tr><td>Infrared</td>      <td id="sfcINs"></td><td id="sfcINm"></td><td id="sfcINl"></td><td id="sfcINx"></td></tr>
+<tr><td>Standard</td>      <td id="sfcSTs"></td><td id="sfcSTm"></td><td id="sfcSTl"></td><td id="sfcSTx"></td></tr>
+<tr><td>Ultraviolet</td>   <td id="sfcULs"></td><td id="sfcULm"></td><td id="sfcULl"></td><td id="sfcULx"></td></tr>
+<tr><td>Xray</td>          <td id="sfcXRs"></td><td id="sfcXRm"></td><td id="sfcXRl"></td><td id="sfcXRx"></td></tr>
+<tr><td>Gamma</td>         <td id="sfcGAs"></td><td id="sfcGAm"></td><td id="sfcGAl"></td><td id="sfcGAx"></td></tr>
+<tr><td>Multifrequency</td><td id="sfcMUs"></td><td id="sfcMUm"></td><td id="sfcMUl"></td><td id="sfcMUx"></td></tr>
+</tbody>
+</table>
+
+<table border=1>
+<thead>
+<tr><th>Missiles(100)</th><th>Em</th><th>Th</th><th>Ki</th><th>Ex</th></tr>
+</thead>
+<tbody>
+<tr><td>Rockets</td>     <td id="smRem"></td><td id="smRth"></td><td id="smRki"></td><td id="smRex"></td></tr>
+<tr><td>Light</td>       <td id="smLem"></td><td id="smLth"></td><td id="smLki"></td><td id="smLex"></td></tr>
+<tr><td>Assault</td>     <td id="smAem"></td><td id="smAth"></td><td id="smAki"></td><td id="smAex"></td></tr>
+<tr><td>Heavy</td>       <td id="smHem"></td><td id="smHth"></td><td id="smHki"></td><td id="smHex"></td></tr>
+<tr><td>Torpedoes</td>   <td id="smTem"></td><td id="smTth"></td><td id="smTki"></td><td id="smTex"></td></tr>
+<tr><td>Cruise</td>      <td id="smCem"></td><td id="smCth"></td><td id="smCki"></td><td id="smCex"></td></tr>
+<tr><td>XL Torpedoes</td><td id="smXTem"></td><td id="smXTth"></td><td id="smXTki"></td><td id="smXTex"></td></tr>
+<tr><td>XL Cruise</td>   <td id="smXCem"></td><td id="smXCth"></td><td id="smXCki"></td><td id="smXCex"></td></tr>
 </tbody>
 </table>
 

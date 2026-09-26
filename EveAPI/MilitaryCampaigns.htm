@@ -41,12 +41,13 @@ function GetMilitaryCampaigns(ClBt,Step)
 	}
 	const APIendpoint = [
 		"https://esi.evetech.net/military-campaigns",
-		`https://esi.evetech.net/military-campaigns/${CSelVal}/objectives`
+		`https://esi.evetech.net/military-campaigns/${CSelVal}/objectives?limit=50`
 	][Step];
 	const hAL = {'X-Compatibility-Date':'2026-08-18'};
 	if(DchkAL.checked){hAL["Accept-Language"]=DtxtAL.value.trim();}
 	OGresp.innerText = "Fetching military campaign data...";
 	svr.innerText = "Waiting for response...";
+	Dlog.innerText = "Fetching ".concat(APIendpoint);
 	const TS1 = Date.now();
 	fetch(APIendpoint,{'headers':hAL}).then((response) => {
 		OGresp.innerText = "Response code = ".concat(response.status);
@@ -80,8 +81,8 @@ function GetMilitaryCampaigns(ClBt,Step)
 			const Prgrss = parseInt(currPrt["progress"]??"");
 			lister(Prgrss,tabRw,'td');
 			lister(currPrt["started"]??"",tabRw,'td');
-			const DUR = ((TS-(new Date(currPrt["started"]??0).valueOf()))/86400000).toFixed(4);
-			lister(DUR,tabRw,'td');
+			const DUR = new Date(currPrt["started"]??0).valueOf();
+			lister(((TS-DUR)/86400000).toFixed(4),tabRw,'td');
 			if(Step==0)
 			{
 				lister(issuers[currPrt["id"]]??"",tabRw,'td');
@@ -102,6 +103,7 @@ function GetMilitaryCampaigns(ClBt,Step)
 		return TS;
 	}).then((TS2) => {
 		svr.innerText = "JSON response received in ".concat((TS2-TS1)/1000," seconds");
+		Dlog.innerText = "Fetched ".concat(APIendpoint);
 	}).catch((error) => {
 		console.log(error);
 	});

@@ -558,6 +558,15 @@ Order type:<select id="selOrderType">
 		<tr><td>3200</td><td><input type=radio name="PickedType" value="41489"></td><td><input type=radio name="PickedType" value="41490"></td></tr>
 		</tbody></table>
 		</details></dd>
+
+		<dd><details><summary>Scanner probes</summary>
+		<table border=1><thead class="res">
+		<tr class="cpr"><th class="nc"></th><th>Standard</th><th>Sisters</th></tr>
+		</thead><tbody>
+		<tr><td>Core</td>  <td><input type=radio name="PickedType" value="30013"></td><td><input type=radio name="PickedType" value="30488"></td></tr>
+		<tr><td>Combat</td><td><input type=radio name="PickedType" value="30028"></td><td><input type=radio name="PickedType" value="30486"></td></tr>
+		</tbody></table>
+		</details></dd>
 	</dl>
 	</details></dd>
 
@@ -737,17 +746,29 @@ Order type:<select id="selOrderType">
 		</details></dd>
 
 		<dd><details><summary>Loot, unsized</summary>
-		<table border=1><thead>
-		<tr><th class="nc"></th><th>I</th><th>Compact(fitting reqs)</th><th>Enduring(activation cost)</th><th>Scoped(range)</th></tr>
+		<table border=1><thead class="res">
+		<tr><th class="nc"></th><th>I</th><th>Compact</th><th>Enduring</th><th>Scoped</th></tr>
 		</thead><tbody>
-		<tr><td>Guidance disruptors</td>    <td><input type=radio name="PickedType" value="37543"></td><td><input type=radio name="PickedType" value="5321">C-IR</td><td><input type=radio name="PickedType" value="37545">A-211</td><td><input type=radio name="PickedType" value="37544">Highstroke</td></tr>
-		<tr><td>Remote sensor boosters</td> <td><input type=radio name="PickedType" value="1963"></td><td><input type=radio name="PickedType" value="5279">F-23</td><td><input type=radio name="PickedType" value="5282">Linked</td><td><input type=radio name="PickedType" value="5281">Coadjunct</td></tr>
-		<tr><td>Remote sensor dampeners</td><td><input type=radio name="PickedType" value="1968"></td><td><input type=radio name="PickedType" value="5301">Kapteyn</td><td><input type=radio name="PickedType" value="5299">LFT</td><td><input type=radio name="PickedType" value="5302">Phased Muon</td></tr>
-		<tr><td>Stasis webifiers</td>       <td></td><td><input type=radio name="PickedType" value="4027">Fleeting</td><td><input type=radio name="PickedType" value="4025">X5</td></tr>
-		<tr><td>Target painters</td>        <td></td><td><input type=radio name="PickedType" value="19810">Periphera</td><td><input type=radio name="PickedType" value="19812">Parallel</td><td><input type=radio name="PickedType" value="19814">Phased</td></tr>
-		<tr><td>Tracking disruptors</td>    <td><input type=radio name="PickedType" value="2108"></td><td><input type=radio name="PickedType" value="5320">Balmer Series</td><td><input type=radio name="PickedType" value="5319">Baker Nunn</td><td><input type=radio name="PickedType" value="5322">DDO</td></tr>
+		<tr><td>Guidance disruptors</td>    <td><input type=radio name="PickedType" value="37543"></td><td><input type=radio name="PickedType" value="5321"></td><td><input type=radio name="PickedType" value="37545"></td><td><input type=radio name="PickedType" value="37544"></td></tr>
+		<tr><td>Remote sensor boosters</td> <td><input type=radio name="PickedType" value="1963"></td><td><input type=radio name="PickedType" value="5279"></td><td><input type=radio name="PickedType" value="5282"></td><td><input type=radio name="PickedType" value="5281"></td></tr>
+		<tr><td>Remote sensor dampeners</td><td><input type=radio name="PickedType" value="1968"></td><td><input type=radio name="PickedType" value="5301"></td><td><input type=radio name="PickedType" value="5299"></td><td><input type=radio name="PickedType" value="5302"></td></tr>
+		<tr><td>Stasis webifiers</td>       <td></td><td><input type=radio name="PickedType" value="4027"></td><td><input type=radio name="PickedType" value="4025"></td></tr>
+		<tr><td>Target painters</td>        <td></td><td><input type=radio name="PickedType" value="19810"></td><td><input type=radio name="PickedType" value="19812"></td><td><input type=radio name="PickedType" value="19814"></td></tr>
+		<tr><td>Tracking disruptors</td>    <td><input type=radio name="PickedType" value="2108"></td><td><input type=radio name="PickedType" value="5320"></td><td><input type=radio name="PickedType" value="5319"></td><td><input type=radio name="PickedType" value="5322"></td></tr>
 <!--		<tr><td>(future expansion)</td>     <td></td><td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td></tr>
 -->		</tbody></table>
+		</details></dd>
+
+		<dd><details><summary>Loot, protection</summary>
+		<table border=1><thead>
+		<tr><th rowspan=2 class="nc"></th><th colspan=5>Compact</th><th colspan=5>Enduring</th></tr>
+		<tr class="cpr"><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>&#9788;</th><th>Em</th><th>Th</th><th>Kn</th><th>Ex</th><th>&#9788;</th></tr>
+		</thead><tbody>
+		<tr><td>Shield Hardener</td>   <td><input type=radio name="PickedType" value="9622"></td><td><input type=radio name="PickedType" value="9660"></td><td><input type=radio name="PickedType" value="9608"></td><td><input type=radio name="PickedType" value="9646"></td><td><input type=radio name="PickedType" value="9632"></td><td><input type=radio name="PickedType" value="54292"></td><td><input type=radio name="PickedType" value="54295"></td><td><input type=radio name="PickedType" value="54294"></td><td><input type=radio name="PickedType" value="54293"></td><td><input type=radio name="PickedType" value="54291"></td></tr>
+		<tr><td>Shield Amplifier</td>  <td><input type=radio name="PickedType" value="9580"></td><td><input type=radio name="PickedType" value="9568"></td><td><input type=radio name="PickedType" value="9582"></td><td><input type=radio name="PickedType" value="9556"></td></tr>
+		<tr><td>Armor Hardener</td>    <td><input type=radio name="PickedType" value="16359"></td><td><input type=radio name="PickedType" value="16383"></td><td><input type=radio name="PickedType" value="16375"></td><td><input type=radio name="PickedType" value="16367"></td><td class="nc"></td><td><input type=radio name="PickedType" value="16357"></td><td><input type=radio name="PickedType" value="16381"></td><td><input type=radio name="PickedType" value="16373"></td><td><input type=radio name="PickedType" value="16365"></td></tr>
+		<tr><td>Energized Membrane</td><td><input type=radio name="PickedType" value="16415"></td><td><input type=radio name="PickedType" value="16431"></td><td><input type=radio name="PickedType" value="16399"></td><td><input type=radio name="PickedType" value="16407"></td><td><input type=radio name="PickedType" value="16391"></td></tr>
+		</tbody></table>
 		</details></dd>
 
 		<dd><details><summary>Armor plates</summary>
@@ -837,7 +858,8 @@ Order type:<select id="selOrderType">
 	<dd><details><summary>Vendor trash</summary>
 	<input type=radio name="PickedType" value="48121">Triglavian Survey Database<br>
 	<input type=radio name="PickedType" value="56708">Interstellar Navigation Logs<br>
-	<input type=radio name="PickedType" value="60459">Rogue Drone Infestation Data
+	<input type=radio name="PickedType" value="60459">Rogue Drone Infestation Data<br>
+	<input type=radio name="PickedType" value="86216">Stellar Surveillance Data
 	</details></dd>
 
 	<dd><details><summary>Other</summary>

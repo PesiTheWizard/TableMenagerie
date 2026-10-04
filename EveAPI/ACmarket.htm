@@ -37,9 +37,11 @@ function calculate()
 	document.getElementById("BallConSys").innerText= (trit*1351 + mex*636 + iso*4 + zyd*14 + mega*4);
 	document.getElementById("CapPowRel").innerText= (trit*1116 + pye*861 + noc*3);
 	document.getElementById("CapRech").innerText= (trit*763 + pye*321 + mex*412 + mega*2);
+	document.getElementById("CoreProbeLauncher").innerText= (trit*471 + pye*716);
 	document.getElementById("CoProc").innerText= (trit*2398 + pye*466 + mex*179 + iso*1 + noc*4);
 	document.getElementById("DamControl").innerText= (trit*1062 + pye*2 + mex*53);
 	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
+	document.getElementById("ExpandedProbeLauncher").innerText= (trit*471 + pye*716);
 	document.getElementById("Gyrostab").innerText= (trit*773 + pye*491 + mex*518 + iso*3 + zyd*4);
 	document.getElementById("HeatSink").innerText= (trit*676 + mex*318 + iso*2 + zyd*6 + mega*2);
 	document.getElementById("NanIntStruct").innerText= (iso*10 + noc*1);
@@ -114,6 +116,7 @@ function calculate()
 	document.getElementById("Frigate").innerText= (trit*13333 + pye*3333 + mex*1333);
 	document.getElementById("ScanFrigate").innerText= (trit*13333 + pye*6111 + mex*2444);
 	document.getElementById("Hauler").innerText= (trit*47222 + pye*9333 + mex*3750 + iso*356 + noc*133 + zyd*34 + mega*12);
+	document.getElementById("MakeHauler").innerText= (trit*80000 + pye*15000 + mex*3750 + iso*2000 + noc*750 + zyd*125 + mega*70);
 	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
 	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
 	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
@@ -411,9 +414,11 @@ table
 <tr><td>Ballistic Control System I</td><td id="BallConSys"></td></tr>
 <tr><td>Capacitor Power Relay I</td><td id="CapPowRel"></td></tr>
 <tr><td>Cap Recharger I</td><td id="CapRech"></td></tr>
+<tr><td>Core Probe Launcher I</td><td id="CoreProbeLauncher"></td></tr>
 <tr><td>Co-Processor I</td><td id="CoProc"></td></tr>
 <tr><td>Damage Control I</td><td id="DamControl"></td></tr>
 <tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
+<tr><td>Expanded Probe Launcher I</td><td id="ExpandedProbeLauncher"></td></tr>
 <tr><td>Gyrostabilizer I</td><td id="Gyrostab"></td></tr>
 <tr><td>Heat Sink I</td><td id="HeatSink"></td></tr>
 <tr><td>Nanofiber Internal Structure I</td><td id="NanIntStruct"></td></tr>
@@ -480,7 +485,8 @@ table
 <tr><td>Shuttle</td><td id="Shuttle"></td></tr>
 <tr><td>Non-scan Frigate</td><td id="Frigate"></td></tr>
 <tr><td>Scan Frigate</td><td id="ScanFrigate"></td></tr>
-<tr><td>Non-specialty Hauler</td><td id="Hauler"></td></tr>
+<tr><td>Hauler(v1)</td><td id="Hauler"></td></tr>
+<tr><td>Hauler(v2)</td><td id="MakeHauler"></td></tr>
 <tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
 <tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
 <tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>

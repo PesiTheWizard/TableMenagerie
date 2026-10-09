@@ -40,10 +40,13 @@ function calculate()
 	document.getElementById("CoreProbeLauncher").innerText= (trit*471 + pye*716);
 	document.getElementById("CoProc").innerText= (trit*2398 + pye*466 + mex*179 + iso*1 + noc*4);
 	document.getElementById("DamControl").innerText= (trit*1062 + pye*2 + mex*53);
+	document.getElementById("DroneDamAmp").innerText= (trit*1230 + pye*234 + mex*380 + iso*4 + zyd*12 + mega*4);
+	document.getElementById("DroneNavComp").innerText= (trit*13333 + pye*14444 + mex*61 + iso*2 + noc*2 + mega*2);
 	document.getElementById("ExpCarg").innerText= (iso*10 + noc*1);
 	document.getElementById("ExpandedProbeLauncher").innerText= (trit*471 + pye*716);
 	document.getElementById("Gyrostab").innerText= (trit*773 + pye*491 + mex*518 + iso*3 + zyd*4);
 	document.getElementById("HeatSink").innerText= (trit*676 + mex*318 + iso*2 + zyd*6 + mega*2);
+	document.getElementById("MagFieldStab").innerText= (trit*8050 + pye*1459);
 	document.getElementById("NanIntStruct").innerText= (iso*10 + noc*1);
 	document.getElementById("Overdrive").innerText= (trit*234 + pye*3413);
 	document.getElementById("PowDiagSys").innerText= (pye*658 + mex*2 + iso*4 + noc*1 + zyd*4);
@@ -117,6 +120,8 @@ function calculate()
 	document.getElementById("ScanFrigate").innerText= (trit*13333 + pye*6111 + mex*2444);
 	document.getElementById("Hauler").innerText= (trit*47222 + pye*9333 + mex*3750 + iso*356 + noc*133 + zyd*34 + mega*12);
 	document.getElementById("MakeHauler").innerText= (trit*80000 + pye*15000 + mex*3750 + iso*2000 + noc*750 + zyd*125 + mega*70);
+	document.getElementById("Destroyer").innerText= (trit*39253 + pye*11483 + mex*3750);
+	document.getElementById("MakeDestroyer").innerText= (trit*80000 + pye*15000 + mex*5000 + iso*1000);
 	document.getElementById("civies").innerText= (trit*71 + pye*24 + mex*1);
 	document.getElementById("TrackDis").innerText= (trit*716 + pye*154 + mex*370 + iso*3 + mega*4);
 	document.getElementById("RemSenDam").innerText= (trit*252 + pye*766 + mex*1053 + iso*119);
@@ -417,10 +422,13 @@ table
 <tr><td>Core Probe Launcher I</td><td id="CoreProbeLauncher"></td></tr>
 <tr><td>Co-Processor I</td><td id="CoProc"></td></tr>
 <tr><td>Damage Control I</td><td id="DamControl"></td></tr>
+<tr><td>Drone Damage Amplifier I</td><td id="DroneDamAmp"></td></tr>
+<tr><td>Drone Navigation Computer I</td><td id="DroneNavComp"></td></tr>
 <tr><td>Expanded Cargohold I</td><td id="ExpCarg"></td></tr>
 <tr><td>Expanded Probe Launcher I</td><td id="ExpandedProbeLauncher"></td></tr>
 <tr><td>Gyrostabilizer I</td><td id="Gyrostab"></td></tr>
 <tr><td>Heat Sink I</td><td id="HeatSink"></td></tr>
+<tr><td>Magnetic Field Stabilizer</td><td id="MagFieldStab"></td></tr>
 <tr><td>Nanofiber Internal Structure I</td><td id="NanIntStruct"></td></tr>
 <tr><td>Overdrive Injector System I</td><td id="Overdrive"></td></tr>
 <tr><td>Power Diagnostic System I</td><td id="PowDiagSys"></td></tr>
@@ -487,6 +495,8 @@ table
 <tr><td>Scan Frigate</td><td id="ScanFrigate"></td></tr>
 <tr><td>Hauler(v1)</td><td id="Hauler"></td></tr>
 <tr><td>Hauler(v2)</td><td id="MakeHauler"></td></tr>
+<tr><td>Destroyer(v1)</td><td id="Destroyer"></td></tr>
+<tr><td>Destroyer(v2)</td><td id="MakeDestroyer"></td></tr>
 <tr><td>Civilian Shield Booster</td><td id="civies"></td></tr>
 <tr><td>Tracking Disruptor I</td><td id="TrackDis"></td></tr>
 <tr><td>Remote Sensor Dampener I</td><td id="RemSenDam"></td></tr>

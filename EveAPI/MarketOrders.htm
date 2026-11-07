@@ -597,13 +597,19 @@ Order type:<select id="selOrderType">
 		</tbody></table>
 		</details></dd>
 
-		<dd><details><summary>Other missiles</summary>
-		<input type=radio name="PickedType" value="32782">Defender Missile I<br>
+		<dd><details><summary>Standup</summary>
 		<input type=radio name="PickedType" value="37848">Standup Light Missile<br>
 		<input type=radio name="PickedType" value="37847">Standup Heavy Missile<br>
 		<input type=radio name="PickedType" value="37846">Standup Cruise Missile<br>
 		<input type=radio name="PickedType" value="37844">Standup XL Cruise Missile<br>
-		<input type=radio name="PickedType" value="37843">Standup Super-heavy Torpedo
+		<input type=radio name="PickedType" value="37843">Standup Super-heavy Torpedo<br>
+		<input type=radio name="PickedType" value="37850">Standup Light Guided Bomb<br>
+		<input type=radio name="PickedType" value="37849">Standup Heavy Guided Bomb<br>
+		<input type=radio name="PickedType" value="63195">Standup Flak Round I<br>
+		</details></dd>
+
+		<dd><details><summary>Other</summary>
+		<input type=radio name="PickedType" value="32782">Defender Missile I<br>
 		</details></dd>
 	</dl>
 	</details></dd>
@@ -996,11 +1002,11 @@ Order type:<select id="selOrderType">
 		<tr class="cpr"><th rowspan=2 class="nc"></th><th colspan=3>Energy</th><th colspan=3>Hybrid</th><th colspan=3>Projectile</th></tr>
 		<tr><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th><th>S</th><th>M</th><th>L</th></tr>
 		</thead><tbody>
-		<tr><td>Metastasis Adjuster</td>       <td><input type=radio name="PickedType" value="31490"></td><td><input type=radio name="PickedType" value="31492"></td><td><input type=radio name="PickedType" value="25974"></td><td><input type=radio name="PickedType" value="31574"></td><td><input type=radio name="PickedType" value="31576"></td><td><input type=radio name="PickedType" value="26002"></td><td><input type=radio name="PickedType" value="31704"></td><td><input type=radio name="PickedType" value="31706"></td><td><input type=radio name="PickedType" value="26042"></td></tr>
+		<tr><td>Metastasis Adjuster</td>       <td><input type=radio name="PickedType" value="31490"></td><td><input type=radio name="PickedType" value="31492"></td><td><input type=radio name="PickedType" value="25974"></td><td><input type=radio name="PickedType" value="31574"></td><td class="mfdn"><input type=radio name="PickedType" value="31576"></td><td><input type=radio name="PickedType" value="26002"></td><td><input type=radio name="PickedType" value="31704"></td><td><input type=radio name="PickedType" value="31706"></td><td><input type=radio name="PickedType" value="26042"></td></tr>
 		<tr><td>Locus Coordinator</td>         <td class="mfdn"><input type=radio name="PickedType" value="31478"></td><td><input type=radio name="PickedType" value="31480"></td><td><input type=radio name="PickedType" value="25972"></td><td><input type=radio name="PickedType" value="31562"></td><td><input type=radio name="PickedType" value="31564"></td><td><input type=radio name="PickedType" value="26000"></td><td><input type=radio name="PickedType" value="31692"></td><td><input type=radio name="PickedType" value="31694"></td><td><input type=radio name="PickedType" value="26040"></td></tr>
 		<tr><td>Discharge Elutriation</td>     <td><input type=radio name="PickedType" value="31466"></td><td><input type=radio name="PickedType" value="31468"></td><td><input type=radio name="PickedType" value="25968"></td><td><input type=radio name="PickedType" value="31550"></td><td><input type=radio name="PickedType" value="31552"></td><td><input type=radio name="PickedType" value="25996"></td></tr>
-		<tr><td>Collision Accelerator</td>     <td><input type=radio name="PickedType" value="31454"></td><td><input type=radio name="PickedType" value="31456"></td><td><input type=radio name="PickedType" value="25980"></td><td><input type=radio name="PickedType" value="31538"></td><td><input type=radio name="PickedType" value="31540"></td><td><input type=radio name="PickedType" value="26008"></td><td><input type=radio name="PickedType" value="31680"></td><td><input type=radio name="PickedType" value="31682"></td><td><input type=radio name="PickedType" value="26048"></td></tr>
-		<tr><td>Burst Aerator</td>             <td><input type=radio name="PickedType" value="31442"></td><td><input type=radio name="PickedType" value="31444"></td><td><input type=radio name="PickedType" value="25978"></td><td><input type=radio name="PickedType" value="31526"></td><td><input type=radio name="PickedType" value="31528"></td><td><input type=radio name="PickedType" value="26006"></td><td class="mfdn"><input type=radio name="PickedType" value="31668"></td><td><input type=radio name="PickedType" value="31670"></td><td><input type=radio name="PickedType" value="26046"></td></tr>
+		<tr><td>Collision Accelerator</td>     <td><input type=radio name="PickedType" value="31454"></td><td><input type=radio name="PickedType" value="31456"></td><td><input type=radio name="PickedType" value="25980"></td><td class="mfdn"><input type=radio name="PickedType" value="31538"></td><td><input type=radio name="PickedType" value="31540"></td><td><input type=radio name="PickedType" value="26008"></td><td class="mfdn"><input type=radio name="PickedType" value="31680"></td><td><input type=radio name="PickedType" value="31682"></td><td><input type=radio name="PickedType" value="26048"></td></tr>
+		<tr><td>Burst Aerator</td>             <td><input type=radio name="PickedType" value="31442"></td><td><input type=radio name="PickedType" value="31444"></td><td><input type=radio name="PickedType" value="25978"></td><td class="mfdn"><input type=radio name="PickedType" value="31526"></td><td><input type=radio name="PickedType" value="31528"></td><td><input type=radio name="PickedType" value="26006"></td><td class="mfdn"><input type=radio name="PickedType" value="31668"></td><td><input type=radio name="PickedType" value="31670"></td><td><input type=radio name="PickedType" value="26046"></td></tr>
 		<tr><td>Ambit Extension</td>           <td><input type=radio name="PickedType" value="31430"></td><td><input type=radio name="PickedType" value="31432"></td><td><input type=radio name="PickedType" value="25970"></td><td><input type=radio name="PickedType" value="31514"></td><td><input type=radio name="PickedType" value="31516"></td><td><input type=radio name="PickedType" value="25998"></td><td><input type=radio name="PickedType" value="31656"></td><td><input type=radio name="PickedType" value="31658"></td><td><input type=radio name="PickedType" value="26038"></td></tr>
 		<tr><td>Algid Administrations Unit</td><td><input type=radio name="PickedType" value="31418"></td><td><input type=radio name="PickedType" value="31420"></td><td><input type=radio name="PickedType" value="25976"></td><td><input type=radio name="PickedType" value="31502"></td><td><input type=radio name="PickedType" value="31504"></td><td><input type=radio name="PickedType" value="26004"></td></tr>
 		</tbody></table>
@@ -1020,13 +1026,13 @@ Order type:<select id="selOrderType">
 		<table border=1><thead>
 		<tr><th class="nc"></th><th>S</th><th>M</th><th>L</th></tr>
 		</thead><tbody>
-		<tr><td>Trimark Armor Pump</td><td></td><td></td><td></td></tr>
-		<tr><td>Transverse Bulkhead</td><td></td><td></td><td></td></tr>
+		<tr><td>Trimark Armor Pump</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
+		<tr><td>Transverse Bulkhead</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Remote Repair Augmentor</td><td></td><td></td><td></td></tr>
 		<tr><td>Nanobot Accelerator</td><td></td><td></td><td></td></tr>
-		<tr><td>Auxiliary Nano Pump</td><td></td><td></td><td></td></tr>
+		<tr><td>Auxiliary Nano Pump</td><td></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Warp Core Optimizer</td><td></td><td></td><td></td></tr>
-		<tr><td>Polycarbon Engine Housing</td><td></td><td></td><td></td></tr>
+		<tr><td>Polycarbon Engine Housing</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Low Friction Nozzle Joints</td><td></td><td></td><td></td></tr>
 		<tr><td>Hyperspatial Velocity Optimizer</td><td></td><td></td><td></td></tr>
 		<tr><td>Higgs Anchor</td><td></td><td></td><td></td></tr>
@@ -1036,7 +1042,7 @@ Order type:<select id="selOrderType">
 		<tr><td>Auxiliary Thrusters</td><td></td><td></td><td></td></tr>
 		<tr><td>Stasis Drone Augmentor</td><td></td><td></td><td></td></tr>
 		<tr><td>Sentry Damage Augmentor</td><td></td><td></td><td></td></tr>
-		<tr><td>Drone Speed Augmentor</td><td></td><td></td><td></td></tr>
+		<tr><td>Drone Speed Augmentor</td><td></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Drone Scope Chip</td><td></td><td></td><td></td></tr>
 		<tr><td>Drone Repair Augmentor</td><td></td><td></td><td></td></tr>
 		<tr><td>Drone Mining Augmentor</td><td></td><td></td><td></td></tr>
@@ -1047,21 +1053,21 @@ Order type:<select id="selOrderType">
 		<tr><td>Signal Disruption Amplifier</td><td></td><td></td><td></td></tr>
 		<tr><td>Particle Dispersion Projector</td><td></td><td></td><td></td></tr>
 		<tr><td>Particle Dispersion Augmentor</td><td></td><td></td><td></td></tr>
-		<tr><td>Inverted Signal Field Projector</td><td></td><td></td><td></td></tr>
+		<tr><td>Inverted Signal Field Projector</td><td class="mfdn"></td><td></td><td></td></tr>
 		<tr><td>Semiconductor Memory Cell</td><td></td><td></td><td></td></tr>
-		<tr><td>Processor Overclocking Unit</td><td></td><td></td><td></td></tr>
+		<tr><td>Processor Overclocking Unit</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Powergrid Subroutine Maximizer</td><td></td><td></td><td></td></tr>
 		<tr><td>Liquid Cooled Electronics</td><td></td><td></td><td></td></tr>
 		<tr><td>Egress Port Maximizer</td><td></td><td></td><td></td></tr>
 		<tr><td>Command Processor</td><td></td><td></td><td></td></tr>
-		<tr><td>Capacitor Control Circuit</td><td></td><td></td><td></td></tr>
-		<tr><td>Ancillary Current Router</td><td></td><td></td><td></td></tr>
+		<tr><td>Capacitor Control Circuit</td><td></td><td class="mfdn"></td><td></td></tr>
+		<tr><td>Ancillary Current Router</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Warhead Rigor Catalyst</td><td></td><td></td><td></td></tr>
 		<tr><td>Warhead Flare Catalyst</td><td></td><td></td><td></td></tr>
 		<tr><td>Warhead Calefaction Catalyst</td><td></td><td></td><td></td></tr>
 		<tr><td>Rocket Fuel Cache Partition</td><td></td><td></td><td></td></tr>
-		<tr><td>Hydraulic Bay Thrusters</td><td></td><td></td><td></td></tr>
-		<tr><td>Bay Loading Accelerator</td><td></td><td></td><td></td></tr>
+		<tr><td>Hydraulic Bay Thrusters</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
+		<tr><td>Bay Loading Accelerator</td><td class="mfdn"></td><td></td><td></td></tr>
 		<tr><td>Salvage Tackle</td><td></td><td></td><td></td></tr>
 		<tr><td>Signal Focusing Kit</td><td></td><td></td><td></td></tr>
 		<tr><td>Memetic Algorithm Bank</td><td></td><td></td><td></td></tr>
@@ -1069,10 +1075,10 @@ Order type:<select id="selOrderType">
 		<tr><td>Emission Scope Sharpener</td><td></td><td></td><td></td></tr>
 		<tr><td>Core Defense Operational Solidifier</td><td></td><td></td><td></td></tr>
 		<tr><td>Core Defense Field Purger</td><td></td><td></td><td></td></tr>
-		<tr><td>Core Defense Field Extender</td><td></td><td></td><td></td></tr>
+		<tr><td>Core Defense Field Extender</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Core Defense Charge Economizer</td><td></td><td></td><td></td></tr>
 		<tr><td>Core Defense Capacitor Safeguard</td><td></td><td></td><td></td></tr>
-		<tr><td>Ionic Field Projector</td><td></td><td></td><td></td></tr>
+		<tr><td>Ionic Field Projector</td><td class="mfdn"></td><td class="mfdn"></td><td></td></tr>
 		<tr><td>Targeting System Subcontroller</td><td></td><td></td><td></td></tr>
 		</tbody></table>
 		</details></dd>

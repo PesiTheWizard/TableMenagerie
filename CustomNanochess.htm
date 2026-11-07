@@ -10,8 +10,8 @@ class CustomNanoChess
 	#PDC;//ply draw count, if 100 its a draw. Unused.
 	#PlyDepth;//AI difficulty
 	#RidersVar;//proper value for "Are we using knightriders?"
-	#NkingVar;//proper move-index for king
-	#DefPars = {AIside:true,PlyDepth:2,Riders:false,Nking:false,KnightValue:306,BishopValue:297,RookValue:495,QueenValue:846};
+	#NkingVar;//proper move-indexes for king
+	#DefPars = {AIside:true,PlyDepth:2,Riders:false,Nking:0,KnightValue:306,BishopValue:297,RookValue:495,QueenValue:846};
 	constructor(ParObj)
 	{
 		if(typeof(ParObj)!=="object" || (ParObj == null) || Array.isArray(ParObj))
@@ -36,7 +36,7 @@ class CustomNanoChess
 		this.PromSel="t";
 		this.#PlyDepth=Math.min(ParObj.PlyDepth,6);
 		this.#RidersVar=(ParObj?.Riders)?1:2;//2 = normal knights, 1 = knightriders
-		this.#NkingVar=(ParObj?.Nking)?61:47;//47 = normal king, 61 = knightmate
+		this.#NkingVar=[[47,8],[61,8],[51,4]][ParObj?.Nking??0];//[47,8] = normal king, [61,8] = knightmate, [51,4] = ferzlike
 		//vars
 		this.B=0;
 		this.i=0;
@@ -47,7 +47,7 @@ class CustomNanoChess
 		this.G=120;
 		//consts
 		this.x=10;
-		this.z=15;
+		this.z=15;//used for bitmasking, clearing bits above the 4 least significant
 		this.M=10000;
 		this.l=[5,3,4,6,2,4,3,5,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,9,13,11,12,14,10,12,11,13,0,99,0,306,297,495,846,-1,0,1,2,2,1,0,-1,-1,1,-10,10,-11,-9,9,11,10,20,-9,-11,-10,-20,-21,-19,-12,-8,8,12,19,21];
 		//Explain:   Starting setup of board;black pieces up top,white moves first     .  P     N   B   R   Q . positionalbonus .  R-move   .B-move. OL . WP  .  blackpawn   .   knight-move offsets   .
@@ -65,7 +65,7 @@ class CustomNanoChess
 			This covers the rightmost column of the larger board.
 			*/
 		}
-		console.log(`CustomNanoChess created, AI plays with ${this.#AIside?"black":"white"}, plyDepth=${this.#PlyDepth}, Knights=${["ranging","normal"][this.#RidersVar-1]}, King=${["normal","knightlike"][0+ParObj?.Nking]}`);
+		console.log(`CustomNanoChess created, AI plays with ${this.#AIside?"black":"white"}, plyDepth=${this.#PlyDepth}, Knights=${["ranging","normal"][this.#RidersVar-1]}, King=${["normal","knightlike","ferzlike"][0+ParObj?.Nking]}`);
 		this.W();
 		if(this.#AIside === this.y){this.makeAImove();}
 	}
@@ -93,22 +93,22 @@ class CustomNanoChess
 
 		this.y^=8;
 		this.G++;
-		d=w||s&&s>=h&&this.X(0,0,0,21,0,0)>this.M;
+		d=w||s&&s>=h&&this.X(0,0,0,21,0,0)>this.M;//check if king is in check; d initialized
 		do
 		{
 			if(o=this.I[p=O])//o and p initialized
 			{
-				q=(o&this.z)^this.y;//parenths added for readability
-				if(q<7)
+				q=(o&this.z)^this.y;//q initialized; parenths added for readability
+				if(q<7)//valid squares are less than 7 so borders, being 7, are always ignored
 				{
-					A=q--&2?8:4;//A initialized; comparison returns true for 2,3 and 6; king, knight and queen respectively
-					C=o-9&this.z?[53,this.#NkingVar,61,51,47,47][q]:57;//C initialized; array was [53,47,61,51,47,47]; movesets can be changed by changing these values
+					A=[4,4,this.#NkingVar[1],8,4,4,8][q--];//Line was A=q--&2?8:4; A initialized; comparison returns true for 2,3 and 6; king, knight and queen respectively; piece-values bumped down (so pawns are 0 henceforth)
+					C=o-9&this.z?[53,this.#NkingVar[0],61,51,47,47][q]:57;//C initialized; array was [53,47,61,51,47,47]; movesets can be changed by changing these values
 					do
 					{
-						r=this.I[p+=this.l[C]];
+						r=this.I[p+=this.l[C]];//r initialized
 						if(!w|p==w)
 						{
-							g=q|p+a-S?0:S;
+							g=q|p+a-S?0:S;//g initialized; bitwise-or happens last, so q must be 0 for g to be anything
 							if(!r&(!!q|A<3||!!g)||(r+1&this.z^this.y)>9&&q|A>2)
 							{
 								if(m=!(r-2&7))
@@ -126,7 +126,7 @@ class CustomNanoChess
 									if(s>h||1<s&s==h&&L>this.z|d)
 									{
 										this.I[p]=n,this.I[O]=m?(this.I[g]=this.I[m],this.I[m]=0):g?this.I[g]=0:0;
-										L-=this.X(s>h|d?0:p,L-N,h+1,this.I[this.G+1],J=q|A>1?0:p,s);
+										L-=this.X(s>h|d?0:p,L-N,h+1,this.I[this.G+1],J=q|A>1?0:p,s);//the only instance of w possibly not being 0
 										if(!(h||s-1|this.B-O|this.i-n|p-this.b|L<-this.M))
 										{//curlies added by me
 											this.logMove(O,p,this.y,this.i,q,r);
@@ -137,7 +137,7 @@ class CustomNanoChess
 										this.I[p]=r;
 										m?(this.I[m]=this.I[g],this.I[g]=0):g?this.I[g]=9^this.y:0;
 									}
-									if(L>N||s>1&&L==N&&!h&&Math.random()<.5)
+									if(L>N||s>1&&L==N&&!h&&Math.random()<.5)//seems to be "use the better move, or an equally good move if you feel like it"
 									{
 										this.I[this.G]=O;
 										if(s>1)
@@ -150,7 +150,7 @@ class CustomNanoChess
 										N=L;
 									}
 									n+=J||(g=p,m=p<O?g-3:g+2,this.I[m]<this.z|this.I[m+O-p]||this.I[p+=p-O])?1:0;
-								}
+								}//end of while(n<=t)
 							}
 						}
 					}while(!r&q>this.#RidersVar||(p=O,q|A>2|o>this.z&!r&&++C*--A));//the comparison to q determines which pieces are sliding.
@@ -175,6 +175,7 @@ class CustomNanoChess
 			if((this.i&7)==1&(this.b<29|this.b>90))
 			{
 				this.i=14-document.getElementById(this.PromSel).selectedIndex^this.y;
+				//Queen=0, Rook=1, Bishop=2, kNight=3
 			}
 			this.X(0,0,0,21,this.u,1);
 
@@ -332,7 +333,7 @@ AI plays with <select id="selAIside"><option>white</option><option selected>blac
 <input type="range" min="100" max="999" step="1" id="rangRV" oninput=rangeFeedback(this) value="495"><span></span> (Rook value)<br>
 <input type="range" min="100" max="999" step="1" id="rangQV" oninput=rangeFeedback(this) value="846"><span></span> (Queen value)<br>
 <input type="checkbox" id="chkRiders">Knightriders replace knights<br>
-<input type="checkbox" id="chkNking">King moves like a knight (no castling, maybe edge-cases)<br>
+King moves like a <select id="selKingMoves"><option>King</option><option>Knight</option><option>Ferz</option></select><br>
 <input type="button" value="Reset defaults" onclick=resetDefaults()> <input type="button" value="Setup game" onclick=setupNewGame(this)>
 <hr>
 <table cellspacing=0>
@@ -355,8 +356,8 @@ function collectPageNodes()
 	const RV = document.getElementById("rangRV");
 	const QV = document.getElementById("rangQV");
 	const Riders = document.getElementById("chkRiders");
-	const Nking = document.getElementById("chkNking");
-	return [AIside,Ply,NV,BV,RV,QV,Riders,Nking];
+	const KingMoves = document.getElementById("selKingMoves");
+	return [AIside,Ply,NV,BV,RV,QV,Riders,KingMoves];
 }
 function setupNewGame(b)
 {
@@ -368,7 +369,7 @@ function setupNewGame(b)
 	const RV = parseInt(InpNodes[4]?.value);
 	const QV = parseInt(InpNodes[5]?.value);
 	const r = InpNodes[6]?.checked??false;
-	const k = InpNodes[7]?.checked??false;
+	const k = InpNodes[7]?.selectedIndex??0;
 	const P = {AIside:s,PlyDepth:p,Riders:r,Nking:k,KnightValue:NV,BishopValue:BV,RookValue:RV,QueenValue:QV};
 	myTNC = new CustomNanoChess(P);
 }
@@ -382,7 +383,7 @@ function resetDefaults()
 	InpNodes[4].value = 495;
 	InpNodes[5].value = 846;
 	InpNodes[6].checked = false;
-	InpNodes[7].checked = false;
+	InpNodes[7].selectedIndex = 0;
 	rangeFeedback(InpNodes[1]);
 	rangeFeedback(InpNodes[2]);
 	rangeFeedback(InpNodes[3]);

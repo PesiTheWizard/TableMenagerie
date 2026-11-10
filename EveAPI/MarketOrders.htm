@@ -447,7 +447,7 @@ Order type:<select id="selOrderType">
 
 		<dd><details><summary>Gas</summary>
 		<table border=1><thead>
-		<tr class="wms"><th rowspan=2 class="nc"></th><th colspan=2>Standard</th><th colspan=2>Compressed</th></tr>
+		<tr class="cpr wms"><th rowspan=2 class="nc"></th><th colspan=2>Standard</th><th colspan=2>Compressed</th></tr>
 		<tr><th title="Cytoserocin">C</th><th title="Mykoserocin">M</th><th title="Cytoserocin">C</th><th title="Mykoserocin">M</th></tr>
 		</thead><tbody>
 		<tr><td>Amber</td>     <td><input type=radio name="PickedType" value="25268"></td><td><input type=radio name="PickedType" value="28694"></td><td><input type=radio name="PickedType" value="62396"></td><td><input type=radio name="PickedType" value="62377"></td></tr>
@@ -644,7 +644,7 @@ Order type:<select id="selOrderType">
 		<dd><details><summary>Boosters</summary>
 		<table border=1><thead>
 		<tr><th rowspan=2 class="nc"></th><th colspan=4>Ready</th><th colspan=4>Pure</th></tr>
-		<tr class="wms"><th>Synth</th><th>Standard</th><th>Improved</th><th>Strong</th><th>Synth</th><th>Standard</th><th>Improved</th><th>Strong</th></tr>
+		<tr class="cpr wms"><th>Synth</th><th>Standard</th><th>Improved</th><th>Strong</th><th>Synth</th><th>Standard</th><th>Improved</th><th>Strong</th></tr>
 		</thead><tbody>
 		<tr><td title="Slot 1">Blue pill</td>  <td><input type=radio name="PickedType" value="28670"></td><td class="mfdn"><input type=radio name="PickedType" value="9950"></td> <td><input type=radio name="PickedType" value="10155"></td><td><input type=radio name="PickedType" value="10156"></td><td><input type=radio name="PickedType" value="28686"></td><td><input type=radio name="PickedType" value="25237"></td><td><input type=radio name="PickedType" value="25241"></td><td><input type=radio name="PickedType" value="25283"></td></tr>
 		<tr><td title="Slot 1">Exile</td>      <td><input type=radio name="PickedType" value="28676"></td><td class="mfdn"><input type=radio name="PickedType" value="15479"></td><td><input type=radio name="PickedType" value="15480"></td><td><input type=radio name="PickedType" value="25349"></td><td><input type=radio name="PickedType" value="28689"></td><td><input type=radio name="PickedType" value="25331"></td><td><input type=radio name="PickedType" value="25337"></td><td><input type=radio name="PickedType" value="25344"></td></tr>
@@ -912,7 +912,7 @@ Order type:<select id="selOrderType">
 
 		<dd><details><summary>Loot, unsized</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Restrained</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Restrained</th></tr>
 		</thead><tbody>
 		<tr><td>Ballistic Control System</td><td class="mfdn"><input type=radio name="PickedType" value="16457"></td></tr>
 		<tr><td>Capacitor Power Relay</td>   <td><input type=radio name="PickedType" value="8177"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="8175"></td></tr>
@@ -920,22 +920,25 @@ Order type:<select id="selOrderType">
 		<tr><td>Drone Damage Amplifier</td>  <td class="mfdn"><input type=radio name="PickedType" value="41034"></td></tr>
 		<tr><td>Reinforced Bulkhead</td>     <td class="mfdn"><input type=radio name="PickedType" value="5649"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="5647"></td></tr>
 		<tr><td>Sensor Booster</td>          <td class="mfdn"><input type=radio name="PickedType" value="6160"></td><td class="mfdn"><input type=radio name="PickedType" value="6159"></td></tr>
-		<tr><td>Stasis webifier</td>         <td><input type=radio name="PickedType" value="4027"></td><td class="mfdn"><input type=radio name="PickedType" value="4025"></td></tr>
-		<tr><td>Target painter</td>          <td><input type=radio name="PickedType" value="19810"></td><td><input type=radio name="PickedType" value="19812"></td><td><input type=radio name="PickedType" value="19814"></td></tr>
+		<tr><td>Signal Amplifier</td>        <td class="mfdn"><input type=radio name="PickedType" value="6296"></td></tr>
+		<tr><td>Stasis Webifier</td>         <td><input type=radio name="PickedType" value="4027"></td><td class="mfdn"><input type=radio name="PickedType" value="4025"></td></tr>
+		<tr><td>Target Painter</td>          <td><input type=radio name="PickedType" value="19810"></td><td><input type=radio name="PickedType" value="19812"></td><td><input type=radio name="PickedType" value="19814"></td></tr>
+		<tr><td>Tracking Computer</td>       <td class="mfdn"><input type=radio name="PickedType" value="6173"></td><td><input type=radio name="PickedType" value="6176"></td></tr>
 		<tr><td>Tracking Enhancer</td>       <td class="mfdn"><input type=radio name="PickedType" value="6325"></td></tr>
 		<tr><td>Warp Disruptor</td>          <td class="mfdn"><input type=radio name="PickedType" value="5405"></td><td class="mfdn"><input type=radio name="PickedType" value="5399"></td><td><input type=radio name="PickedType" value="5403"></td></tr>
+		<tr><td>Warp Scrambler</td>          <td class="mfdn"><input type=radio name="PickedType" value="5445"></td><td><input type=radio name="PickedType" value="5439"></td><td class="mfdn"><input type=radio name="PickedType" value="5443"></td></tr>
 <!--		<tr><td>(future expansion)</td>      <td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td></tr>
 -->		</tbody></table>
 		</details></dd>
 
 		<dd><details><summary>Unsized, unfactioned</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Restrained</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Restrained</th></tr>
 		</thead><tbody>
 		<tr><td>Guidance disruptor</td>    <td><input type=radio name="PickedType" value="37543"></td><td class="mfdn"><input type=radio name="PickedType" value="5321"></td><td><input type=radio name="PickedType" value="37545"></td><td class="mfdn"><input type=radio name="PickedType" value="37544"></td></tr>
 		<tr><td>Remote sensor booster</td> <td><input type=radio name="PickedType" value="1963"></td><td><input type=radio name="PickedType" value="5279"></td><td><input type=radio name="PickedType" value="5282"></td><td><input type=radio name="PickedType" value="5281"></td></tr>
 		<tr><td>Remote sensor dampener</td><td><input type=radio name="PickedType" value="1968"></td><td><input type=radio name="PickedType" value="5301"></td><td><input type=radio name="PickedType" value="5299"></td><td class="mfdn"><input type=radio name="PickedType" value="5302"></td></tr>
-		<tr><td>Tracking disruptor</td>    <td><input type=radio name="PickedType" value="2108"></td><td class="mfdn"><input type=radio name="PickedType" value="5320"></td><td><input type=radio name="PickedType" value="5319"></td><td><input type=radio name="PickedType" value="5322"></td></tr>
+		<tr><td>Tracking disruptor</td>    <td><input type=radio name="PickedType" value="2108"></td><td class="mfdn"><input type=radio name="PickedType" value="5320"></td><td><input type=radio name="PickedType" value="5319"></td><td class="mfdn"><input type=radio name="PickedType" value="5322"></td></tr>
 		</tbody></table>
 		</details></dd>
 
@@ -953,7 +956,7 @@ Order type:<select id="selOrderType">
 
 		<dd><details><summary>Armor plates</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Restrained</th><th>Imperial navy</th><th>Federation navy</th><th>Syndicate</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Restrained</th><th>Imperial navy</th><th>Federation navy</th><th>Syndicate</th></tr>
 		</thead><tbody>
 		<tr><td>100mm</td> <td><input type=radio name="PickedType" value="11293"></td><td><input type=radio name="PickedType" value="11341"></td><td><input type=radio name="PickedType" value="11343"></td><td><input type=radio name="PickedType" value="31896"></td><td><input type=radio name="PickedType" value="31898"></td><td><input type=radio name="PickedType" value="28778"></td></tr>
 		<tr><td>200mm</td> <td><input type=radio name="PickedType" value="11295"></td><td><input type=radio name="PickedType" value="11349"></td><td><input type=radio name="PickedType" value="11351"></td><td><input type=radio name="PickedType" value="31904"></td><td><input type=radio name="PickedType" value="31906"></td><td><input type=radio name="PickedType" value="28782"></td></tr>
@@ -965,7 +968,7 @@ Order type:<select id="selOrderType">
 
 		<dd><details><summary>ECM</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Legion</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th>I</th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Legion</th></tr>
 		</thead><tbody>
 		<tr><td>Radar</td>        <td><input type=radio name="PickedType" value="1956"></td><td><input type=radio name="PickedType" value="19950"></td><td><input type=radio name="PickedType" value="19948"></td><td><input type=radio name="PickedType" value="19952"></td><td><input type=radio name="PickedType" value="28737"></td></tr>
 		<tr><td>Gravimetric</td>  <td><input type=radio name="PickedType" value="1955"></td><td><input type=radio name="PickedType" value="19944"></td><td><input type=radio name="PickedType" value="19942"></td><td><input type=radio name="PickedType" value="19946"></td><td><input type=radio name="PickedType" value="28735"></td></tr>
@@ -1090,7 +1093,7 @@ Order type:<select id="selOrderType">
 	<dl>
 		<dd><details><summary>Attribute Enhancers</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th title="+1">Limited</th><th title="+2">Limited - Beta</th><th title="+3">Basic</th><th title="+4">Standard</th><th title="+5">Improved</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th title="+1">Limited</th><th title="+2">Limited - Beta</th><th title="+3">Basic</th><th title="+4">Standard</th><th title="+5">Improved</th></tr>
 		</thead><tbody>
 		<tr><td title="Slot 1&#13;Perception">Ocular Filter</td>            <td><input type=radio name="PickedType" value="13283"></td><td><input type=radio name="PickedType" value="14295"></td><td><input type=radio name="PickedType" value="9899"></td><td><input type=radio name="PickedType" value="10216"></td><td><input type=radio name="PickedType" value="10217"></td></tr>
 		<tr><td title="Slot 2&#13;Memory">Memory Augmentation</td>          <td><input type=radio name="PickedType" value="13284"></td><td><input type=radio name="PickedType" value="14297"></td><td><input type=radio name="PickedType" value="9941"></td><td><input type=radio name="PickedType" value="10208"></td><td><input type=radio name="PickedType" value="10209"></td></tr>
@@ -1162,7 +1165,7 @@ Order type:<select id="selOrderType">
 
 		<dd><details><summary>Containers</summary>
 		<table border=1><thead>
-		<tr class="wms"><th class="nc"></th><th>Small</th><th>Medium</th><th>Large</th><th>Huge</th><th>Giant</th><th>Enormous</th></tr>
+		<tr class="cpr wms"><th class="nc"></th><th>Small</th><th>Medium</th><th>Large</th><th>Huge</th><th>Giant</th><th>Enormous</th></tr>
 		</thead><tbody>
 		<tr><td>Audit Log</td><td><input type=radio name="PickedType" value="17363"></td><td><input type=radio name="PickedType" value="17364"></td><td><input type=radio name="PickedType" value="17365"></td></tr>
 		<tr><td>Freight</td>  <td><input type=radio name="PickedType" value="33011"></td><td><input type=radio name="PickedType" value="33009"></td><td><input type=radio name="PickedType" value="33007"></td><td><input type=radio name="PickedType" value="33005"></td><td><input type=radio name="PickedType" value="24445"></td><td><input type=radio name="PickedType" value="33003"></td></tr>

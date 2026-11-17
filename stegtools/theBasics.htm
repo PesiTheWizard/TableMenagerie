@@ -24,7 +24,8 @@ function something()
 		document.getElementById("f14"),
 		document.getElementById("f15"),
 		document.getElementById("f16"),
-		document.getElementById("f17")
+		document.getElementById("f17"),
+		document.getElementById("f18")
 	];
 	f[0].textContent = inp;
 	f[1].textContent = inp.split("").reverse().join("");
@@ -92,21 +93,22 @@ function something()
 	}
 	f[14].textContent = inp.toLowerCase();
 	f[15].textContent = inp.toUpperCase();
+	f[16].textContent = inp.length;
 	try
 	{
-		f[16].textContent = Uint8Array.fromBase64(inp).toString();
-	}
-	catch(e)
-	{
-		f[16].textContent = e.toString();
-	}
-	try
-	{
-		f[17].textContent = Uint8Array.fromHex(inp).toString();
+		f[17].textContent = Uint8Array.fromBase64(inp,{lastChunkHandling:"strict"}).toString();
 	}
 	catch(e)
 	{
 		f[17].textContent = e.toString();
+	}
+	try
+	{
+		f[18].textContent = Uint8Array.fromHex(inp).toString();
+	}
+	catch(e)
+	{
+		f[18].textContent = e.toString();
 	}
 }
 </script>
@@ -138,8 +140,9 @@ input
 <tr><th>codePoints</th><td id="f13"></td></tr>
 <tr><th>toLowerCase</th><td id="f14"></td></tr>
 <tr><th>toUpperCase</th><td id="f15"></td></tr>
-<tr><th>fromBase64</th><td id="f16"></td></tr>
-<tr><th>fromHex</th><td id="f17"></td></tr>
+<tr><th>length</th><td id="f16"></td></tr>
+<tr><th>fromBase64</th><td id="f17"></td></tr>
+<tr><th>fromHex</th><td id="f18"></td></tr>
 </tbody></table>
 </body>
 </html>

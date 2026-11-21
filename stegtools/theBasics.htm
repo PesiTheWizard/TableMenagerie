@@ -25,7 +25,8 @@ function something()
 		document.getElementById("f15"),
 		document.getElementById("f16"),
 		document.getElementById("f17"),
-		document.getElementById("f18")
+		document.getElementById("f18"),
+		document.getElementById("f19")
 	];
 	f[0].textContent = inp;
 	f[1].textContent = inp.split("").reverse().join("");
@@ -96,7 +97,7 @@ function something()
 	f[16].textContent = inp.length;
 	try
 	{
-		f[17].textContent = Uint8Array.fromBase64(inp,{lastChunkHandling:"strict"}).toString();
+		f[17].textContent = Date.parse(inp);
 	}
 	catch(e)
 	{
@@ -104,11 +105,19 @@ function something()
 	}
 	try
 	{
-		f[18].textContent = Uint8Array.fromHex(inp).toString();
+		f[18].textContent = Uint8Array.fromBase64(inp,{lastChunkHandling:"strict"}).toString();
 	}
 	catch(e)
 	{
 		f[18].textContent = e.toString();
+	}
+	try
+	{
+		f[19].textContent = Uint8Array.fromHex(inp).toString();
+	}
+	catch(e)
+	{
+		f[19].textContent = e.toString();
 	}
 }
 </script>
@@ -141,8 +150,9 @@ input
 <tr><th>toLowerCase</th><td id="f14"></td></tr>
 <tr><th>toUpperCase</th><td id="f15"></td></tr>
 <tr><th>length</th><td id="f16"></td></tr>
-<tr><th>fromBase64</th><td id="f17"></td></tr>
-<tr><th>fromHex</th><td id="f18"></td></tr>
+<tr><th>Date.parse</th><td id="f17"></td></tr>
+<tr><th>fromBase64</th><td id="f18"></td></tr>
+<tr><th>fromHex</th><td id="f19"></td></tr>
 </tbody></table>
 </body>
 </html>

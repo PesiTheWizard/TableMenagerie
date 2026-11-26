@@ -173,7 +173,7 @@ input,select
 td
 {
 	white-space:nowrap;
-	min-width:18px;
+	min-width:15px;
 	position:relative;/*this one was added due to mfdn*/
 }
 .nc
@@ -184,7 +184,7 @@ th>span,summary
 {
 	cursor:pointer;
 }
-tr.wms>th
+tr.wms>th,td.wms
 {
 	writing-mode:sideways-lr;
 }
@@ -201,6 +201,11 @@ tr.cpr>th
 input[type=radio]
 {
 	margin-left:3px;
+}
+td.tac
+{
+	text-align:center;
+	font-weight:bold;
 }
 td.mfdn::before
 {
@@ -794,14 +799,34 @@ Order type:<select id="selOrderType">
 	</td></tr></tbody></table>
 	</details></dd>
 
-	<dd><details><summary>Modules</summary>
+	<dd><details><summary>Weapons</summary>
 	<dl>
-		<dd><details><summary>Weapons</summary>
+		<dd><details><summary>Projectile Weapons</summary>
+		<table border=1><thead>
+		<tr class="cpr wms"><th colspan=3 class="nc"><th>I</th><th title="Compact">Carbine</th><th title="Ample">Gallium</th><th title="Precise">Prototype</th><th title="Scoped">'Scout'</th><th>Republic Fleet</th><th>Domination</th></tr>
+		</thead><tbody>
+		<tr><td rowspan=9 class="wms">AutoCannons</td><td rowspan=3 class="tac">S</td><td>125mm Gatling AutoCannon</td><td><input type=radio name="PickedType" value="484"></td><td><input type=radio name="PickedType" value="8785"></td><td><input type=radio name="PickedType" value="8787"></td><td><input type=radio name="PickedType" value="8789"></td><td><input type=radio name="PickedType" value="8759"></td><td><input type=radio name="PickedType" value="16046"></td><td><input type=radio name="PickedType" value="13773"></td></tr>
+		<tr><td>150mm Light AutoCannon</td><td><input type=radio name="PickedType" value="485"></td><td><input type=radio name="PickedType" value="8817"></td><td><input type=radio name="PickedType" value="8819"></td><td><input type=radio name="PickedType" value="8821"></td><td><input type=radio name="PickedType" value="8815"></td><td><input type=radio name="PickedType" value="16049"></td><td><input type=radio name="PickedType" value="13776"></td></tr>
+		<tr><td>200mm AutoCannon</td><td><input type=radio name="PickedType" value="486"></td><td><input type=radio name="PickedType" value="8865"></td><td><input type=radio name="PickedType" value="8867"></td><td><input type=radio name="PickedType" value="8869"></td><td><input type=radio name="PickedType" value="8863"></td><td><input type=radio name="PickedType" value="16050"></td><td><input type=radio name="PickedType" value="13777"></td></tr>
+		<tr><td rowspan=3 class="tac">M</td><td>Dual 180mm AutoCannon</td><td><input type=radio name="PickedType" value="489"></td><td><input type=radio name="PickedType" value="9073"></td><td><input type=radio name="PickedType" value="9091"></td><td><input type=radio name="PickedType" value="9093"></td><td><input type=radio name="PickedType" value="9071"></td><td><input type=radio name="PickedType" value="16058"></td><td><input type=radio name="PickedType" value="13786"></td></tr>
+		<tr><td>220mm Vulcan AutoCannon</td><td><input type=radio name="PickedType" value="490"></td><td><input type=radio name="PickedType" value="9129"></td><td><input type=radio name="PickedType" value="9131"></td><td><input type=radio name="PickedType" value="9133"></td><td><input type=radio name="PickedType" value="9127"></td><td><input type=radio name="PickedType" value="16051"></td><td><input type=radio name="PickedType" value="13778"></td></tr>
+		<tr><td>425mm AutoCannon</td><td><input type=radio name="PickedType" value="491"></td><td><input type=radio name="PickedType" value="9137"></td><td><input type=radio name="PickedType" value="9139"></td><td><input type=radio name="PickedType" value="9141"></td><td><input type=radio name="PickedType" value="9135"></td><td><input type=radio name="PickedType" value="16054"></td><td><input type=radio name="PickedType" value="13782"></td></tr>
+		<tr><td rowspan=3 class="tac">L</td><td>Dual 425mm AutoCannon</td><td><input type=radio name="PickedType" value="494"></td><td><input type=radio name="PickedType" value="9249"></td><td><input type=radio name="PickedType" value="9251"></td><td><input type=radio name="PickedType" value="9253"></td><td><input type=radio name="PickedType" value="9247"></td><td><input type=radio name="PickedType" value="16059"></td><td><input type=radio name="PickedType" value="13787"></td></tr>
+		<tr><td>Dual 650mm Repeating Cannon</td><td><input type=radio name="PickedType" value="495"></td><td><input type=radio name="PickedType" value="9289"></td><td><input type=radio name="PickedType" value="9291"></td><td><input type=radio name="PickedType" value="9293"></td><td><input type=radio name="PickedType" value="9287"></td><td><input type=radio name="PickedType" value="16060"></td><td><input type=radio name="PickedType" value="13788"></td></tr>
+		<tr><td>800mm Repeating Cannon</td><td><input type=radio name="PickedType" value="496"></td><td><input type=radio name="PickedType" value="9329"></td><td><input type=radio name="PickedType" value="9331"></td><td><input type=radio name="PickedType" value="9333"></td><td><input type=radio name="PickedType" value="9327"></td><td><input type=radio name="PickedType" value="16057"></td><td><input type=radio name="PickedType" value="13785"></td></tr>
+		<tr><td rowspan=6 class="wms">Artillery Cannons</td><td rowspan=2 class="tac">S</td><td>250mm Light Artillery Cannon</td><td><input type=radio name="PickedType" value="487"></td><td><input type=radio name="PickedType" value="8905"></td><td><input type=radio name="PickedType" value="8907"></td><td><input type=radio name="PickedType" value="8909"></td><td><input type=radio name="PickedType" value="8903"></td><td><input type=radio name="PickedType" value="16052"></td><td><input type=radio name="PickedType" value="13779"></td></tr>
+		<tr><td>280mm Howitzer Artillery</td><td class="mfdn"><input type=radio name="PickedType" value="488"></td><td><input type=radio name="PickedType" value="9413"></td><td><input type=radio name="PickedType" value="9415"></td><td><input type=radio name="PickedType" value="9417"></td><td><input type=radio name="PickedType" value="9411"></td><td><input type=radio name="PickedType" value="16053"></td><td><input type=radio name="PickedType" value="13781"></td></tr>
+		<tr><td rowspan=2 class="tac">M</td><td>650mm Artillery Cannon</td><td><input type=radio name="PickedType" value="492"></td><td><input type=radio name="PickedType" value="9209"></td><td><input type=radio name="PickedType" value="9211"></td><td><input type=radio name="PickedType" value="9213"></td><td><input type=radio name="PickedType" value="9207"></td><td><input type=radio name="PickedType" value="16055"></td><td><input type=radio name="PickedType" value="13783"></td></tr>
+		<tr><td>720mm Howitzer Artillery</td><td><input type=radio name="PickedType" value="493"></td><td><input type=radio name="PickedType" value="9453"></td><td><input type=radio name="PickedType" value="9455"></td><td><input type=radio name="PickedType" value="9457"></td><td><input type=radio name="PickedType" value="9451"></td><td><input type=radio name="PickedType" value="16056"></td><td><input type=radio name="PickedType" value="13784"></td></tr>
+		<tr><td rowspan=2 class="tac">L</td><td>1200mm Artillery Cannon</td><td><input type=radio name="PickedType" value="497"></td><td><input type=radio name="PickedType" value="9369"></td><td><input type=radio name="PickedType" value="9371"></td><td><input type=radio name="PickedType" value="9377"></td><td><input type=radio name="PickedType" value="9367"></td><td><input type=radio name="PickedType" value="16047"></td><td><input type=radio name="PickedType" value="13774"></td></tr>
+		<tr><td>1400mm Howitzer Artillery</td><td><input type=radio name="PickedType" value="498"></td><td><input type=radio name="PickedType" value="9493"></td><td><input type=radio name="PickedType" value="9495"></td><td><input type=radio name="PickedType" value="9497"></td><td><input type=radio name="PickedType" value="9491"></td><td><input type=radio name="PickedType" value="16048"></td><td><input type=radio name="PickedType" value="13775"></td></tr>
+		</tbody></table>
+		</details></dd>
+
+		<dd><details><summary>Other weapons</summary>
 		<table border=1><thead>
 		<tr><th class="nc"></th><th>Small</th><th>Medium</th><th>Large</th></tr>
 		</thead><tbody>
-		<tr><td>AutoCannons</td><td><input type=radio name="PickedType" value="484">125mm Gatling AutoCannon I<br><input type=radio name="PickedType" value="485">150mm Light AutoCannon I<br><input type=radio name="PickedType" value="486">200mm AutoCannon I</td><td><input type=radio name="PickedType" value="489">Dual 180mm AutoCannon I<br><input type=radio name="PickedType" value="490">220mm Vulcan AutoCannon I<br><input type=radio name="PickedType" value="491">425mm AutoCannon I</td><td><input type=radio name="PickedType" value="494">Dual 425mm AutoCannon I<br><input type=radio name="PickedType" value="495">Dual 650mm Repeating Cannon I<br><input type=radio name="PickedType" value="496">800mm Repeating Cannon I</td></tr>
-		<tr><td>Artillery Cannons</td><td><input type=radio name="PickedType" value="487">250mm Light Artillery Cannon I<br><input type=radio name="PickedType" value="488">280mm Howitzer Artillery I&#185;</td><td><input type=radio name="PickedType" value="492">650mm Artillery Cannon I<br><input type=radio name="PickedType" value="493">720mm Howitzer Artillery I</td><td><input type=radio name="PickedType" value="497">1200mm Artillery Cannon I<br><input type=radio name="PickedType" value="498">1400mm Howitzer Artillery I</td></tr>
 		<tr><td>Pulse Lasers</td><td><input type=radio name="PickedType" value="450">Gatling Pulse Laser I<br><input type=radio name="PickedType" value="451">Dual Light Pulse Laser I<br><input type=radio name="PickedType" value="453">Small Focused Pulse Laser I</td><td><input type=radio name="PickedType" value="456">Focused Medium Pulse Laser I<br><input type=radio name="PickedType" value="458">Heavy Pulse Laser I</td><td><input type=radio name="PickedType" value="460">Dual Heavy Pulse Laser I<br><input type=radio name="PickedType" value="462">Mega Pulse Laser I</td></tr>
 		<tr><td>Beam Lasers</td><td><input type=radio name="PickedType" value="452">Dual Light Beam Laser I<br><input type=radio name="PickedType" value="454">Small Focused Beam Laser I</td><td><input type=radio name="PickedType" value="455">Quad Light Beam Laser I<br><input type=radio name="PickedType" value="457">Focused Medium Beam Laser I<br><input type=radio name="PickedType" value="459">Heavy Beam Laser I</td><td><input type=radio name="PickedType" value="461">Dual Heavy Beam Laser I<br><input type=radio name="PickedType" value="463">Mega Beam Laser I<br><input type=radio name="PickedType" value="464">Tachyon Beam Laser I</td></tr>
 		<tr><td>Blasters</td><td><input type=radio name="PickedType" value="562">Light Electron Blaster I<br><input type=radio name="PickedType" value="563">Light Ion Blaster I<br><input type=radio name="PickedType" value="564">Light Neutron Blaster I</td><td><input type=radio name="PickedType" value="566">Heavy Electron Blaster I<br><input type=radio name="PickedType" value="569">Heavy Ion Blaster I<br><input type=radio name="PickedType" value="568">Heavy Neutron Blaster I</td><td><input type=radio name="PickedType" value="571">Electron Blaster Cannon I<br><input type=radio name="PickedType" value="575">Ion Blaster Cannon I<br><input type=radio name="PickedType" value="573">Neutron Blaster Cannon I</td></tr>
@@ -810,7 +835,11 @@ Order type:<select id="selOrderType">
 		<tr><td>Smartbombs</td><td><input type=radio name="PickedType" value="1563">Small EMP Smartbomb I<br><input type=radio name="PickedType" value="1557">Small Plasma Smartbomb I<br><input type=radio name="PickedType" value="1551">Small Graviton Smartbomb I<br><input type=radio name="PickedType" value="1547">Small Proton Smartbomb I</td><td><input type=radio name="PickedType" value="3953">Medium EMP Smartbomb I<br><input type=radio name="PickedType" value="3947">Medium Plasma Smartbomb I<br><input type=radio name="PickedType" value="3941">Medium Graviton Smartbomb I<br><input type=radio name="PickedType" value="3937">Medium Proton Smartbomb I</td><td><input type=radio name="PickedType" value="3993">Large EMP Smartbomb I<br><input type=radio name="PickedType" value="3987">Large Plasma Smartbomb I<br><input type=radio name="PickedType" value="3981">Large Graviton Smartbomb I<br><input type=radio name="PickedType" value="3977">Large Proton Smartbomb I</td></tr>
 		</tbody></table>
 		</details></dd>
+	</dl>
+	</details></dd>
 
+	<dd><details><summary>Modules</summary>
+	<dl>
 		<dd><details><summary>Sized</summary>
 		<table border=1><thead>
 		<tr class="cpr"><th rowspan=2 class="nc"></th><th colspan=4>I</th><th colspan=4>Republic fleet</th><th colspan=3>Thukker</th><th colspan=3>Imperial Navy</th></tr>
@@ -914,20 +943,35 @@ Order type:<select id="selOrderType">
 		<table border=1><thead>
 		<tr class="cpr wms"><th class="nc"></th><th>Compact</th><th>Enduring</th><th>Scoped</th><th>Restrained</th></tr>
 		</thead><tbody>
-		<tr><td>Ballistic Control System</td><td class="mfdn"><input type=radio name="PickedType" value="16457"></td></tr>
-		<tr><td>Capacitor Power Relay</td>   <td><input type=radio name="PickedType" value="8177"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="8175"></td></tr>
-		<tr><td>Cap Recharger</td>           <td><input type=radio name="PickedType" value="4435"></td></tr>
-		<tr><td>Drone Damage Amplifier</td>  <td class="mfdn"><input type=radio name="PickedType" value="41034"></td></tr>
-		<tr><td>Reinforced Bulkhead</td>     <td class="mfdn"><input type=radio name="PickedType" value="5649"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="5647"></td></tr>
-		<tr><td>Sensor Booster</td>          <td class="mfdn"><input type=radio name="PickedType" value="6160"></td><td class="mfdn"><input type=radio name="PickedType" value="6159"></td></tr>
-		<tr><td>Signal Amplifier</td>        <td class="mfdn"><input type=radio name="PickedType" value="6296"></td></tr>
-		<tr><td>Stasis Webifier</td>         <td><input type=radio name="PickedType" value="4027"></td><td class="mfdn"><input type=radio name="PickedType" value="4025"></td></tr>
-		<tr><td>Target Painter</td>          <td><input type=radio name="PickedType" value="19810"></td><td><input type=radio name="PickedType" value="19812"></td><td><input type=radio name="PickedType" value="19814"></td></tr>
-		<tr><td>Tracking Computer</td>       <td class="mfdn"><input type=radio name="PickedType" value="6173"></td><td><input type=radio name="PickedType" value="6176"></td></tr>
-		<tr><td>Tracking Enhancer</td>       <td class="mfdn"><input type=radio name="PickedType" value="6325"></td></tr>
-		<tr><td>Warp Disruptor</td>          <td class="mfdn"><input type=radio name="PickedType" value="5405"></td><td class="mfdn"><input type=radio name="PickedType" value="5399"></td><td><input type=radio name="PickedType" value="5403"></td></tr>
-		<tr><td>Warp Scrambler</td>          <td class="mfdn"><input type=radio name="PickedType" value="5445"></td><td><input type=radio name="PickedType" value="5439"></td><td class="mfdn"><input type=radio name="PickedType" value="5443"></td></tr>
-<!--		<tr><td>(future expansion)</td>      <td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td></tr>
+		<tr><td>Ballistic Control System</td>         <td class="mfdn"><input type=radio name="PickedType" value="16457"></td></tr>
+		<tr><td>Capacitor Power Relay</td>            <td><input type=radio name="PickedType" value="8177"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="8175"></td></tr>
+		<tr><td>Cap Recharger</td>                    <td><input type=radio name="PickedType" value="4435"></td></tr>
+		<tr><td>Drone Damage Amplifier</td>           <td class="mfdn"><input type=radio name="PickedType" value="41034"></td></tr>
+		<tr><td>Expanded Cargohold</td>               <td colspan=3 class="nc"></td><td><input type=radio name="PickedType" value="5493"></td></tr>
+		<tr><td>Gyrostabilizer</td>                   <td class="mfdn"><input type=radio name="PickedType" value="5933"></td></tr>
+		<tr><td>Heat Sink</td>                        <td class="mfdn"><input type=radio name="PickedType" value="5849"></td></tr>
+		<tr><td>Magnetic Field Stabilizer</td>        <td class="mfdn"><input type=radio name="PickedType" value="11105"></td></tr>
+		<tr><td>Miner</td>                            <td><input type=radio name="PickedType" value="5245"></td><td class="nc"></td><td><input type=radio name="PickedType" value="5239"></td></tr>
+		<tr><td>Nanofiber Internal Structure</td>     <td colspan=3 class="nc"></td><td><input type=radio name="PickedType" value="5599"></td></tr>
+		<tr><td>Omnidirectional Tracking Enhancer</td><td><input type=radio name="PickedType" value="41033"></td></tr>
+		<tr><td>Omnidirectional Tracking Link</td>    <td><input type=radio name="PickedType" value="41031"></td><td><input type=radio name="PickedType" value="41032"></td></tr>
+		<tr><td>Overdrive Injector System</td>        <td colspan=3 class="nc"></td><td><input type=radio name="PickedType" value="5631"></td></tr>
+		<tr><td>Power Diagnostic System</td>          <td><input type=radio name="PickedType" value="8225"></td></tr>
+		<tr><td>Reactor Control Unit</td>             <td><input type=radio name="PickedType" value="8263"></td></tr>
+		<tr><td>Reinforced Bulkhead</td>              <td class="mfdn"><input type=radio name="PickedType" value="5649"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="5647"></td></tr>
+		<tr><td>Remote Tracking Computer</td>         <td><input type=radio name="PickedType" value="5340"></td><td><input type=radio name="PickedType" value="5342"></td><td><input type=radio name="PickedType" value="5339"></td></tr>
+		<tr><td>Sensor Booster</td>                   <td class="mfdn"><input type=radio name="PickedType" value="6160"></td><td class="mfdn"><input type=radio name="PickedType" value="6159"></td></tr>
+		<tr><td>Shield Boost Amplifier</td>           <td><input type=radio name="PickedType" value="16535"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="16533"></td></tr>
+		<tr><td>Shield Power Relay</td>               <td><input type=radio name="PickedType" value="8337"></td><td colspan=2 class="nc"></td><td><input type=radio name="PickedType" value="8335"></td></tr>
+		<tr><td>Shield Recharger</td>                 <td><input type=radio name="PickedType" value="6485"></td></tr>
+		<tr><td>Signal Amplifier</td>                 <td class="mfdn"><input type=radio name="PickedType" value="6296"></td></tr>
+		<tr><td>Stasis Webifier</td>                  <td><input type=radio name="PickedType" value="4027"></td><td class="mfdn"><input type=radio name="PickedType" value="4025"></td></tr>
+		<tr><td>Target Painter</td>                   <td><input type=radio name="PickedType" value="19810"></td><td><input type=radio name="PickedType" value="19812"></td><td><input type=radio name="PickedType" value="19814"></td></tr>
+		<tr><td>Tracking Computer</td>                <td class="mfdn"><input type=radio name="PickedType" value="6173"></td><td><input type=radio name="PickedType" value="6176"></td></tr>
+		<tr><td>Tracking Enhancer</td>                <td class="mfdn"><input type=radio name="PickedType" value="6325"></td></tr>
+		<tr><td>Warp Disruptor</td>                   <td class="mfdn"><input type=radio name="PickedType" value="5405"></td><td class="mfdn"><input type=radio name="PickedType" value="5399"></td><td><input type=radio name="PickedType" value="5403"></td></tr>
+		<tr><td>Warp Scrambler</td>                   <td class="mfdn"><input type=radio name="PickedType" value="5445"></td><td><input type=radio name="PickedType" value="5439"></td><td class="mfdn"><input type=radio name="PickedType" value="5443"></td></tr>
+<!--		<tr><td>(future expansion)</td>               <td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td><td><input type=radio name="PickedType" value=""></td></tr>
 -->		</tbody></table>
 		</details></dd>
 
@@ -1146,10 +1190,10 @@ Order type:<select id="selOrderType">
 		<tr><th>Fuel Blocks</th><th>R.A.M.</th></tr>
 		</thead><tbody>
 		<tr><td>
-		<input type=radio name="PickedType" value="4247">Helium Fuel Block<br>
-		<input type=radio name="PickedType" value="4246">Hydrogen Fuel Block<br>
-		<input type=radio name="PickedType" value="4051">Nitrogen Fuel Block<br>
-		<input type=radio name="PickedType" value="4312">Oxygen Fuel Block
+		<input type=radio name="PickedType" value="4247">Helium<br>
+		<input type=radio name="PickedType" value="4246">Hydrogen<br>
+		<input type=radio name="PickedType" value="4051">Nitrogen<br>
+		<input type=radio name="PickedType" value="4312">Oxygen
 		</td><td>
 		<input type=radio name="PickedType" value="11476">Ammunition Tech<br>
 		<input type=radio name="PickedType" value="11475">Armor/Hull Tech<br>
